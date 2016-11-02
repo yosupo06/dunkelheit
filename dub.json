@@ -1,0 +1,17 @@
+{
+	"name": "dcomp",
+	"authors": [
+		"yosupo"
+	],
+	"description": "Programming Contest Library.",
+	"copyright": "Copyright © 2016, yosupo",
+	"license": "proprietary",
+	"targetType": "library",
+	"subPackages": [
+		{
+			"name": "combine",
+			"sourcePaths": ["combine"],
+			"targetType": "executable"
+		}
+	]
+}

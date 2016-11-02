@@ -1,0 +1,3 @@
+```
+dub add-local .
+```
