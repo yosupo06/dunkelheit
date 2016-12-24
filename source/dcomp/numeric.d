@@ -5,13 +5,13 @@ T lcm(T)(const T a, const T b) {
     return a / gcd(a,b) * b;
 }
 
-//T[0] = a*T[1]+b*T[2], T[0]=gcd
+//a*T[0]+b*T[1]=T[2], T[2]=gcd
 T[3] extGcd(T)(T a, T b) {
     if (b==0) {
-        return [a, 1, 0];
+        return [1, 0, a];
     } else {
         auto e = extGcd(b, a%b);
-        return [e[0], e[2], e[1]-a/b*e[2]];
+        return [e[1], e[0]-a/b*e[1], e[2]];
     }
 }
 
@@ -27,6 +27,6 @@ struct ModInt(uint MD) {
     auto opBinary(string op:"*")(ModInt r) {return make(cast(ulong)v*r.v%MD);}
     auto opBinary(string op:"/")(ModInt r) {return this*inv(r);}
     auto opOpAssign(string op)(ModInt r) {return mixin ("this=this"~op~"r");}
-    static ModInt inv(ModInt x) {return ModInt(extGcd(x.v, MD)[1]);}
+    static ModInt inv(ModInt x) {return ModInt(extGcd(x.v, MD)[0]);}
     string toString() {return v.to!string;}
 }
