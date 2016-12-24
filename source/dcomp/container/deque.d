@@ -1,3 +1,5 @@
+module dcomp.container.deque;
+
 struct Deque(T) {
     T[] d = new T[](1);
     size_t st, length;
