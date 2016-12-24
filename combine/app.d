@@ -40,7 +40,9 @@ string[] enumImport(string fn) {
 	}
 
 	string[] res;
+	res ~= fn;
 	foreach (s, _; visited) {
+		if (s == fn) continue;
 		res ~= s;
 	}
 	return res;
@@ -65,6 +67,9 @@ int main(string[] argv) {
 	auto ouf = File(argv[2], "w");
 	foreach (ph; imported) {
 		auto inf = File(ph, "r");
+		if (ph != argv[1]) {
+			ouf.writeln("/* IMPORT " ~ ph ~ " */");
+		}
 		foreach (line; inf.byLine) {
 			if (willCommentOut(line.idup)) {
 				ouf.writeln("// " ~ line);
