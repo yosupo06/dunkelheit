@@ -6,6 +6,7 @@ T lcm(T)(const T a, const T b) {
 }
 
 //a*T[0]+b*T[1]=T[2], T[2]=gcd
+//todo: to binary extgcd
 T[3] extGcd(T)(T a, T b) {
     if (b==0) {
         return [1, 0, a];
