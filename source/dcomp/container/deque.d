@@ -1,6 +1,6 @@
 module dcomp.container.deque;
 
-struct Deque(T) {
+class Deque(T) {
     T[] d = new T[](1);
     size_t st, length;
     @property bool empty() { return length == 0; }
