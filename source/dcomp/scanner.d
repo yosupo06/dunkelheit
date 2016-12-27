@@ -1,7 +1,7 @@
 module dcomp.scanner;
 
 class Scanner {
-    import std.stdio : File, readln, stdin;
+    import std.stdio : File, stdin;
     import std.conv : to;
     import std.range : front, popFront, array, ElementType;
     import std.array : split;
