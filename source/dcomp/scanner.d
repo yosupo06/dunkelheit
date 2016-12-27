@@ -15,7 +15,7 @@ class Scanner {
     bool succ() {
         while (!buf.length) {
             if (f.eof) return false;
-            buf = readln.split;
+            buf = f.readln.split;
         }
         return true;
     }
