@@ -25,4 +25,3 @@ T[] factorList(T)(T x) {
     // res is sorted!
     return res;
 }
-

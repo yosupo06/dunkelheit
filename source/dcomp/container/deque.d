@@ -22,7 +22,7 @@ struct Deque(T) {
         if (st == 0) st += d.length;
         st--; length++;
         this[0] = v; 
-    }    
+    }
     void insertBack(T v) {
         if (length == d.length) expand();
         length++;
