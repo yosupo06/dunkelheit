@@ -1,8 +1,9 @@
 module dcomp.container.deque;
 
-class Deque(T) {
+struct Deque(T) {
     T[] d = new T[](1);
     size_t st, length;
+    @disable this(this); // can't copy!(this container isn't reference type)
     @property bool empty() { return length == 0; }
     ref T opIndex(size_t i) {
         return d[(st+i >= d.length) ? (st+i-d.length) : st+i];
