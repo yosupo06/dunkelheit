@@ -1,6 +1,6 @@
 /+ dub.sdl:
     name "A"
-    dependency "dcomp" version=">=0.1.1"
+    dependency "dcomp" version=">=0.1.2"
 +/
 
 int main() {
