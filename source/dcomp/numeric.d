@@ -1,6 +1,19 @@
 module dcomp.numeric;
 
-T lcm(T)(const T a, const T b) {
+
+T pow(T, U)(T x, U n, T e) {
+    while (n) {
+        if (n & 1) e *= x;
+        x *= x;
+        n /= 2;
+    }
+    return e;
+}
+T pow(T, U)(T x, U n) {
+    return pow(x, n, T(1));
+}
+
+T lcm(T)(in T a, in T b) {
     import std.numeric : gcd, abs;
     return a / gcd(a,b) * b;
 }
@@ -25,7 +38,7 @@ struct ModInt(uint MD) {
     auto make(uint x) {ModInt m; m.v = x; return m;}
     auto opBinary(string op:"+")(ModInt r) {return make(normS(v+r.v));}
     auto opBinary(string op:"-")(ModInt r) {return make(normS(v+MD-r.v));}
-    auto opBinary(string op:"*")(ModInt r) {return make(cast(ulong)v*r.v%MD);}
+    auto opBinary(string op:"*")(ModInt r) {return make((v.to!long*r.v%MD).to!uint);}
     auto opBinary(string op:"/")(ModInt r) {return this*inv(r);}
     auto opOpAssign(string op)(ModInt r) {return mixin ("this=this"~op~"r");}
     static ModInt inv(ModInt x) {return ModInt(extGcd(x.v, MD)[0]);}
