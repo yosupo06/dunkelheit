@@ -52,3 +52,33 @@ unittest {
         }
     }
 }
+
+T[] factTable(T)(size_t length) {
+    import std.range : take, recurrence;
+    import std.array : array;
+    return T(1).recurrence!((a, n) => a[n-1]*T(n)).take(length).array;
+}
+
+// optimize
+T[] invFactTable(T)(size_t length) {
+    import std.range : take, recurrence;
+    import std.array : array;
+    return T(1).recurrence!((a, n) => a[n-1]/T(n)).take(length).array;
+}
+
+unittest {
+    import std.stdio;
+    import dcomp.numeric.modint;
+    alias Mint = ModInt!(10^^9 + 7);
+    auto r = factTable!Mint(20);
+    Mint a = 1;
+    assert(r[0] == Mint(1));
+    foreach (i; 1..20) {
+        a *= Mint(i);
+        assert(r[i] == a);
+    }
+    auto p = invFactTable!Mint(20);
+    foreach (i; 1..20) {
+        assert((r[i]*p[i]).v == 1);
+    }
+}
