@@ -1,11 +1,12 @@
 /+ dub.sdl:
     name "A"
-    dependency "dcomp" version=">=0.1.2"
+    dependency "dcomp" version=">=0.1.3"
 +/
+
+import dcomp.scanner;
 
 int main() {
     import std.stdio;
-    import dcomp.scanner;
     auto sc = new Scanner();
     int a, b;
     int[] c;
