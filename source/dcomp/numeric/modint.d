@@ -19,7 +19,7 @@ struct ModInt(uint MD) if (MD < int.max) {
 }
 
 unittest {
-//    static assert( is(ModInt!(uint(1000000000) * 2))); //not overflow
+    static assert( is(ModInt!(uint(1000000000) * 2))); //not overflow
     static assert(!is(ModInt!(uint(1145141919) * 2))); //overflow!
     alias Mint = ModInt!(10^^9+7);
     // negative check
@@ -29,6 +29,10 @@ unittest {
     Mint a = 48;
     Mint b = Mint.inv(a);
     assert(b.v == 520833337);
+
+    Mint c = Mint(15);
+    Mint d = Mint(3);
+    assert((c/d).v == 5);
 }
 
 struct DModInt {
@@ -71,9 +75,12 @@ unittest {
     immutable MD = 10^^9 + 7;
     alias Mint = DModInt;
     //negative check
-    assert(DModInt(-1, MD).v == 10^^9 + 6);
-    assert(DModInt(-1L, MD).v == 10^^9 + 6);
-    Mint a = DModInt(48, MD);
-    Mint b = DModInt.inv(a);
+    assert(Mint(-1, MD).v == 10^^9 + 6);
+    assert(Mint(-1L, MD).v == 10^^9 + 6);
+    Mint a = Mint(48, MD);
+    Mint b = Mint.inv(a);
     assert(b.v == 520833337);
+    Mint c = Mint(15, MD);
+    Mint d = Mint(3, MD);
+    assert((c/d).v == 5);
 }
