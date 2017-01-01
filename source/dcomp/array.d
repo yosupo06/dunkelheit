@@ -47,10 +47,3 @@ struct FastAppender(A, bool useMyPool = false) {
 }
 
 T[N] toStaticArray(T, int N)(T[N] a) {return a;}
-bool cmpStaticArray(T, int N)(in T[N] a, in T[N] b) {
-    foreach (i; 0..N) {
-        if (a[i] != b[i]) return a[i] < b[i];
-    }
-    return false;
-}
-
