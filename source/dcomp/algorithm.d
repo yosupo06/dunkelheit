@@ -46,3 +46,24 @@ if (isForwardRange!Range && hasLength!Range) {
         now.popFront;
     }
 }
+
+
+E minimum(alias pred = "a < b", Range, E = ElementType!Range)(Range range, E seed)
+if (isInputRange!Range && !isInfinite!Range && !is(CommonType!(ElementType!Range, E) == void)) {
+    import std.functional;
+    while (!range.empty) {
+        if (binaryFun!pred(range.front, seed)) {
+            seed = range.front;
+        }
+        range.popFront;
+    }
+    return seed;
+}
+
+ElementType!Range minimum(alias pred = "a < b", Range)(Range range)
+if (isInputRange!Range && !isInfinite!Range) {
+    import std.functional;
+    assert(!range.empty, "range must not empty");
+    auto e = range.front; range.popFront;
+    return minimum!pred(range, e);
+}
