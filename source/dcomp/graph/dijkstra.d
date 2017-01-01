@@ -49,6 +49,7 @@ Dijkstra!D dijkstraDense(D, T)(T g, size_t s, D inf = D.max) {
         bool[] used = new bool[](V);
         dist[s] = D(0);
         while (true) {
+            //todo can optimize
             auto rng = dist.enumerate.filter!(a => !used[a.index]);
             if (rng.empty) break;
             auto nx = rng.minimum!"a.value < b.value";
