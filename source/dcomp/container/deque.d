@@ -166,3 +166,13 @@ unittest {
     a.insertFront(2);
     assert(b.length == 0);
 }
+
+unittest {
+    import std.algorithm : equal;
+    import std.range : iota;
+    Deque!int a;
+    foreach (i; 0..100) {
+        a.insertBack(i);
+    }
+    assert(equal(a[], iota(100)));
+}

@@ -87,7 +87,7 @@ unittest {
         }
         return ans;
     }
-    writeln("Start ConvexHull");
+    writeln("ConvexHull Random10000");
     void f() {
         int[2][] v = new int[2][](100);
         int[] smp = new int[](100);
