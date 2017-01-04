@@ -21,13 +21,14 @@ struct FastAppender(A, bool useMyPool = false) {
     void reserve(size_t nlen) {
         import core.memory : GC;
         if (nlen <= cap) return;
-
+        
         void* nx;
-        if (useMyPool) {
+        static if (useMyPool) {
             nx = nowPool.malloc(nlen * T.sizeof);
         } else {
-            nx = GC.malloc(nlen * T.sizeof, GC.BlkAttr.NO_SCAN | GC.BlkAttr.APPENDABLE);
+            nx = GC.malloc(nlen * T.sizeof);            
         }
+
         cap = nlen;
         if (len) memcpy(nx, _data, len * T.sizeof);
         _data = cast(T*)(nx);
@@ -40,7 +41,7 @@ struct FastAppender(A, bool useMyPool = false) {
     }
     void clear() {
         len = 0;
-    }
+    }    
     T[] data() {
         return (_data) ? _data[0..len] : null;
     }
