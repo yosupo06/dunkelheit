@@ -1,6 +1,8 @@
 module dcomp.container.deque;
 
 struct Deque(T) {
+    import std.traits : isImplicitlyConvertible;
+    import std.range : ElementType, isInputRange;
     import core.exception : RangeError;
 
     struct Payload {
@@ -9,7 +11,7 @@ struct Deque(T) {
         @property bool empty() const { return length == 0; }
         alias opDollar = length;
         ref inout(T) opIndex(size_t i) inout {
-            version(assert) if (i < length) throw new RangeError();
+            version(assert) if (length <= i) throw new RangeError();
             return d[(st+i >= d.length) ? (st+i-d.length) : st+i];
         }
         private void expand() {
@@ -82,12 +84,22 @@ struct Deque(T) {
     alias ImmutableRange = RangeT!(immutable Deque);
 
     Payload *p = new Payload;
+    //some value
+    this(U)(U[] values...) if (isImplicitlyConvertible!(U, T)) {
+        foreach (v; values) {
+            insertBack(v);
+        }
+    }
+    //range
     this(Range)(Range r)
-    if (is(ElementType!Range == T)) {
+    if (isInputRange!Range &&
+        isImplicitlyConvertible!(ElementType!Range, T) &&
+        !is(Range == T[])) {
         foreach (v; r) {
             insertBack(v);
         }
     }
+    
     @property bool empty() const { return p.empty; }
     @property size_t length() const { return p.length; }
     ref inout(T) opIndex(size_t i) inout { return (*p)[i]; }
@@ -100,10 +112,10 @@ struct Deque(T) {
     Range opSlice() { return Range(p, 0, length); }
 }
 
-
 unittest {
     import std.algorithm : equal;
     import std.range.primitives : isRandomAccessRange;
+    import std.container.util : make;
     Deque!int q;
     assert(isRandomAccessRange!(typeof(q[])));
 
@@ -131,5 +143,7 @@ unittest {
     assert(equal(q[], q2[]));
     assert(equal(q[][][][], q[]));
     assert(q[].length == q2[].length);
+    auto a = make!(Deque!int)(1, 2, 3);
+    auto b = make!(Deque!int)([1, 2, 3]);
+    assert(equal(a[], b[]));
 }
-
