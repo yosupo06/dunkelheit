@@ -14,6 +14,7 @@ class MemoryPool {
     import std.algorithm : max;
 
     static immutable Allign = 16;
+    static immutable BIG = 2^^20;
     GC.BlkInfo[] blks;
     size_t e, idx, pos;
     this(size_t e) {
@@ -23,7 +24,10 @@ class MemoryPool {
     void assign(size_t sz) {
         blks ~= GC.qalloc(sz);
     }
-    void* malloc(size_t sz) {   
+    void* malloc(size_t sz) {
+        if (BIG < sz) {
+            return GC.malloc(sz);
+        }
         sz = (sz + Allign-1) / Allign * Allign;
         while (idx < blks.length && blks[idx].size < pos + sz) {
             idx++; pos = 0;
