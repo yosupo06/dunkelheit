@@ -1,6 +1,6 @@
 /+ dub.sdl:
     name "A"
-    dependency "dcomp" version=">=0.3.2"
+    dependency "dcomp" version=">=0.3.3"
 +/
 
 import dcomp.scanner;
