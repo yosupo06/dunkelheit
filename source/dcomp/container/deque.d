@@ -18,12 +18,12 @@ struct Deque(T) {
         private void expand() {
             import std.algorithm : max;
             assert(length == cap);
-            cap = max(4L, 2*cap);
-            T* nd = cast(T*)GC.malloc(cap * T.sizeof);
+            auto nc = max(4L, 2*cap);
+            T* nd = cast(T*)GC.malloc(nc * T.sizeof);
             foreach (i; 0..length) {
                 nd[i] = this[i];
             }
-            d = nd; st = 0;
+            d = nd; st = 0; cap = nc;
         }
         void insertFront(T v) {
             if (length == cap) expand();

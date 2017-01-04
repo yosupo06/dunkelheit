@@ -12,32 +12,35 @@ struct ConvexHull(T, CHMode queryType) {
     Deque!L data;
     bool isNeed(L x, L l, L r) const {
         assert(l[0] <= x[0] && x[0] <= r[0], "x must be mid");
-        return (r[0]-x[0])*(l[1]-x[1]) <= (x[0]-l[0])*(x[1]-r[1]);
+        return (r[0]-x[0])*(l[1]-x[1]) < (x[0]-l[0])*(x[1]-r[1]);
     }
     void insertFront(L x) {
         if (data.empty) {
             data.insertFront(x);
             return;
         }
-        assert(x[0] <= data.front[0]);
-        if (x[0] == data.front[0]) {
-            data.front[1] = max(data.front[1], x[1]);
-            return;
+        assert(x[0] <= data[0][0]);
+        if (x[0] == data[0][0]) {
+            if (x[1] <= data[0][1]) return;
+            data.removeFront;
         }
-        while (data.length >= 2 && !isNeed(x, data[0], data[1])) {
+        while (data.length >= 2 && !isNeed(data[0], x, data[1])) {
             data.removeFront;
         }
         data.insertFront(x);
+        if (data.length >= 3) {
+            assert(isNeed(data[1], data[0], data[2]));
+        }
     }
     void insertBack(L x) {
         if (data.empty) {
             data.insertBack(x);
             return;
         }
-        assert(data.back[0] <= x[0]);
-        if (data.back[0] == x[0]) {
-            data.back[1] = max(data.back[1], x[1]);
-            return;
+        assert(data[$-1][0] <= x[0]);
+        if (data[$-1][0] == x[0]) {
+            if (x[1] <= data[$-1][1]) return;
+            data.removeBack;
         }
         while (data.length >= 2 && !isNeed(data[$-1], data[$-2], x)) {
             data.removeBack;
@@ -47,17 +50,68 @@ struct ConvexHull(T, CHMode queryType) {
     long yMax(T x) {
         assert(data.length);
         static if (queryType == CHMode.incr) {
-            while (data.length >= 2) {
-                if (value(data[0], x) < value(data[1], x)) break;
+            while (data.length >= 2 &&
+                value(data[0], x) <= value(data[1], x)) {
                 data.removeFront;
             }
             return value(data.front, x);
         } else {
-            while (data.length >= 2) {
-                if (value(data[$-2], x) < value(data[$-1], x)) break;
+            while (data.length >= 2 &&
+                value(data[$-2], x) >= value(data[$-1], x)) {
                 data.removeBack;
             }
             return value(data.back, x);
         }
     }
+}
+
+unittest {
+    ConvexHull!(int, CHMode.incr) c;
+    c.insertFront([1, 1]);
+    c.insertBack([2, 1]);
+    c.insertBack([3, -100]);
+    assert(c.yMax(-1) == 0);
+    c.insertFront([0, 100]);
+    assert(c.yMax(0) == 100);
+}
+
+unittest {
+    import std.stdio;
+    import std.random;
+    import std.datetime : benchmark;
+    import std.algorithm;
+    int getMax(int[2][] v, int x) {
+        int ans = int.min;
+        foreach (l; v) {
+            ans = max(ans, l[0]*x + l[1]);
+        }
+        return ans;
+    }
+    writeln("Start ConvexHull");
+    void f() {
+        int[2][] v = new int[2][](100);
+        int[] smp = new int[](100);
+        foreach (i; 0..100) {
+            v[i][0] = uniform(-100, 100);
+            v[i][1] = uniform(-100, 100);
+            smp[i] = uniform(-10000, 10000);
+        }
+        sort(v);
+        sort(smp);
+        ConvexHull!(int, CHMode.incr) c;
+        if (uniform(0, 2)) {
+            foreach_reverse (i; 0..100) {
+                c.insertFront(v[i]);
+            }
+        } else {
+            foreach (i; 0..100) {
+                c.insertBack(v[i]);
+            }
+        }
+        foreach (i; 0..100) {
+            assert(c.yMax(smp[i]) == getMax(v, smp[i]));
+        }
+    }
+    auto ti = benchmark!f(10000);
+    writeln(ti[0].msecs, "ms");
 }
