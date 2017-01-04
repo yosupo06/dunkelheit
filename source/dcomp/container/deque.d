@@ -1,10 +1,10 @@
 module dcomp.container.deque;
 
 struct Deque(T) {
-    import std.traits : isImplicitlyConvertible;
-    import std.range : ElementType, isInputRange;
     import core.exception : RangeError;
     import core.memory : GC;
+    import std.range : ElementType, isInputRange;
+    import std.traits : isImplicitlyConvertible;
 
     struct Payload {
         T *d;
@@ -124,7 +124,6 @@ unittest {
     import std.range.primitives : isRandomAccessRange;
     import std.container.util : make;
     auto q = make!(Deque!int);
-//    Deque!int q;
     assert(isRandomAccessRange!(typeof(q[])));
 
     //insert,remove
