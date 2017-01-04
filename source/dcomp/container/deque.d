@@ -4,40 +4,42 @@ struct Deque(T) {
     import std.traits : isImplicitlyConvertible;
     import std.range : ElementType, isInputRange;
     import core.exception : RangeError;
+    import core.memory : GC;
 
     struct Payload {
-        T[] d;
-        size_t st, length;
+        T *d;
+        size_t st, length, cap;
         @property bool empty() const { return length == 0; }
         alias opDollar = length;
         ref inout(T) opIndex(size_t i) inout {
             version(assert) if (length <= i) throw new RangeError();
-            return d[(st+i >= d.length) ? (st+i-d.length) : st+i];
+            return d[(st+i >= cap) ? (st+i-cap) : st+i];
         }
         private void expand() {
             import std.algorithm : max;
-            assert(length == d.length);
-            T[] nd = new T[](max(4L, 2*d.length));
-            foreach (i; 0..d.length) {
+            assert(length == cap);
+            cap = max(4L, 2*cap);
+            T* nd = cast(T*)GC.malloc(cap * T.sizeof);
+            foreach (i; 0..length) {
                 nd[i] = this[i];
             }
             d = nd; st = 0;
         }
         void insertFront(T v) {
-            if (length == d.length) expand();
-            if (st == 0) st += d.length;
+            if (length == cap) expand();
+            if (st == 0) st += cap;
             st--; length++;
             this[0] = v; 
         }
         void insertBack(T v) {
-            if (length == d.length) expand();
+            if (length == cap) expand();
             length++;
             this[length-1] = v; 
         }
         void removeFront() {
             assert(!empty, "Deque.removeFront: Deque is empty");        
             st++; length--;
-            if (st == d.length) st = 0;
+            if (st == cap) st = 0;
         }
         void removeBack() {
             assert(!empty, "Deque.removeBack: Deque is empty");        
@@ -83,9 +85,12 @@ struct Deque(T) {
     alias ConstRange = RangeT!(const Deque);
     alias ImmutableRange = RangeT!(immutable Deque);
 
-    Payload *p = new Payload;
+    Payload *p;
+    private void I() { if (!p) p = new Payload(); }
+    private void C() const { assert(p, "this deque is not init"); }
     //some value
-    this(U)(U[] values...) if (isImplicitlyConvertible!(U, T)) {
+    this(U)(U[] values...) if (isImplicitlyConvertible!(U, T)) {I;
+        p = new Payload();
         foreach (v; values) {
             insertBack(v);
         }
@@ -93,57 +98,72 @@ struct Deque(T) {
     //range
     this(Range)(Range r)
     if (isInputRange!Range &&
-        isImplicitlyConvertible!(ElementType!Range, T) &&
-        !is(Range == T[])) {
+    isImplicitlyConvertible!(ElementType!Range, T) &&
+    !is(Range == T[])) {I;
+        p = new Payload();
         foreach (v; r) {
             insertBack(v);
         }
     }
     
-    @property bool empty() const { return p.empty; }
-    @property size_t length() const { return p.length; }
-    ref inout(T) opIndex(size_t i) inout { return (*p)[i]; }
-    ref inout(T) front() inout { return (*p)[0]; }
-    ref inout(T) back() inout { return (*p)[$-1]; }
-    void insertFront(T v) { p.insertFront(v); }
-    void insertBack(T v) { p.insertBack(v); }
-    void removeFront() { p.removeFront(); }
-    void removeBack() { p.removeBack(); }
-    Range opSlice() { return Range(p, 0, length); }
+    @property bool empty() const { return (!p || p.empty); }
+    @property size_t length() const { return (p ? p.length : 0); }
+    alias opDollar = length;
+    ref inout(T) opIndex(size_t i) inout {C; return (*p)[i]; }
+    ref inout(T) front() inout {C; return (*p)[0]; }
+    ref inout(T) back() inout {C; return (*p)[$-1]; }
+    void insertFront(T v) {I; p.insertFront(v); }
+    void insertBack(T v) {I; p.insertBack(v); }
+    void removeFront() {C; p.removeFront(); }
+    void removeBack() {C; p.removeBack(); }
+    Range opSlice() {I; return Range(p, 0, length); }
 }
 
 unittest {
     import std.algorithm : equal;
     import std.range.primitives : isRandomAccessRange;
     import std.container.util : make;
-    Deque!int q;
+    auto q = make!(Deque!int);
+//    Deque!int q;
     assert(isRandomAccessRange!(typeof(q[])));
 
+    //insert,remove
     assert(equal(q[], new int[](0)));
     q.insertBack(1);
     assert(equal(q[], [1]));
     q.insertBack(2);
     assert(equal(q[], [1, 2]));
     q.insertFront(3);
-    assert(q.front == 3);
-    assert(equal(q[], [3, 1, 2]));
+    assert(equal(q[], [3, 1, 2]) && q.front == 3);
     q.removeFront;
+    assert(equal(q[], [1, 2]) && q.length == 2);
     q.insertBack(4);
-    assert(q.front == 1);
-    assert(q.back == 4);
-    assert(equal(q[], [1, 2, 4]));
+    assert(equal(q[], [1, 2, 4]) && q.front == 1 && q.back == 4 && q[$-1] == 4);
     q.insertFront(5);
     assert(equal(q[], [5, 1, 2, 4]));
+
+    //range
     assert(equal(q[][1..3], [1, 2]));
+    assert(equal(q[][][][], q[]));
+    //const range
     const auto rng = q[];
     assert(rng.front == 5 && rng.back == 4);
+    
+    //reference type
     auto q2 = q;
     q2.insertBack(6);
     q2.insertFront(7);
-    assert(equal(q[], q2[]));
-    assert(equal(q[][][][], q[]));
-    assert(q[].length == q2[].length);
+    assert(equal(q[], q2[]) && q.length == q2.length);
+
+    //construct with make
     auto a = make!(Deque!int)(1, 2, 3);
     auto b = make!(Deque!int)([1, 2, 3]);
     assert(equal(a[], b[]));
+}
+
+unittest {
+    Deque!int a;
+    Deque!int b;
+    a.insertFront(2);
+    assert(b.length == 0);
 }
