@@ -1,14 +1,14 @@
 module dcomp.scanner;
 
 class Scanner {
-    import std.stdio : File, stdin;
+    import std.stdio : File;
     import std.conv : to;
     import std.range : front, popFront, array, ElementType;
     import std.array : split;
     import std.traits : isSomeChar, isStaticArray, isArray; 
     import std.algorithm : map;
     File f;
-    this(File f = stdin) {
+    this(File f) {
         this.f = f;
     }
     string[] buf;
