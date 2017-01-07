@@ -1,3 +1,5 @@
+module dcomp.functional;
+
 struct memoCont(alias pred) {
     import std.range, std.algorithm, std.conv;
     import std.string : join;

@@ -47,4 +47,4 @@ struct FastAppender(A, bool useMyPool = false) {
     }
 }
 
-T[N] toStaticArray(T, int N)(T[N] a) {return a;}
+T[N] fixed(T, int N)(T[N] a) {return a;}
