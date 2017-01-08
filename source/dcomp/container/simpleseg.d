@@ -1,4 +1,4 @@
-module dcomp.container.simpleSeg;
+module dcomp.container.simpleseg;
 
 // simpleなsegtree
 // a op b op .. op x が求められる、遅延評価なし
