@@ -60,6 +60,7 @@ if (isInputRange!Range && !isInfinite!Range && !is(CommonType!(ElementType!Range
     return seed;
 }
 
+//should be use reduce?
 ElementType!Range minimum(alias pred = "a < b", Range)(Range range)
 if (isInputRange!Range && !isInfinite!Range) {
     assert(!range.empty, "range must not empty");
@@ -67,11 +68,35 @@ if (isInputRange!Range && !isInfinite!Range) {
     return minimum!pred(range, e);
 }
 
+E maximum(alias pred = "a < b", Range, E = ElementType!Range)(Range range, E seed)
+if (isInputRange!Range && !isInfinite!Range && !is(CommonType!(ElementType!Range, E) == void)) {
+    import std.functional;
+    while (!range.empty) {
+        if (binaryFun!pred(seed, range.front)) {
+            seed = range.front;
+        }
+        range.popFront;
+    }
+    return seed;
+}
+
+ElementType!Range maximum(alias pred = "a < b", Range)(Range range)
+if (isInputRange!Range && !isInfinite!Range) {
+    assert(!range.empty, "range must not empty");
+    auto e = range.front; range.popFront;
+    return maximum!pred(range, e);
+}
+
 unittest {
     assert(minimum([2, 1, 3]) == 1);
     assert(minimum!"a > b"([2, 1, 3]) == 3);
     assert(minimum([2, 1, 3], -1) == -1);
     assert(minimum!"a > b"([2, 1, 3], 100) == 100);
+
+    assert(maximum([2, 1, 3]) == 3);
+    assert(maximum!"a > b"([2, 1, 3]) == 1);
+    assert(maximum([2, 1, 3], 100) == 100);
+    assert(maximum!"a > b"([2, 1, 3], -1) == -1);
 }
 
 bool[ElementType!Range] toMap(Range)(Range r) {
