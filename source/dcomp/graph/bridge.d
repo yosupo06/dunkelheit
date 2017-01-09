@@ -3,31 +3,93 @@ module dcomp.graph.bridge;
 import dcomp.graph.dfsinfo;
 
 struct Bridge {
-    int gc;
-    int[] ig, gpar; // i to group, group parent
     bool[] isRoot;
+    int count; // group count
+    int[] id, root; // i to group, group root
+    this(int n) {
+        isRoot = new bool[n];
+        id = new int[n];
+    }
 }
 
 Bridge bridge(T)(T g) {
-    return bridge(g, dfsInfo(g, -1));
+    return bridge(g, dfsInfo(g));
 }
 
 Bridge bridge(T)(T g, DFSInfo info) {
-    assert(info.r == -1);
-    size_t V = g.length;
-    Bridge br;
+    import std.conv : to;
+    int n = g.length.to!int;    
+    auto br = Bridge(n);
     
-    br.ig.length = V;
-    br.isRoot.length = V;
-
-    foreach (p; info.vlis) {
-        br.isRoot[p] = (info.low[p] == info.ord[p]);
-        if (br.isRoot[p]) {
-            br.ig[p] = br.gc++;
-            br.gpar ~= ((info.par[p] == -1) ? -1 : br.ig[info.par[p]]);
-        } else {
-            br.ig[p] = br.ig[info.par[p]];
+    with (br) with (info) {
+        foreach (p; vlis) {
+            isRoot[p] = (low[p] == ord[p]);
+            if (isRoot[p]) {
+                id[p] = count++;
+                root ~= ((par[p] == -1) ? -1 : id[par[p]]);
+            } else {
+                id[p] = id[par[p]];
+            }
         }
     }
     return br;
+}
+
+unittest {
+    import std.algorithm, std.conv, std.stdio;
+    import std.random;
+    import std.typecons;
+    import std.datetime;
+    import dcomp.container.unionfind;
+
+    alias E = Tuple!(int, "to");
+
+    writeln("Bridge Random1000");
+    void f() {
+        //make graph
+        int n = uniform(1, 30);
+        int m = uniform(1, 200);
+        E[][] g = new E[][](n);
+        int[2][] edges;
+        auto qf = UnionFind(n);
+        foreach (i; 0..m) {
+            int x = uniform(0, n);
+            int y = uniform(0, n);
+            edges ~= [x, y];
+            g[x] ~= E(y); g[y] ~= E(x);
+            qf.merge(x, y);
+        }
+
+        //component count
+        int connect = (){
+            auto qf = UnionFind(n);
+            edges.each!(v => qf.merge(v[0], v[1]));
+            return qf.count;
+        }();
+
+        auto br = bridge(g);
+        auto naive = UnionFind(n);
+        //nonbridge union
+        foreach (i; 0..m) {
+            int c = (){
+                auto qf = UnionFind(n);
+                edges.each!((j, v){if (i != j) qf.merge(v[0], v[1]);});
+                return qf.count;
+            }();
+            if (connect == c) {
+                //not bridge
+                naive.merge(edges[i][0], edges[i][1]);
+            }
+        }
+        assert(br.count == naive.count);
+        foreach (i; 0..n) {
+            foreach (j; 0..n) {
+                bool same1 = (br.id[i] == br.id[j]);
+                bool same2 = naive.same(i, j);
+                assert(same1 == same2);
+            }
+        }
+    }
+    auto ti = benchmark!f(1000);
+    writeln(ti[0].msecs, "ms");
 }

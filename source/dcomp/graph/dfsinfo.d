@@ -1,54 +1,52 @@
 module dcomp.graph.dfsinfo;
 
 struct DFSInfo {
-    int r;
     int[] low, ord, par, vlis; //low, ord, parent, visitList
-    int[][] tr; //dfs tree
+    int[][] tr; //dfs tree(directed)
+    this(int n) {
+        low = new int[n];
+        ord = new int[n];
+        par = new int[n];
+        vlis = new int[n];
+        tr = new int[][](n);
+    }
 }
 
-DFSInfo dfsInfo(T)(T g, int r) {
-    import std.algorithm : min;
+DFSInfo dfsInfo(T)(T g) {
+    import std.algorithm : min, each, filter;
     import std.conv : to;
-    const size_t V = g.length;
-    DFSInfo info;
-    info.r = r;
-    info.low.length = V;
-    info.ord.length = V;
-    info.par.length = V;
-    info.tr.length = V;
-    
-    int co = 0;
-    bool[] used = new bool[](V);
-    void dfs(int p, int b) {
-        used[p] = true;
-        bool rt = true;
-        info.low[p] = info.ord[p] = co++;
-        info.par[p] = b;
-        info.vlis ~= p; //optimize?
+    const int n = g.length.to!int;
+    auto info = DFSInfo(n);
+    with(info) {
+        int co = 0;
+        bool[] used = new bool[](n);
+        void dfs(int p, int b) {
+            used[p] = true;
+            low[p] = ord[p] = co++;
+            par[p] = b;
 
-        foreach (e; g[p]) {
-            int d = e.to;
-            if (rt && d == b) {
-                rt = false;
-                continue;
-            }
-            if (!used[d]) {
-                info.tr[p] ~= d;
-                dfs(d, p);
-                info.low[p] = min(info.low[p], info.low[d]);
-            } else {
-                info.low[p] = min(info.low[p], info.ord[d]);
+            bool rt = true;
+            foreach (e; g[p]) {
+                int d = e.to;
+                if (rt && d == b) {
+                    rt = false;
+                    continue;
+                }
+                if (!used[d]) {
+                    dfs(d, p);
+                    low[p] = min(low[p], low[d]);
+                } else {
+                    low[p] = min(low[p], ord[d]);
+                }
             }
         }
-    }
-        
-    if (r != -1) {
-        dfs(r, -1);
-    } else {
-        foreach (i; 0..V) {
+            
+        foreach (i; 0..n) {
             if (used[i]) continue;
-            dfs(i.to!int, -1);
+            dfs(i, -1);
         }
+        par.filter!"a!=-1".each!((i, v) => tr[v] ~= i.to!int);
+        ord.each!((i, v) => vlis[v] = i.to!int);
     }
     return info;
 }
