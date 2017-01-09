@@ -1,33 +1,36 @@
-module dcomp.container.quickfind;
+module dcomp.container.unionfind;
 
-struct QuickFind {
+struct UnionFind {
     import std.algorithm : map, swap, each;
     import std.range : iota, array;
-    int[] group; // group id
-    int[][] list; // group list
+    int[] id; // group id
+    int[][] groups; // group list
     int count; // group count
     this(int n) {
-        group = iota(n).array;
-        list = iota(n).map!(a => [a]).array;
+        id = iota(n).array;
+        groups = iota(n).map!(a => [a]).array;
         count = n;
     }
     void merge(int a, int b) {
         if (same(a, b)) return;
         count--;
-        int x = group[a], y = group[b];
-        if (list[x].length < list[y].length) swap(x, y);
-        list[y].each!(a => group[a] = x);
-        list[x] ~= list[y];
-        list[y] = [];
+        int x = id[a], y = id[b];
+        if (groups[x].length < groups[y].length) swap(x, y);
+        groups[y].each!(a => id[a] = x);
+        groups[x] ~= groups[y];
+        groups[y] = [];
+    }
+    int[] group(int i) {
+        return groups[id[i]];
     }
     bool same(int a, int b) {
-        return group[a] == group[b];
+        return id[a] == id[b];
     }
 }
 
 unittest {
     import std.algorithm : equal, sort;
-    auto uf = QuickFind(5);
+    auto uf = UnionFind(5);
     assert(!uf.same(1, 3));
     assert(uf.same(0, 0));
 
@@ -37,32 +40,32 @@ unittest {
     uf.merge(4, 3);
 
     assert(uf.count == 3);
-    assert(uf.group[2] == uf.group[3]);
-    assert(uf.group[2] == uf.group[4]);
-    assert(equal(uf.list[uf.group[0]], [0]));
-    assert(equal(uf.list[uf.group[1]], [1]));
-    assert(equal(sort(uf.list[uf.group[2]]), [2, 3, 4]));
+    assert(uf.id[2] == uf.id[3]);
+    assert(uf.id[2] == uf.id[4]);
+    assert(equal(uf.group(0), [0]));
+    assert(equal(uf.group(1), [1]));
+    assert(equal(sort(uf.group(2)), [2, 3, 4]));
 }
 
 unittest {
     import std.datetime, std.stdio, std.range;
     // speed check
-    writeln("QuickFind Speed Test");
+    writeln("UnionFind Speed Test");
     StopWatch sw;
     sw.start;
-    QuickFind uf;
+    UnionFind uf;
     // line
-    uf = QuickFind(1_000_000);
+    uf = UnionFind(1_000_000);
     foreach (i; 1..1_000_000) {
         uf.merge(i-1, i);
     }
     // line(reverse)
-    uf = QuickFind(1_000_000);
+    uf = UnionFind(1_000_000);
     foreach_reverse (i; 1..1_000_000) {
         uf.merge(i-1, i);
     }
     // binary tree
-    uf = QuickFind(1_000_000);
+    uf = UnionFind(1_000_000);
     foreach (lg; 1..20) {
         int len = 1<<lg;
         foreach (i; iota(0, 1_000_000-len/2, len)) {
