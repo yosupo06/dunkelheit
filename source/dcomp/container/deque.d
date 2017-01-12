@@ -87,7 +87,9 @@ struct Deque(T) {
 
     Payload *p;
     private void I() { if (!p) p = new Payload(); }
-    private void C() const { assert(p, "this deque is not init"); }
+    private void C() const {
+        version(assert) if (!p) throw new RangeError();
+    }
     //some value
     this(U)(U[] values...) if (isImplicitlyConvertible!(U, T)) {I;
         p = new Payload();

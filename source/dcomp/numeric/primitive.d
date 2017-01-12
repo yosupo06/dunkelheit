@@ -61,11 +61,26 @@ T[] factTable(T)(size_t length) {
 
 // optimize
 T[] invFactTable(T)(size_t length) {
-    import std.range : take, recurrence;
+    import std.algorithm : map, reduce;
+    import std.range : take, recurrence, iota;
     import std.array : array;
-    return T(1).recurrence!((a, n) => a[n-1]/T(n)).take(length).array;
+    auto res = new T[length];
+    res[$-1] = T(1) / iota(1, length).map!T.reduce!"a*b";
+    foreach_reverse (i, v; res[0..$-1]) {
+        res[i] = res[i+1] * T(i+1);
+    }
+    return res;
 }
 
+T[] invTable(T)(size_t length) {
+    auto f = factTable!T(length);
+    auto invf = invFactTable!T(length);
+    auto res = new T[length];
+    foreach (i; 1..length) {
+        res[i] = invf[i] * f[i-1];
+    }
+    return res;
+}
 unittest {
     import std.stdio;
     import dcomp.numeric.modint;
