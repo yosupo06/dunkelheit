@@ -1,6 +1,7 @@
 module dcomp.functional;
 
 struct memoCont(alias pred) {
+    import core.exception : RangeError;
     import std.range, std.algorithm, std.conv;
     import std.string : join;
     import std.traits : ReturnType, ParameterTypeTuple, isIntegral;
@@ -24,6 +25,11 @@ struct memoCont(alias pred) {
     R opCall(Args args) {
         int idx, base = 1;
         foreach (i, v; args) {
+            version(assert) {
+                if (v < rng[i][0] || rng[i][1] < v) {
+                    throw new RangeError;
+                }
+            }
             assert(rng[i][0] <= v && v <= rng[i][1]);
             idx += base*(v - rng[i][0]);
             base *= len[i];

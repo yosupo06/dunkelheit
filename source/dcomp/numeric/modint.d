@@ -7,12 +7,12 @@ struct ModInt(uint MD) if (MD < int.max) {
     uint v;
     this(int v) {this.v = (long(v)%MD+MD)%MD;}
     this(long v) {this.v = (v%MD+MD)%MD;}
-    auto normS(uint x) {return (x<MD)?x:x-MD;}
-    auto make(uint x) {ModInt m; m.v = x; return m;}
-    auto opBinary(string op:"+")(ModInt r) {return make(normS(v+r.v));}
-    auto opBinary(string op:"-")(ModInt r) {return make(normS(v+MD-r.v));}
-    auto opBinary(string op:"*")(ModInt r) {return make( (long(v)*r.v%MD).to!uint );}
-    auto opBinary(string op:"/")(ModInt r) {return this*inv(r);}
+    static auto normS(uint x) {return (x<MD)?x:x-MD;}
+    static auto make(uint x) {ModInt m; m.v = x; return m;}
+    auto opBinary(string op:"+")(ModInt r) const {return make(normS(v+r.v));}
+    auto opBinary(string op:"-")(ModInt r) const {return make(normS(v+MD-r.v));}
+    auto opBinary(string op:"*")(ModInt r) const {return make( (long(v)*r.v%MD).to!uint );}
+    auto opBinary(string op:"/")(ModInt r) const {return this*inv(r);}
     auto opOpAssign(string op)(ModInt r) {return mixin ("this=this"~op~"r");}
     static ModInt inv(ModInt x) {return ModInt(extGcd!int(x.v, MD)[0]);}
     string toString() {return v.to!string;}
