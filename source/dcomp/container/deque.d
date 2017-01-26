@@ -18,7 +18,7 @@ struct Deque(T) {
         private void expand() {
             import std.algorithm : max;
             assert(length == cap);
-            auto nc = max(4L, 2*cap);
+            auto nc = max(size_t(4), 2*cap);
             T* nd = cast(T*)GC.malloc(nc * T.sizeof);
             foreach (i; 0..length) {
                 nd[i] = this[i];
