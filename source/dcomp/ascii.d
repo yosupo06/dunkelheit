@@ -12,6 +12,12 @@ struct ASCIIString {
     void popFront() {
         s = s[1..$];
     }
+    ref immutable(char) back() const {
+        return s[$-1];
+    }
+    void popBack() {
+        s = s[0..$-1];
+    }
 }
 
 ASCIIString ascii(string s) {
@@ -25,5 +31,7 @@ unittest {
     auto asc = s.ascii;
     assert(s.front == 'タ');
     assert(asc.front == "タ"[0]);
+    assert(s.back == '品');
+    assert(asc.back == "品"[$-1]);
     assert(asc.map!(c => 1).sum == s.length);
 }
