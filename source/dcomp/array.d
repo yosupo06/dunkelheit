@@ -1,8 +1,8 @@
 module dcomp.array;
 
-import dcomp.memory;
+T[N] fixed(T, int N)(T[N] a) {return a;}
 
-struct FastAppender(A, bool useMyPool = false) {
+struct FastAppender(A) {
     @disable this(this); //this is not reference type(don't copy!)
 
     import std.algorithm : max;
@@ -13,21 +13,11 @@ struct FastAppender(A, bool useMyPool = false) {
     private T* _data;
     private size_t len, cap;
 
-    this(T[]* arr) {
-        _data = (*arr).ptr;
-        len = (*arr).length;
-        cap = (*arr).length;
-    }
     void reserve(size_t nlen) {
         import core.memory : GC;
         if (nlen <= cap) return;
         
-        void* nx;
-        static if (useMyPool) {
-            nx = nowPool.malloc(nlen * T.sizeof);
-        } else {
-            nx = GC.malloc(nlen * T.sizeof);            
-        }
+        void* nx = GC.malloc(nlen * T.sizeof);            
 
         cap = nlen;
         if (len) memcpy(nx, _data, len * T.sizeof);
@@ -47,4 +37,9 @@ struct FastAppender(A, bool useMyPool = false) {
     }
 }
 
-T[N] fixed(T, int N)(T[N] a) {return a;}
+unittest {
+    import std.stdio, std.algorithm;
+    auto u = FastAppender!(int[])();
+    u ~= 4; u ~= 5;
+    assert(equal(u.data, [4, 5]));
+}

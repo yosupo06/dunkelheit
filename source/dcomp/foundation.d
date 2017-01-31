@@ -1,5 +1,5 @@
 module dcomp.foundation;
-//fold
+//fold(for old compiler)
 static if (__VERSION__ <= 2070) {
     template fold(fun...) if (fun.length >= 1) {
         auto fold(R, S...)(R r, S seed) {
