@@ -1,7 +1,10 @@
 module dcomp.algorithm;
 
+import std.range.primitives;
+import std.traits : isIntegral;
+
 //[0,0,0,...,1,1,1]で、初めて1となる場所を探す。pred(l) == 0, pred(r) == 1と仮定
-T binSearch(alias pred, T)(T l, T r) {
+T binSearch(alias pred, T)(T l, T r) if (isIntegral!T) {
     while (r-l > 1) {
         T md = (l+r)/2;
         if (!pred(md)) l = md;
@@ -10,11 +13,8 @@ T binSearch(alias pred, T)(T l, T r) {
     return r;
 }
 
-import std.range.primitives;
-
-Rotator!Range rotator(Range)(Range r)
-if (isForwardRange!Range && hasLength!Range) {
-    return typeof(return)(r);
+Rotator!Range rotator(Range)(Range r) {
+    return Rotator!Range(r);
 }
 
 struct Rotator(Range)
@@ -49,39 +49,24 @@ if (isForwardRange!Range && hasLength!Range) {
 
 
 E minimum(alias pred = "a < b", Range, E = ElementType!Range)(Range range, E seed)
-if (isInputRange!Range && !isInfinite!Range && !is(CommonType!(ElementType!Range, E) == void)) {
-    import std.functional;
-    while (!range.empty) {
-        if (binaryFun!pred(range.front, seed)) {
-            seed = range.front;
-        }
-        range.popFront;
-    }
-    return seed;
+if (isInputRange!Range && !isInfinite!Range) {
+    import std.algorithm, std.functional;
+    return reduce!((a, b) => binaryFun!pred(a, b) ? a : b)(seed, range);
 }
 
-//should be use reduce?
-ElementType!Range minimum(alias pred = "a < b", Range)(Range range)
-if (isInputRange!Range && !isInfinite!Range) {
+ElementType!Range minimum(alias pred = "a < b", Range)(Range range) {
     assert(!range.empty, "range must not empty");
     auto e = range.front; range.popFront;
     return minimum!pred(range, e);
 }
 
 E maximum(alias pred = "a < b", Range, E = ElementType!Range)(Range range, E seed)
-if (isInputRange!Range && !isInfinite!Range && !is(CommonType!(ElementType!Range, E) == void)) {
-    import std.functional;
-    while (!range.empty) {
-        if (binaryFun!pred(seed, range.front)) {
-            seed = range.front;
-        }
-        range.popFront;
-    }
-    return seed;
+if (isInputRange!Range && !isInfinite!Range) {
+    import std.algorithm, std.functional;
+    return reduce!((a, b) => binaryFun!pred(a, b) ? b : a)(seed, range);
 }
 
-ElementType!Range maximum(alias pred = "a < b", Range)(Range range)
-if (isInputRange!Range && !isInfinite!Range) {
+ElementType!Range maximum(alias pred = "a < b", Range)(Range range) {
     assert(!range.empty, "range must not empty");
     auto e = range.front; range.popFront;
     return maximum!pred(range, e);
