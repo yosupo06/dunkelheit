@@ -44,7 +44,7 @@ struct memoCont(alias pred) {
 
 unittest {
     import dcomp.numeric.primitive;
-    import dcomp.numeric.modint;
+    import dcomp.modint;
     alias Mint = ModInt!(10^^9+7);
     auto fact = factTable!Mint(100);
     auto iFac = invFactTable!Mint(100);

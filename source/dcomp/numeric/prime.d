@@ -1,4 +1,4 @@
-module dcomp.prime;
+module dcomp.numeric.prime;
 
 T[] divisorList(T)(T x) {
     import std.algorithm : sort;

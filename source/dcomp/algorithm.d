@@ -1,11 +1,20 @@
 module dcomp.algorithm;
 
 import std.range.primitives;
-import std.traits : isIntegral;
+import std.traits : isFloatingPoint, isIntegral;
 
 //[0,0,0,...,1,1,1]で、初めて1となる場所を探す。pred(l) == 0, pred(r) == 1と仮定
 T binSearch(alias pred, T)(T l, T r) if (isIntegral!T) {
     while (r-l > 1) {
+        T md = (l+r)/2;
+        if (!pred(md)) l = md;
+        else r = md;
+    }
+    return r;
+}
+
+T binSearch(alias pred, T)(T l, T r, int cnt = 60) if (isFloatingPoint!T) {
+    foreach (i; 0..cnt) {
         T md = (l+r)/2;
         if (!pred(md)) l = md;
         else r = md;
