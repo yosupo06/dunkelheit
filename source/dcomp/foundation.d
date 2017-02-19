@@ -23,3 +23,7 @@ static if (__VERSION__ <= 2070) {
 ptrdiff_t ilength(T)(T arr) {
     return cast(ptrdiff_t)(arr.length);
 }
+
+int lengthI(T)(T arr) {
+    return cast(int)(arr.length);
+}
