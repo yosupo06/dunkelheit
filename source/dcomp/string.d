@@ -34,8 +34,8 @@ int[] sais(T)(in T[] _s, int B = 200) {
     }
 
     void induce(in int[] lms) {
-        auto buf0 = sumS.dup;
         sa[] = -1;
+        auto buf0 = sumS.dup;
         foreach (d; lms) {
             sa[buf0[s[d]]++] = d;
         }
