@@ -2,10 +2,11 @@ module dcomp.numeric.primitive;
 
 import std.traits;
 
-T pow(T, U)(T x, U n) if (!isFloatingPoint!T) {
+T pow(T, U)(T x, U n) if (!isFloatingPoint!T && isIntegral!U) {
     return pow(x, n, T(1));
 }
-T pow(T, U)(T x, U n, T e) {
+
+T pow(T, U)(T x, U n, T e) if (isIntegral!U) {
     while (n) {
         if (n & 1) e *= x;
         x *= x;

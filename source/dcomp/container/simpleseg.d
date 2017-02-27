@@ -17,6 +17,7 @@ struct SimpleSeg(T, alias op, T e) {
         d = new T[](2*this.sz);
         d.fill(e);
     }
+    T opIndex(int idx) {return d[idx+sz];}
     void opIndexAssign(T v, int idx) {
         import std.stdio : writeln;
         idx += sz;
