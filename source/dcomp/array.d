@@ -2,9 +2,8 @@ module dcomp.array;
 
 T[N] fixed(T, int N)(T[N] a) {return a;}
 
+//this is not reference type!(please attention to copy)
 struct FastAppender(A) {
-    @disable this(this); //this is not reference type(don't copy!)
-
     import std.algorithm : max;
     import std.range.primitives : ElementEncodingType;
     import core.stdc.string : memcpy;

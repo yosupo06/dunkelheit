@@ -9,17 +9,20 @@ struct SCC {
     }
 }
 
+import dcomp.array;
+
 SCC scc(T)(T g) {
     import std.array : appender;
     import std.range;
-    import std.algorithm : each;
+    import std.algorithm : each, map;
     import std.conv : to;
     int n = g.length.to!int;
     //make reverse graph
     struct Edge {int to;}
-    Edge[][] rg = new Edge[][](n);
-    g.each!((i, v) => v.each!(e => rg[e.to] ~= Edge(i.to!int)));
-    
+    FastAppender!(Edge[])[] rg_buf = new FastAppender!(Edge[])[](n);
+    g.each!((i, v) => v.each!(e => rg_buf[e.to] ~= Edge(i.to!int)));
+    auto rg = rg_buf.map!(v => v.data).array;
+
     auto sccInfo = SCC(n);
     with (sccInfo) {
         auto used = new bool[n];
@@ -51,13 +54,15 @@ SCC scc(T)(T g) {
                 rdfs(e.to);
             }
         }
+        auto groups_buf = appender!(int[][])();
         foreach_reverse (i; vs.data) {
             if (used[i]) continue;
             rdfs(i);
-            groups ~= buf.data().dup;
+            groups_buf ~= buf.data.dup;
             buf.clear();
             count++;
         }
+        groups = groups_buf.data;
     }
     return sccInfo;
 }

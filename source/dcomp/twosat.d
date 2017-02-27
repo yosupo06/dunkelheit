@@ -1,12 +1,15 @@
 module dcomp.twosat;
 
 import dcomp.graph.scc;
+import dcomp.array;
 
 struct TwoSat {
     bool[] res;
 
     struct Edge {int to;}
-    Edge[][] g;
+    import std.array;
+//    Edge[][] g;
+    FastAppender!(Edge[])[] g;
 
     // add ((a == aExp) || (b == bExp))
     void addCond(int a, bool aExp, int b, bool bExp) {
@@ -17,9 +20,10 @@ struct TwoSat {
         addEdge(2*b+(bExp?0:1), 2*a+(aExp?1:0));
     }
     bool exec() {
+        import std.algorithm : map;
         import std.conv : to;
         int n = res.length.to!int;
-        auto sccInfo = scc(g);
+        auto sccInfo = scc(g.map!(v => v.data).array);
         for (int i = 0; i < n; i++) {
             if (sccInfo.id[2*i] == sccInfo.id[2*i+1]) return false;
             res[i] = sccInfo.id[2*i] < sccInfo.id[2*i+1];
@@ -28,7 +32,7 @@ struct TwoSat {
     }
     this(int n) {
         res = new bool[n];
-        g = new Edge[][](2*n);
+        g = new FastAppender!(Edge[])[](2*n);
     }
 }
 
