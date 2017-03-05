@@ -7,19 +7,15 @@ struct TwoSat {
     bool[] res;
 
     struct Edge {int to;}
-    import std.array;
-//    Edge[][] g;
     FastAppender!(Edge[])[] g;
 
     // add ((a == aExp) || (b == bExp))
     void addCond(int a, bool aExp, int b, bool bExp) {
-        void addEdge(int l, int r) {
-            g[l] ~= Edge(r);
-        }
-        addEdge(2*a+(aExp?0:1), 2*b+(bExp?1:0));
-        addEdge(2*b+(bExp?0:1), 2*a+(aExp?1:0));
+        g[2*a+(aExp?0:1)] ~= Edge(2*b+(bExp?1:0));
+        g[2*b+(bExp?0:1)] ~= Edge(2*a+(aExp?1:0));
     }
     bool exec() {
+        import std.array : array;
         import std.algorithm : map;
         import std.conv : to;
         int n = res.length.to!int;

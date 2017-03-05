@@ -1,68 +1,62 @@
 module dcomp.graph.scc;
 
+import dcomp.array;
+import dcomp.graph.primitive;
+import dcomp.container.deque;
+
 struct SCC {
     int[] id; // vertex id -> scc id
     int[][] groups; // scc id -> scc vertexs
-    int count; // scc count
     this(int n) {
         id = new int[n];
     }
 }
 
-import dcomp.array;
-
 SCC scc(T)(T g) {
-    import std.array : appender;
     import std.range;
-    import std.algorithm : each, map;
+    import std.algorithm : each, map, min, reverse;
     import std.conv : to;
     int n = g.length.to!int;
-    //make reverse graph
-    struct Edge {int to;}
-    FastAppender!(Edge[])[] rg_buf = new FastAppender!(Edge[])[](n);
-    g.each!((i, v) => v.each!(e => rg_buf[e.to] ~= Edge(i.to!int)));
-    auto rg = rg_buf.map!(v => v.data).array;
-
     auto sccInfo = SCC(n);
     with (sccInfo) {
-        auto used = new bool[n];
-
-        //make backorder list
-        auto vs = appender!(int[])();
+        bool[] inS = new bool[n];
+        int[] low = new int[n], ord = new int[n]; ord[] = -1;
+        int time = 0;
+        Deque!int st;
+        int bufC = 0;
+        FastAppender!(int[]) buf; buf.reserve(n);
+        FastAppender!(int[][]) gBuf;
         void dfs(int v) {
-            used[v] = true;
+            low[v] = ord[v] = time++;
+            st.insertBack(v);
+            inS[v] = true;
             foreach (e; g[v]) {
-                if (used[e.to]) continue;
-                dfs(e.to);
+                if (ord[e.to] == -1) {
+                    dfs(e.to);
+                    low[v] = min(low[v], low[e.to]);
+                } else if (inS[e.to]) {
+                    low[v] = min(low[v], ord[e.to]);
+                }
             }
-            vs ~= v;
+            if (low[v] == ord[v]) {
+                int p = st.length.to!int - 1;
+                while (true) {
+                    int u = st.back; st.removeBack;
+                    buf ~= u;
+                    if (u == v) break;
+                }
+                auto gr = buf.data[bufC..$];
+                bufC = buf.length.to!int;
+                gr.each!(x => inS[x] = false);
+                gBuf ~= gr;
+            }
         }
         foreach (i; 0..n) {
-            if (used[i]) continue;
-            dfs(i);
+            if (ord[i] == -1) dfs(i);
         }
-
-        used[] = false;        
-        count = 0;
-        auto buf = appender!(int[])();
-        void rdfs(int v) {
-            used[v] = true;
-            id[v] = count;
-            buf ~= v;
-            foreach (e; rg[v]) {
-                if (used[e.to]) continue;
-                rdfs(e.to);
-            }
-        }
-        auto groups_buf = appender!(int[][])();
-        foreach_reverse (i; vs.data) {
-            if (used[i]) continue;
-            rdfs(i);
-            groups_buf ~= buf.data.dup;
-            buf.clear();
-            count++;
-        }
-        groups = groups_buf.data;
+        groups = gBuf.data;
+        reverse(groups);
+        groups.each!((i, v) => v.each!(x => id[x] = i.to!int));
     }
     return sccInfo;
 }
@@ -102,6 +96,8 @@ unittest {
         }
 
         foreach (i; 0..n) {
+            int iid = sccInfo.id[i];
+            assert(sccInfo.groups[iid].find(i).empty == false);
             foreach (j; i+1..n) {
                 bool same = sccInfo.id[i] == sccInfo.id[j];
                 if (same) {
