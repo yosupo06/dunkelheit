@@ -2,4 +2,5 @@
 .dub
 *.a
 dcomp_combine
+dcomp-test-library
 __test__library__
