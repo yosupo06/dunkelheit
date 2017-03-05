@@ -11,12 +11,12 @@ struct FastAppender(A) {
     private alias T = ElementEncodingType!A;
     private T* _data;
     private size_t len, cap;
-
+    @property size_t length() {return len;}
     void reserve(size_t nlen) {
         import core.memory : GC;
         if (nlen <= cap) return;
         
-        void* nx = GC.malloc(nlen * T.sizeof);            
+        void* nx = GC.malloc(nlen * T.sizeof);
 
         cap = nlen;
         if (len) memcpy(nx, _data, len * T.sizeof);
