@@ -25,6 +25,9 @@ struct Deque(T) {
             }
             d = nd; st = 0; cap = nc;
         }
+        void clear() {
+            st = length = 0;
+        }
         void insertFront(T v) {
             if (length == cap) expand();
             if (st == 0) st += cap;
@@ -114,6 +117,7 @@ struct Deque(T) {
     ref inout(T) opIndex(size_t i) inout {C; return (*p)[i]; }
     ref inout(T) front() inout {C; return (*p)[0]; }
     ref inout(T) back() inout {C; return (*p)[$-1]; }
+    void clear() { if (p) p.clear(); }
     void insertFront(T v) {I; p.insertFront(v); }
     void insertBack(T v) {I; p.insertBack(v); }
     void removeFront() {C; p.removeFront(); }
@@ -162,6 +166,25 @@ unittest {
     assert(equal(a[], b[]));
 }
 
+unittest {
+    import std.algorithm : equal;
+    import std.range.primitives : isRandomAccessRange;
+    import std.container.util : make;
+    auto q = make!(Deque!int);
+    q.clear();
+    assert(equal(q[], new int[0]));
+    foreach (i; 0..100) {
+        q.insertBack(1);
+        q.insertBack(2);
+        q.insertBack(3);
+        q.insertBack(4);
+        q.insertBack(5);    
+        assert(equal(q[], [1,2,3,4,5]));
+        q.clear();
+        assert(equal(q[], new int[0]));
+    }
+
+}
 unittest {
     Deque!int a;
     Deque!int b;
