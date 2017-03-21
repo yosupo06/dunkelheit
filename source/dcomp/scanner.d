@@ -11,33 +11,47 @@ class Scanner {
     this(File f) {
         this.f = f;
     }
-    string[] buf;
+    char[512] lineBuf;
+    char[] line;
     private bool succ() {
-        while (!buf.length) {
+        import std.range.primitives : empty, front, popFront;
+        import std.ascii : isWhite;
+        while (true) {
+            while (!line.empty && line.front.isWhite) {
+                line.popFront;
+            }
+            if (!line.empty) break;
             if (f.eof) return false;
-            buf = f.readln.split;
+            line = lineBuf[];
+            f.readln(line);
         }
         return true;
     }
+
     private bool readSingle(T)(ref T x) {
+        import std.algorithm : findSplitBefore;
+        import std.string : strip;
+        import std.conv : parse;
         if (!succ()) return false;
         static if (isArray!T) {
             alias E = ElementType!T;
             static if (isSomeChar!E) {
                 //string or char[10] etc
-                x = buf.front;
-                buf.popFront;
+                //todo optimize
+                auto r = line.findSplitBefore(" ");
+                x = r[0].strip.dup;
+                line = r[1];
             } else {
+                auto buf = line.split.map!(to!E).array;
                 static if (isStaticArray!T) {
                     //static
                     assert(buf.length == T.length);
                 }
-                x = buf.map!(to!E).array;
-                buf.length = 0;                
+                x = buf;
+                line.length = 0;
             }
         } else {
-            x = buf.front.to!T;
-            buf.popFront;            
+            x = line.parse!T;
         }
         return true;
     }
@@ -50,6 +64,8 @@ class Scanner {
         }
     }
 }
+
+
 
 unittest {
     import std.path : buildPath;
@@ -76,4 +92,47 @@ unittest {
     assert(equal(d, "cde"));
     assert(e == 1.0);
     assert(equal(f, [1.0, 2.0]));
+}
+
+unittest {
+    import std.path : buildPath;
+    import std.file : tempDir;
+    import std.algorithm : equal;
+    import std.stdio : File, writeln;
+    import std.datetime;
+    string fileName = buildPath(tempDir, "kyuridenanmaida.txt");
+    auto fout = File(fileName, "w");
+    foreach (i; 0..1_000_000) {
+        fout.writeln(3*i, " ", 3*i+1, " ", 3*i+2);
+    }
+    fout.close;
+    writeln("Scanner Speed Test(3*1,000,000 int)");
+    StopWatch sw;
+    sw.start;
+    Scanner sc = new Scanner(File(fileName, "r"));
+    foreach (i; 0..500_000) {
+        int a, b, c;
+        sc.read(a, b, c);
+        assert(a == 3*i);
+        assert(b == 3*i+1);
+        assert(c == 3*i+2);
+    }
+    foreach (i; 500_000..700_000) {
+        int[3] d;
+        sc.read(d);
+        int a = d[0], b = d[1], c = d[2];
+        assert(a == 3*i);
+        assert(b == 3*i+1);
+        assert(c == 3*i+2);
+    }
+    foreach (i; 700_000..1_000_000) {
+        int[] d;
+        sc.read(d);
+        assert(d.length == 3);
+        int a = d[0], b = d[1], c = d[2];
+        assert(a == 3*i);
+        assert(b == 3*i+1);
+        assert(c == 3*i+2);
+    }
+    writeln(sw.peek.msecs, "ms");
 }
