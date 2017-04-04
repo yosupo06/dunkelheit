@@ -1,3 +1,5 @@
+module dcomp.dungeon;
+
 struct DungeonHelper {
     immutable static int[2][4] d4 = [
         [1, 0], [0, 1], [-1, 0], [0, -1],
