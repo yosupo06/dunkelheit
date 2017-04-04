@@ -3,8 +3,8 @@
     dependency "dcomp" version=">=0.6.0"
 +/
 
-import std.stdio;
-import dcomp.scanner;
+import std.stdio, std.algorithm, std.range, std.conv;
+import dcomp.foundation, dcomp.scanner;
 
 int main() {
     auto sc = new Scanner(stdin);
