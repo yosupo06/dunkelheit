@@ -61,7 +61,7 @@ Dijkstra!D dijkstraDense(D, T)(T g, int s, D inf = D.max) {
             auto nx = rng.minimum!"a.value < b.value";
             used[nx.index] = true;
             P p = P(nx.index.to!int, nx.value); 
-            if (dist[p.to] < p.dist) continue;
+            if (p.dist == inf) continue;
             foreach (e; g[p.to]) {
                 if (p.dist+e.dist < dist[e.to]) {
                     dist[e.to] = p.dist+e.dist;
@@ -114,6 +114,59 @@ unittest {
             foreach (j; 0..n) {
                 if (i == j) continue;
                 if (dist[i][j] == 10^^9) continue;
+                int b = dijk.from[j];
+                assert(dijk.dist[j] == dist[i][b]+dist[b][j]);
+            }
+        }
+    }
+    auto ti = benchmark!(f!dijkstra, f!dijkstraDense)(100);
+    writeln(ti[0].msecs, "ms");
+    writeln(ti[1].msecs, "ms");
+}
+
+unittest {
+    import std.algorithm, std.conv, std.stdio, std.range;
+    import std.random;
+    import std.typecons;
+    import std.datetime;
+
+    alias E = Tuple!(int, "to", int, "dist");
+
+    writeln("Dijkstra_INF Random100000");
+    void f(alias pred)() {
+        int n = uniform(1, 100);
+        int m = uniform(1, 1000);
+        E[][] g = new E[][n];
+        int[][] dist = new int[][](n, n);
+        foreach (i, ref v; dist) {
+            v[] = int.max;
+        }
+        iota(n).each!(i => dist[i][i] = 0);
+        foreach (i; 0..m) {
+            int a = uniform(0, n);
+            int b = uniform(0, n);
+            int c = uniform(0, 1000);
+            g[a] ~= E(b, c);
+            dist[a][b] = min(dist[a][b], c);
+        }
+        foreach (k; 0..n) {
+            foreach (i; 0..n) {
+                foreach (j; 0..n) {
+                    if (dist[i][k] == int.max) continue;
+                    if (dist[k][j] == int.max) continue;
+                    dist[i][j] = min(dist[i][j], dist[i][k]+dist[k][j]);
+                }
+            }
+        }
+        foreach (i; 0..n) {
+            auto dijk = pred!int(g, i);
+            foreach (j; 0..n) {
+                assert(dist[i][j] == dijk.dist[j]);
+            }
+            assert(dijk.from[i] == -1);
+            foreach (j; 0..n) {
+                if (i == j) continue;
+                if (dist[i][j] == int.max) continue;
                 int b = dijk.from[j];
                 assert(dijk.dist[j] == dist[i][b]+dist[b][j]);
             }
