@@ -38,8 +38,8 @@ ulong[2] mul128(ulong a, ulong b) {
         ulong[4] c;
         foreach (i; 0..2) {
             foreach (j; 0..2) {
-                c[i+j] += a2[i] * b2[i] % B;
-                c[i+j+1] += a2[i] * b2[i] / B;
+                c[i+j] += a2[i] * b2[j] % B;
+                c[i+j+1] += a2[i] * b2[j] / B;
             }
         }
         foreach (i; 0..3) {
