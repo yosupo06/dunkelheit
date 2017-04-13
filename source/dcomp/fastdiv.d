@@ -1,12 +1,12 @@
 module dcomp.fastdiv;
 
 import dcomp.foundation, dcomp.int128;
+import core.bitop;
 
 struct FastDivULong {
     ulong value, m;
     int lg;
     this(ulong value) {
-        import core.bitop : bsr;
         this.value = value;
         if (value <= 1) return;
         lg = value.bsr;
