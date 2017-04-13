@@ -1,6 +1,6 @@
 module dcomp.fastdiv;
 
-import dcomp.int128;
+import dcomp.foundation, dcomp.int128;
 
 struct FastDivULong {
     ulong value, m;
