@@ -36,16 +36,16 @@ ulong[2] mul128(ulong a, ulong b) {
         ulong[2] a2 = [a % B, a / B];
         ulong[2] b2 = [b % B, b / B];
         ulong[4] c;
-        ulong z = a2[0] * b2[0];
-        c[0] = z % B;
-        z /= B;
-        z += a2[0] * b2[1] + a2[1] * b2[0];
-        c[1] = z % B;
-        z /= B;
-        z += a2[1] * b2[1];
-        c[2] = z % B;
-        z /= B;
-        c[3] = z;
+        foreach (i; 0..2) {
+            foreach (j; 0..2) {
+                c[i+j] += a2[i] * b2[i] % B;
+                c[i+j+1] += a2[i] * b2[i] / B;
+            }
+        }
+        foreach (i; 0..3) {
+            c[i+1] += c[i] / B;
+            c[i] %= B;
+        }
         return [c[0] + c[1] * B, c[2] + c[3] * B];
     }
 }
@@ -73,7 +73,6 @@ ulong div128(ulong[2] a, ulong b) {
         return res;
     } else {
         import std.bigint, std.conv;
-        ulong B = 2UL^^32;
         return ((BigInt(a[0].to!string) + (BigInt(a[1].to!string) << 64)) / BigInt(b.to!string)).to!string.to!ulong;
     }    
 }
