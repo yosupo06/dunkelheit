@@ -1,4 +1,4 @@
-module dcomp.container.unionfind;
+module dcomp.datastructure.unionfind;
 
 struct UnionFind {
     import std.algorithm : map, swap, each;

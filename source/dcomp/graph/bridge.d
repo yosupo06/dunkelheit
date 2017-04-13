@@ -40,7 +40,7 @@ unittest {
     import std.random;
     import std.typecons;
     import std.datetime;
-    import dcomp.container.unionfind;
+    import dcomp.datastructure.unionfind;
 
     alias E = Tuple!(int, "to");
 

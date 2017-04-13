@@ -1,4 +1,4 @@
-module dcomp.container.convexhull;
+module dcomp.datastructure.convexhull;
 
 import dcomp.container.deque;
 
