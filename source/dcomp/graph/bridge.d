@@ -1,8 +1,8 @@
 module dcomp.graph.bridge;
 
-import dcomp.graph.dfsinfo;
+import dcomp.graph.dfstree;
 
-struct Bridge {
+struct BridgeInfo {
     bool[] isRoot;
     int count; // group count
     int[] id, root; // i to group, group root
@@ -12,14 +12,14 @@ struct Bridge {
     }
 }
 
-Bridge bridge(T)(T g) {
-    return bridge(g, dfsInfo(g));
+BridgeInfo bridge(T)(T g) {
+    return bridge(g, dfsTree(g));
 }
 
-Bridge bridge(T)(T g, DFSInfo info) {
+BridgeInfo bridge(T)(T g, DFSTreeInfo info) {
     import std.conv : to;
     int n = g.length.to!int;    
-    auto br = Bridge(n);
+    auto br = BridgeInfo(n);
     
     with (br) with (info) {
         foreach (p; vlis) {

@@ -4,7 +4,7 @@ import dcomp.array;
 import dcomp.graph.primitive;
 import dcomp.container.deque;
 
-struct SCC {
+struct SCCInfo {
     int[] id; // vertex id -> scc id
     int[][] groups; // scc id -> scc vertexs
     this(int n) {
@@ -12,12 +12,12 @@ struct SCC {
     }
 }
 
-SCC scc(T)(T g) {
+SCCInfo scc(T)(T g) {
     import std.range;
     import std.algorithm : each, map, min, reverse;
     import std.conv : to;
     int n = g.length.to!int;
-    auto sccInfo = SCC(n);
+    auto sccInfo = SCCInfo(n);
     with (sccInfo) {
         bool[] inS = new bool[n];
         int[] low = new int[n], ord = new int[n]; ord[] = -1;

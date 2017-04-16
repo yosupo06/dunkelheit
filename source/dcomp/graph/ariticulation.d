@@ -1,18 +1,18 @@
 module dcomp.graph.ariticulation;
 
-import dcomp.graph.dfsinfo;
+import dcomp.graph.dfstree;
 
-struct Ariticulation {
+struct AriticulationInfo {
     bool[] isArit; // is Ariticulation point
     bool[] isDiv; // is Div when parent remove
 };
 
-Ariticulation ariticulation(T)(T g) {
-    return ariticulation(g, dfsInfo(g, -1));
+AriticulationInfo ariticulationScan(T)(T g) {
+    return ariticulationScan(g, dfsTree(g, -1));
 }
 
-Ariticulation ariticulation(T)(T g, DFSInfo info) {
-    Ariticulation arit;
+AriticulationInfo ariticulationScan(T)(T g, DFSTree info) {
+    AriticulationInfo arit;
     size_t V = g.length;
     arit.isArit.length = V;
     arit.isDiv.length = V;
