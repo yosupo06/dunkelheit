@@ -1,6 +1,6 @@
 module dcomp.container.deque;
 
-struct Deque(T) {
+struct Deque(T, bool mayNull = true) {
     import core.exception : RangeError;
     import core.memory : GC;
     import std.range : ElementType, isInputRange;
@@ -47,7 +47,7 @@ struct Deque(T) {
         void removeBack() {
             assert(!empty, "Deque.removeBack: Deque is empty");        
             length--;
-        }        
+        }
     }
     struct RangeT(A) {
         alias T = typeof(*(A.p));
@@ -88,13 +88,19 @@ struct Deque(T) {
     alias ConstRange = RangeT!(const Deque);
     alias ImmutableRange = RangeT!(immutable Deque);
 
-    Payload *p;
-    private void I() { if (!p) p = new Payload(); }
+    Payload* p;
+    private void I() { if (mayNull && !p) p = new Payload(); }
     private void C() const {
-        version(assert) if (!p) throw new RangeError();
+        version(assert) if (mayNull && !p) throw new RangeError();
+    }
+    static if (!mayNull) {
+        @disable this();
     }
     //some value
-    this(U)(U[] values...) if (isImplicitlyConvertible!(U, T)) {I;
+    private this(Payload* p) {
+        this.p = p;
+    }
+    this(U)(U[] values...) if (isImplicitlyConvertible!(U, T)) {
         p = new Payload();
         foreach (v; values) {
             insertBack(v);
@@ -104,15 +110,16 @@ struct Deque(T) {
     this(Range)(Range r)
     if (isInputRange!Range &&
     isImplicitlyConvertible!(ElementType!Range, T) &&
-    !is(Range == T[])) {I;
+    !is(Range == T[])) {
         p = new Payload();
         foreach (v; r) {
             insertBack(v);
         }
     }
-    
-    @property bool empty() const { return (!p || p.empty); }
-    @property size_t length() const { return (p ? p.length : 0); }
+    static Deque make() { return Deque(new Payload()); }
+    @property bool havePayload() const { return (!mayNull || p); }
+    @property bool empty() const { return (!havePayload || p.empty); }
+    @property size_t length() const { return (havePayload ? p.length : 0); }
     alias opDollar = length;
     ref inout(T) opIndex(size_t i) inout {C; return (*p)[i]; }
     ref inout(T) front() inout {C; return (*p)[0]; }
@@ -183,8 +190,18 @@ unittest {
         q.clear();
         assert(equal(q[], new int[0]));
     }
-
 }
+
+unittest {
+    Deque!(int, false) q1 = Deque!(int, false).make();
+    q1.insertBack(3);
+    assert(q1[0] == 3);
+    Deque!(int, false) q2 = Deque!(int, false)(4, 2);
+    assert(q2[0] == 4);
+    Deque!(int, false) q3 = Deque!(int, false)([6, 9]);
+    assert(q3[1] == 9);
+}
+
 unittest {
     Deque!int a;
     Deque!int b;
