@@ -11,7 +11,10 @@
 		{
 			"name": "combine",
 			"sourcePaths": ["combine"],
-			"targetType": "executable"
+			"targetType": "executable",
+			"dependencies": {
+				"libdparse" : ">=0.7.0-beta.2"
+			}
 		}
 	]
 }
