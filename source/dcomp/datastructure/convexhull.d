@@ -88,7 +88,7 @@ unittest {
         return ans;
     }
     writeln("ConvexHull Random5000");
-    void f() {
+    void f1() {
         int[2][] v = new int[2][](100);
         int[] smp = new int[](100);
         foreach (i; 0..100) {
@@ -112,6 +112,30 @@ unittest {
             assert(c.yMax(smp[i]) == getMax(v, smp[i]));
         }
     }
-    auto ti = benchmark!f(5000);
-    writeln(ti[0].msecs, "ms");
+    void f2() {
+        int[2][] v = new int[2][](100);
+        int[] smp = new int[](100);
+        foreach (i; 0..100) {
+            v[i][0] = uniform(-100, 100);
+            v[i][1] = uniform(-100, 100);
+            smp[i] = uniform(-10000, 10000);
+        }
+        sort(v);
+        sort(smp); reverse(smp);
+        ConvexHull!(int, CHMode.decr) c;
+        if (uniform(0, 2)) {
+            foreach_reverse (i; 0..100) {
+                c.insertFront(v[i]);
+            }
+        } else {
+            foreach (i; 0..100) {
+                c.insertBack(v[i]);
+            }
+        }
+        foreach (i; 0..100) {
+            assert(c.yMax(smp[i]) == getMax(v, smp[i]));
+        }
+    }
+    auto ti = benchmark!(f1, f2)(2500);
+    writeln(ti[0].msecs, "ms ", ti[1].msecs, "ms");
 }
