@@ -1,6 +1,6 @@
-module dcomp.graph.dfsinfo;
+module dcomp.graph.dfstree;
 
-struct DFSInfo {
+struct DFSTreeInfo {
     int[] low, ord, par, vlis; //low, ord, parent, visitList
     int[][] tr; //dfs tree(directed)
     this(int n) {
@@ -12,11 +12,11 @@ struct DFSInfo {
     }
 }
 
-DFSInfo dfsInfo(T)(T g) {
+DFSTreeInfo dfsTree(T)(T g) {
     import std.algorithm : min, each, filter;
     import std.conv : to;
     const int n = g.length.to!int;
-    auto info = DFSInfo(n);
+    auto info = DFSTreeInfo(n);
     with(info) {
         int co = 0;
         bool[] used = new bool[](n);

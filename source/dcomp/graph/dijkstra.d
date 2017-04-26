@@ -2,7 +2,7 @@ module dcomp.graph.djikstra;
 
 import dcomp.algorithm;
 
-struct Dijkstra(T) {
+struct DijkstraInfo(T) {
     T[] dist;
     int[] from;
     this(int n, T inf) {
@@ -11,13 +11,13 @@ struct Dijkstra(T) {
     }
 }
 
-Dijkstra!D dijkstra(D, T)(T g, int s, D inf = D.max) {
+DijkstraInfo!D dijkstra(D, T)(T g, int s, D inf = D.max) {
     import std.conv : to;
     import std.typecons : Tuple;
     import std.container : make, Array, heapify;
 
     int V = g.length.to!int;
-    auto dijk = Dijkstra!D(V, inf);
+    auto dijk = DijkstraInfo!D(V, inf);
     with (dijk) {        
         alias P = Tuple!(int, "to", D, "dist");
         auto q = heapify!"a.dist>b.dist"(make!(Array!P)([P(s, D(0))]));
@@ -39,7 +39,7 @@ Dijkstra!D dijkstra(D, T)(T g, int s, D inf = D.max) {
     return dijk;
 }
 
-Dijkstra!D dijkstraDense(D, T)(T g, int s, D inf = D.max) {
+DijkstraInfo!D dijkstraDense(D, T)(T g, int s, D inf = D.max) {
     import std.conv : to;
     import std.typecons : Tuple;
     import std.container : make, Array, heapify;
@@ -47,7 +47,7 @@ Dijkstra!D dijkstraDense(D, T)(T g, int s, D inf = D.max) {
     import std.algorithm : filter;
 
     int V = g.length.to!int;
-    auto dijk = Dijkstra!D(V, inf);
+    auto dijk = DijkstraInfo!D(V, inf);
     with (dijk) {
         alias P = Tuple!(int, "to", D, "dist");
 
@@ -81,10 +81,10 @@ unittest {
 
     alias E = Tuple!(int, "to", int, "dist");
 
-    writeln("Dijkstra Random100000");
+    writeln("Dijkstra Random100");
     void f(alias pred)() {
-        int n = uniform(1, 100);
-        int m = uniform(1, 1000);
+        int n = uniform(1, 50);
+        int m = uniform(1, 500);
         E[][] g = new E[][n];
         int[][] dist = new int[][](n, n);
         foreach (i, ref v; dist) {
@@ -132,10 +132,10 @@ unittest {
 
     alias E = Tuple!(int, "to", int, "dist");
 
-    writeln("Dijkstra_INF Random100000");
+    writeln("Dijkstra_INF Random100");
     void f(alias pred)() {
-        int n = uniform(1, 100);
-        int m = uniform(1, 1000);
+        int n = uniform(1, 50);
+        int m = uniform(1, 500);
         E[][] g = new E[][n];
         int[][] dist = new int[][](n, n);
         foreach (i, ref v; dist) {

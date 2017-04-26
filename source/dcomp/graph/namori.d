@@ -1,8 +1,8 @@
 module dcomp.graph.namori;
 
-import dcomp.graph.dfsinfo;
+import dcomp.graph.dfstree;
 
-struct Namori {
+struct NamoriInfo {
     bool[] isCycle;
     int[][] cycles;
     int[] root;
@@ -18,7 +18,7 @@ Namori namori(T)(T g) {
     import std.conv : to;
     int n = g.length.to!int;
     auto info = dfsInfo(g);
-    auto nmr = Namori(n);
+    auto nmr = NamoriInfo(n);
     with (nmr) {
         //find self loop
         foreach (i; 0..n) {
@@ -59,12 +59,12 @@ Namori namori(T)(T g) {
     return nmr;
 }
 
-Namori directedNamori(int[] g) {
+NamoriInfo directedNamori(int[] g) {
     import std.algorithm : find, each;
     import std.range;
     import std.conv : to;
     int n = g.length.to!int;
-    auto nmr = Namori(n);
+    auto nmr = NamoriInfo(n);
     with (nmr) {
         int[] used = new int[n]; used[] = -1;
         foreach (i; 0..n) {

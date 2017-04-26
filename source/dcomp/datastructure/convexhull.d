@@ -87,7 +87,7 @@ unittest {
         }
         return ans;
     }
-    writeln("ConvexHull Random10000");
+    writeln("ConvexHull Random5000");
     void f() {
         int[2][] v = new int[2][](100);
         int[] smp = new int[](100);
@@ -112,6 +112,6 @@ unittest {
             assert(c.yMax(smp[i]) == getMax(v, smp[i]));
         }
     }
-    auto ti = benchmark!f(10000);
+    auto ti = benchmark!f(5000);
     writeln(ti[0].msecs, "ms");
 }
