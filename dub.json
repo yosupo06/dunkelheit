@@ -7,6 +7,8 @@
 	"copyright": "Copyright © 2016, yosupo",
 	"license": "proprietary",
 	"targetType": "library",
+	"-ddoxFilterArgs": ["--unittest-examples"],
+	"-ddoxTool": "scod",
 	"subPackages": [
 		{
 			"name": "combine",
