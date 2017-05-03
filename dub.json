@@ -7,12 +7,18 @@
 	"copyright": "Copyright © 2016, yosupo",
 	"license": "proprietary",
 	"targetType": "library",
-	"-ddoxFilterArgs": ["--unittest-examples"],
-	"-ddoxTool": "scod",
 	"subPackages": [
 		{
 			"name": "combine",
 			"sourcePaths": ["combine"],
+			"targetType": "executable",
+			"dependencies": {
+				"libdparse" : ">=0.7.0-beta.2"
+			}
+		},
+		{
+			"name": "document",
+			"sourcePaths": ["document"],
 			"targetType": "executable",
 			"dependencies": {
 				"libdparse" : ">=0.7.0-beta.2"

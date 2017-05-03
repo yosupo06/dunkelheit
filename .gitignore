@@ -2,6 +2,10 @@
 .dub
 *.a
 dcomp_combine
+dcomp_document
 dcomp-test-library
 __test__library__
 dub.selections.json
+
+navbar.ddoc
+docs/

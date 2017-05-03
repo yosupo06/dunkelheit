@@ -2,6 +2,9 @@ module dcomp.modint;
 
 import dcomp.numeric.primitive;
 
+/**
+自動mod取り構造体
+ */
 struct ModInt(uint MD) if (MD < int.max) {
     import std.conv : to;
     uint v;
@@ -9,10 +12,11 @@ struct ModInt(uint MD) if (MD < int.max) {
     this(long v) {this.v = (v%MD+MD)%MD;}
     static auto normS(uint x) {return (x<MD)?x:x-MD;}
     static auto make(uint x) {ModInt m; m.v = x; return m;}
+    /// 整数型と同じように演算可能 割り算のみ遅い
     auto opBinary(string op:"+")(ModInt r) const {return make(normS(v+r.v));}
-    auto opBinary(string op:"-")(ModInt r) const {return make(normS(v+MD-r.v));}
-    auto opBinary(string op:"*")(ModInt r) const {return make( (long(v)*r.v%MD).to!uint );}
-    auto opBinary(string op:"/")(ModInt r) const {return this*inv(r);}
+    auto opBinary(string op:"-")(ModInt r) const {return make(normS(v+MD-r.v));} /// ditto
+    auto opBinary(string op:"*")(ModInt r) const {return make( (long(v)*r.v%MD).to!uint );} /// ditto
+    auto opBinary(string op:"/")(ModInt r) const {return this*inv(r);} /// ditto
     auto opOpAssign(string op)(ModInt r) {return mixin ("this=this"~op~"r");}
     static ModInt inv(ModInt x) {return ModInt(extGcd!int(x.v, MD)[0]);}
     string toString() {return v.to!string;}
@@ -35,6 +39,9 @@ unittest {
     assert((c/d).v == 5);
 }
 
+/**
+自動mod取り構造体(実行時mod指定)
+ */
 struct DModInt(string name) {
     import std.conv : to;
     static uint MD;
