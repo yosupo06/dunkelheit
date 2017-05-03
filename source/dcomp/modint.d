@@ -13,17 +13,25 @@ struct ModInt(uint MD) if (MD < int.max) {
     static auto normS(uint x) {return (x<MD)?x:x-MD;}
     static auto make(uint x) {ModInt m; m.v = x; return m;}
     /// 整数型と同じように演算可能 割り算のみ遅い
-    auto opBinary(string op:"+")(ModInt r) const {return make(normS(v+r.v));}
+    const auto opBinary(string op:"+")(ModInt r) {return make(normS(v+r.v));}
     /// ditto
-    auto opBinary(string op:"-")(ModInt r) const {return make(normS(v+MD-r.v));}
+    const auto opBinary(string op:"-")(ModInt r) {return make(normS(v+MD-r.v));}
     /// ditto
-    auto opBinary(string op:"*")(ModInt r) const {return make((long(v)*r.v%MD).to!uint);}
+    const auto opBinary(string op:"*")(ModInt r) {return make((long(v)*r.v%MD).to!uint);}
     /// ditto
-    auto opBinary(string op:"/")(ModInt r) const {return this*inv(r);}
+    const auto opBinary(string op:"/")(ModInt r) {return this*inv(r);}
     auto opOpAssign(string op)(ModInt r) {return mixin ("this=this"~op~"r");}
     /// xの逆元を求める
     static ModInt inv(ModInt x) {return ModInt(extGcd!int(x.v, MD)[0]);}
     string toString() {return v.to!string;}
+}
+
+///
+unittest {
+    alias Mint = ModInt!(107);
+    assert((Mint(100) + Mint(10)).v == 3);
+    assert(( Mint(10) * Mint(12)).v == 13);
+    assert((  Mint(1) /  Mint(2)).v == 108/2);
 }
 
 unittest {
@@ -52,8 +60,8 @@ struct DModInt(string name) {
     uint v;
     this(int v) {this(long(v));}
     this(long v) {this.v = ((v%MD+MD)%MD).to!uint;}
-    auto normS(uint x) {return (x<MD)?x:x-MD;}
-    auto make(uint x) {DModInt m; m.MD = MD; m.v = x; return m;}
+    static auto normS(uint x) {return (x<MD)?x:x-MD;}
+    static auto make(uint x) {DModInt m; m.MD = MD; m.v = x; return m;}
     /// 整数型と同じように演算可能 割り算のみ遅い
     const auto opBinary(string op:"+")(DModInt r) {return make(normS(v+r.v));}
     /// ditto
