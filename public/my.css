@@ -22,7 +22,7 @@
     padding: 0px;
 }
 
-.main-dlang .ddoc_members > li {
+.main-dlang .ddoc_module_members > .ddoc_members > li {
     margin-top: -1px;
     padding: 10px 5px;
     border-top:1px solid #CCC;

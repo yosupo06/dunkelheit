@@ -14,10 +14,14 @@ struct ModInt(uint MD) if (MD < int.max) {
     static auto make(uint x) {ModInt m; m.v = x; return m;}
     /// 整数型と同じように演算可能 割り算のみ遅い
     auto opBinary(string op:"+")(ModInt r) const {return make(normS(v+r.v));}
-    auto opBinary(string op:"-")(ModInt r) const {return make(normS(v+MD-r.v));} /// ditto
-    auto opBinary(string op:"*")(ModInt r) const {return make( (long(v)*r.v%MD).to!uint );} /// ditto
-    auto opBinary(string op:"/")(ModInt r) const {return this*inv(r);} /// ditto
+    /// ditto
+    auto opBinary(string op:"-")(ModInt r) const {return make(normS(v+MD-r.v));}
+    /// ditto
+    auto opBinary(string op:"*")(ModInt r) const {return make((long(v)*r.v%MD).to!uint);}
+    /// ditto
+    auto opBinary(string op:"/")(ModInt r) const {return this*inv(r);}
     auto opOpAssign(string op)(ModInt r) {return mixin ("this=this"~op~"r");}
+    /// xの逆元を求める
     static ModInt inv(ModInt x) {return ModInt(extGcd!int(x.v, MD)[0]);}
     string toString() {return v.to!string;}
 }
@@ -50,23 +54,30 @@ struct DModInt(string name) {
     this(long v) {this.v = ((v%MD+MD)%MD).to!uint;}
     auto normS(uint x) {return (x<MD)?x:x-MD;}
     auto make(uint x) {DModInt m; m.MD = MD; m.v = x; return m;}
-    auto opBinary(string op:"+")(DModInt r) {
-        return make(normS(v+r.v));
-    }
-    auto opBinary(string op:"-")(DModInt r) {
-        return make(normS(v+MD-r.v));
-    }
-    auto opBinary(string op:"*")(DModInt r) {
-        return make((long(v)*r.v%MD).to!uint);
-    }
-    auto opBinary(string op:"/")(DModInt r) {
-        return this*inv(r);
-    }
-    auto opOpAssign(string op)(DModInt r) {return mixin ("this=this"~op~"r");}
+    /// 整数型と同じように演算可能 割り算のみ遅い
+    const auto opBinary(string op:"+")(DModInt r) {return make(normS(v+r.v));}
+    /// ditto
+    const auto opBinary(string op:"-")(DModInt r) {return make(normS(v+MD-r.v));}
+    /// ditto
+    const auto opBinary(string op:"*")(DModInt r) {return make((long(v)*r.v%MD).to!uint);}
+    /// ditto
+    const auto opBinary(string op:"/")(DModInt r) {return this*inv(r);}
+    const auto opOpAssign(string op)(DModInt r) {return mixin ("this=this"~op~"r");}
+    /// xの逆元を求める
     static DModInt inv(DModInt x) {
         return DModInt(extGcd!int(x.v, MD)[0]);
     }
     string toString() {return v.to!string;}
+}
+
+///
+unittest {
+    alias Mint1 = DModInt!"mod1";
+    alias Mint2 = DModInt!"mod2";
+    Mint1.MD = 7;
+    Mint2.MD = 9;
+    assert((Mint1(5)+Mint1(5)).v == 3); // (5+5) % 7
+    assert((Mint2(5)+Mint2(5)).v == 1); // (5+5) % 9
 }
 
 unittest {

@@ -76,7 +76,7 @@ int main(string[] args) {
     if (!exists("docs")) mkdir("docs");
     foreach (s; sources) {
         auto cmd = ["dmd", "-D", "-o-", "-Isource", "-Dfdocs/"~s.toHTMLFileName,
-            "base.ddoc", "navbar.ddoc", "source/"~s];
+            "document/base.ddoc", "navbar.ddoc", "source/"~s];
         writeln(cmd);
         execute(cmd);
     }
