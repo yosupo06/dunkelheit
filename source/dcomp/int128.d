@@ -1,3 +1,9 @@
+/**
+64bit op 64bit -> 128bit の乗算/除算ライブラリ
+
+TODO : 32bit環境での除算を真面目に実装する
+ */
+
 module dcomp.int128;
 
 version(LDC) {
@@ -8,6 +14,7 @@ version(LDC) version(X86_64) {
     version = LDC_IR;
 }
 
+/// a * b = [return[1], return[0]]
 ulong[2] mul128(ulong a, ulong b) {
     ulong[2] res;
     version(LDC_IR) {
@@ -50,6 +57,7 @@ ulong[2] mul128(ulong a, ulong b) {
     }
 }
 
+/// [a[1], a[0]] / b = return, 答えが64bitに収まらないとヤバイ
 ulong div128(ulong[2] a, ulong b) {
     version(LDC_IR) {
         return inlineIR!(`

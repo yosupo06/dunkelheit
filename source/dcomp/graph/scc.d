@@ -39,7 +39,6 @@ SCCInfo scc(T)(T g) {
                 }
             }
             if (low[v] == ord[v]) {
-                int p = st.length.to!int - 1;
                 while (true) {
                     int u = st.back; st.removeBack;
                     buf ~= u;

@@ -18,6 +18,11 @@ T abs(T)(Point2D!T p) if (isFloatingPoint!T) {
     return (p.x*p.x+p.y*p.y).sqrt;
 }
 
+T arg(T)(Point2D!T p) if (isFloatingPoint!T) {
+    import std.math : atan2;
+    return atan2(p.y, p.x);
+}
+
 unittest {
     alias P = Point2D!int;
     P x = P(1, 2);
