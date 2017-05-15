@@ -28,8 +28,8 @@ DDOC =
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>$(TITLE)</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../public/default.css">    
-    <link rel="stylesheet" href="../public/my.css">
+    <link rel="stylesheet" href="css/default.css">    
+    <link rel="stylesheet" href="css/my.css">
   </head>
   <body class="ddoc dlang" id="ddoc_main">
     <div class="row">
