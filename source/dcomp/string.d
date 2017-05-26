@@ -1,7 +1,9 @@
 module dcomp.string;
 
+/// Suffix Arrayのデータを保持する構造体
 struct SA(T) {
-    T[] s;
+    T[] s; /// 元の文字列
+    ///sa, rsa, lcp
     int[] sa, rsa, lcp;
     this(in T[] s) {
         size_t n = s.length;
@@ -79,6 +81,8 @@ int[] sais(T)(in T[] _s, int B = 200) {
     return sa;
 }
 
+
+/// SAを返す. 内部でSA-ISを使用しており, 各文字は[0, B)に収まっている必要がある
 SA!T suffixArray(T)(in T[] _s, int B = 200) {
     import std.conv, std.algorithm;
     int n = _s.length.to!int;
@@ -101,6 +105,27 @@ SA!T suffixArray(T)(in T[] _s, int B = 200) {
         }
     }
     return saInfo;
+}
+
+///
+unittest {
+    import std.algorithm : equal, map;
+    string s = "abracadabra";
+    auto saInfo = s.suffixArray;
+    assert(equal(saInfo.sa.map!(i => s[i..$]), [
+        "",
+        "a",
+        "abra",
+        "abracadabra",
+        "acadabra",
+        "adabra",
+        "bra",
+        "bracadabra",
+        "cadabra",
+        "dabra",
+        "ra",
+        "racadabra",
+    ]));
 }
 
 unittest {

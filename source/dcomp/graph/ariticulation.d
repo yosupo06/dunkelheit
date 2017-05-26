@@ -7,11 +7,11 @@ struct AriticulationInfo {
     bool[] isDiv; // is Div when parent remove
 };
 
-AriticulationInfo ariticulationScan(T)(T g) {
-    return ariticulationScan(g, dfsTree(g, -1));
+AriticulationInfo ariticulation(T)(T g) {
+    return ariticulation(g, dfsTree(g, -1));
 }
 
-AriticulationInfo ariticulationScan(T)(T g, DFSTree info) {
+AriticulationInfo ariticulation(T)(T g, DFSTree info) {
     AriticulationInfo arit;
     size_t V = g.length;
     arit.isArit.length = V;

@@ -1,3 +1,9 @@
+/**
+64bit op 64bit -> 128bit の乗算/除算ライブラリ
+
+TODO : 32bit環境での除算を真面目に実装する
+ */
+
 module dcomp.int128;
 
 version(LDC) {
@@ -8,6 +14,7 @@ version(LDC) version(X86_64) {
     version = LDC_IR;
 }
 
+/// a * b = (return[1]<<64) + return[0]
 ulong[2] mul128(ulong a, ulong b) {
     ulong[2] res;
     version(LDC_IR) {
@@ -50,6 +57,34 @@ ulong[2] mul128(ulong a, ulong b) {
     }
 }
 
+unittest {
+    import std.random, std.algorithm, std.datetime, std.stdio;
+    StopWatch sw; sw.start;
+    writeln("Start mul128");
+    ulong[2] naive_mul(ulong a, ulong b) {
+        import std.bigint, std.conv;
+        auto a2 = BigInt(a), b2 = BigInt(b);
+        auto c = a2*b2;
+        auto m = BigInt(1)<<64;
+        return [(c % m).to!ulong, (c / m).to!ulong];
+    }
+    ulong[] li;
+    foreach (i; 0..100) {
+        li ~= i;
+        li ~= ulong.max - i;
+    }
+    foreach (i; 0..100) {
+        li ~= uniform(0UL, ulong.max);
+    }
+    foreach (l; li) {
+        foreach (r; li) {
+            assert(equal(mul128(l, r)[], naive_mul(l, r)[]));
+        }
+    }
+    writefln("%dms", sw.peek.msecs);
+}
+
+/// [a[1], a[0]] / b = return, 答えが64bitに収まらないとヤバイ
 ulong div128(ulong[2] a, ulong b) {
     version(LDC_IR) {
         return inlineIR!(`
@@ -73,6 +108,50 @@ ulong div128(ulong[2] a, ulong b) {
         return res;
     } else {
         import std.bigint, std.conv;
-        return ((BigInt(a[0].to!string) + (BigInt(a[1].to!string) << 64)) / BigInt(b.to!string)).to!string.to!ulong;
+        return (((BigInt(a[1]) << 64) + BigInt(a[0])) / BigInt(b)).to!ulong;
+    }
+}
+
+unittest {
+    import std.bigint, std.conv, std.datetime, std.stdio;
+    import std.random, std.algorithm;
+    StopWatch sw; sw.start;
+    writeln("Start div128");
+    bool overflow_check(ulong[2] a, ulong b) {
+        auto a2 = (BigInt(a[1]) << 64) + BigInt(a[0]);
+        return (a2 / b) > BigInt(ulong.max);
+    }
+    ulong naive_div(ulong[2] a, ulong b) {
+        auto a2 = (BigInt(a[1]) << 64) + BigInt(a[0]);
+        return (a2 / b).to!ulong;
+    }
+    ulong[2][] li;
+    ulong[] ri;
+    foreach (i; 0..100) {
+        li ~= [i, 0UL];
+        li ~= [ulong.max - i, 0UL];
+    }
+    foreach (i; 0..100) {
+        ri ~= i;
+        ri ~= ulong.max - i;
+    }
+    foreach (i; 0..100) {
+        li ~= [uniform(0UL, ulong.max), 0UL];
+    }
+    foreach (i; 0..100) {
+        li ~= [uniform(0UL, ulong.max), uniform(0UL, ulong.max)];
     }    
+    foreach (i; 0..100) {
+        ri ~= uniform(0UL, ulong.max);
+    }
+    li ~= [0, ulong.max];
+    li ~= [ulong.max, ulong.max-1];
+    foreach (l; li) {
+        foreach (r; ri) {
+            if (r == 0) continue;
+            if (overflow_check(l, r)) continue;
+            assert(div128(l, r) == naive_div(l, r));
+        }
+    }
+    writefln("%dms", sw.peek.msecs);
 }

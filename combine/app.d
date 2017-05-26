@@ -54,7 +54,7 @@ int main(string[] args) {
             }
         }
         foreach (line; data.map!(to!char).array.splitLines) {
-            if (willCommentOut(line.idup)) {
+            if (willCommentOut(line.idup, first)) {
                 ouf.writeln("// " ~ line);
             } else {
                 ouf.writeln(line);
@@ -81,9 +81,9 @@ string[] line2Imp(string s) {
     return res;
 }
 
-bool willCommentOut(string s) {
+bool willCommentOut(string s, bool first) {
     auto l = s.split;
-    if (l.length && l[0] == "module") return true;
+    if (l.length && l[0] == "module" && !first) return true;
     if (line2Imp(s).length) return true;
     return false;
 }

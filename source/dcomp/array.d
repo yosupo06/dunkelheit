@@ -10,6 +10,13 @@ unittest {
 }
 
 //this is not reference type!(please attention to copy)
+/**
+std.appenderをより高速化したもの.
+
+参照型のように動くが, コピーした後に操作するとそれ以外の参照が全部壊れる.
+ブロック外に出さない一時バッファのような使い方を想定している.
+速度が重要でないならばstd.appenderを使うこと.
+ */
 struct FastAppender(A) {
     import std.algorithm : max;
     import std.range.primitives : ElementEncodingType;
@@ -18,7 +25,9 @@ struct FastAppender(A) {
     private alias T = ElementEncodingType!A;
     private T* _data;
     private size_t len, cap;
+    /// length
     @property size_t length() {return len;}
+    /// C++のreserveと似たようなもの
     void reserve(size_t nlen) {
         import core.memory : GC;
         if (nlen <= cap) return;
@@ -29,15 +38,21 @@ struct FastAppender(A) {
         if (len) memcpy(nx, _data, len * T.sizeof);
         _data = cast(T*)(nx);
     }
+    /// 追加演算子
     void opOpAssign(string op : "~")(T item) {
         if (len == cap) {
             reserve(max(4, cap*2));
         }
         _data[len++] = item;
     }
+    /// C++のvectorと似ている, 要素は空になるがメモリへの参照は手放さない
     void clear() {
         len = 0;
-    }    
+    }
+    /**
+    これで返した配列も, 元のFastAppenderに操作すると壊れる.
+    必要ならばdupしておくこと.
+    */
     T[] data() {
         return (_data) ? _data[0..len] : null;
     }

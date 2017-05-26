@@ -41,40 +41,6 @@ unittest {
     assert(binSearch!(x => false)(0, 20) == 20);
 }
 
-Rotator!Range rotator(Range)(Range r) {
-    return Rotator!Range(r);
-}
-
-struct Rotator(Range)
-if (isForwardRange!Range && hasLength!Range) {
-    size_t cnt;
-    Range start, now;
-    this(Range r) {
-        cnt = 0;
-        start = r.save;
-        now = r.save;
-    }
-    this(this) {
-        start = start.save;
-        now = now.save;
-    }
-    @property bool empty() {
-        return now.empty;
-    }
-    @property auto front() {
-        assert(!now.empty);
-        import std.range : take, chain;
-        return chain(now, start.take(cnt));
-    }
-    @property Rotator!Range save() {
-        return this;
-    }
-    void popFront() {
-        cnt++;
-        now.popFront;
-    }
-}
-
 /// 最小値探索関数
 E minimum(alias pred = "a < b", Range, E = ElementType!Range)(Range range, E seed)
 if (isInputRange!Range && !isInfinite!Range) {
@@ -119,9 +85,54 @@ unittest {
     assert(maximum!"a > b"([2, 1, 3], -1) == -1);
 }
 
-bool[ElementType!Range] toMap(Range)(Range r) {
-    import std.algorithm : each;
-    bool[ElementType!Range] res;
-    r.each!(a => res[a] = true);
-    return res;
+/**
+要素を回転させるRange
+ */
+Rotator!Range rotator(Range)(Range r) {
+    return Rotator!Range(r);
+}
+
+/// ditto
+struct Rotator(Range)
+if (isForwardRange!Range && hasLength!Range) {
+    size_t cnt;
+    Range start, now;
+    this(Range r) {
+        cnt = 0;
+        start = r.save;
+        now = r.save;
+    }
+    this(this) {
+        start = start.save;
+        now = now.save;
+    }
+    @property bool empty() {
+        return now.empty;
+    }
+    @property auto front() {
+        assert(!now.empty);
+        import std.range : take, chain;
+        return chain(now, start.take(cnt));
+    }
+    @property Rotator!Range save() {
+        return this;
+    }
+    void popFront() {
+        cnt++;
+        now.popFront;
+    }
+}
+
+///
+unittest {
+    import std.algorithm : equal, cmp;
+    import std.array : array;
+    int[] a = [1, 2, 3];
+    assert(equal!equal(a.rotator, [
+        [1, 2, 3],
+        [2, 3, 1],
+        [3, 1, 2],
+    ]));
+    int[] b = [3, 1, 4, 1, 5];
+    assert(equal(b.rotator.maximum!"cmp(a, b) == -1", [5, 3, 1, 4, 1]));
 }

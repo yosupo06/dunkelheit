@@ -1,5 +1,11 @@
 module dcomp.functional;
 
+/**
+メモ化ライブラリ
+
+std.functionalとは違い, 引数が連続している必要がある
+ハッシュテーブルではなく配列で値を保存するため, プロコン向き
+ */
 struct memoCont(alias pred) {
     import core.exception : RangeError;
     import std.range, std.algorithm, std.conv;
@@ -42,31 +48,33 @@ struct memoCont(alias pred) {
     }
 }
 
+///
 unittest {
     import dcomp.numeric.primitive;
     import dcomp.modint;
     alias Mint = ModInt!(10^^9+7);
-    auto fact = factTable!Mint(100);
-    auto iFac = invFactTable!Mint(100);
-    Mint C0(int a, int b) {
-        if (a < 0 || a < b) return Mint(0);
-        return fact[a]*iFac[b]*iFac[a-b];
-    }
+    // unittest中では前方参照が出来ないためstructで囲っている
     struct A {
-        static memoCont!C1base C1;
-        static Mint C1base(int a, int b) {
-            if (a == 0) {
-                if (b == 0) return Mint(1);
-                return Mint(0);
-            }
-            if (b < 0) return Mint(0);
-            return C1(a-1, b-1) + C1(a-1, b);
+        static auto fact = factTable!Mint(100);
+        static auto iFac = invFactTable!Mint(100);
+        static Mint C1(int n, int k) {
+            return fact[n] * iFac[k] * iFac[n-k];
+        }
+
+        /// メモ化再帰でnCkの計算をする
+        static memoCont!C2base C2;
+        static Mint C2base(int n, int k) {
+            if (k == 0) return Mint(1);
+            if (n == 0) return Mint(0);
+            return C2(n-1, k-1) + C2(n-1, k);
         }
     }
-    A.C1.init([[0, 100], [-2, 100]]);
+    
+    // 0 <= n <= 99, 0 <= k <= 99, 閉区間
+    A.C2.init([[0, 99], [0, 99]]);
     foreach (i; 0..100) {
-        foreach (j; 0..100) {
-            assert(C0(i, j) == A.C1(i, j));
+        foreach (j; 0..i+1) {
+            assert(A.C1(i, j) == A.C2(i, j));
         }
     }
 }
