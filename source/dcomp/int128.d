@@ -58,7 +58,7 @@ ulong[2] mul128(ulong a, ulong b) {
 }
 
 unittest {
-    import std.random, std.algorithm, std.datetime, std.stdio;
+    import std.random, std.algorithm, std.datetime, std.stdio, std.conv;
     StopWatch sw; sw.start;
     writeln("Start mul128");
     ulong[2] naive_mul(ulong a, ulong b) {
@@ -66,7 +66,7 @@ unittest {
         auto a2 = BigInt(a), b2 = BigInt(b);
         auto c = a2*b2;
         auto m = BigInt(1)<<64;
-        return [(c % m).to!ulong, (c / m).to!ulong];
+        return [(c % m).to!string.to!ulong, (c / m).to!string.to!ulong];
     }
     ulong[] li;
     foreach (i; 0..100) {
@@ -123,7 +123,7 @@ unittest {
     }
     ulong naive_div(ulong[2] a, ulong b) {
         auto a2 = (BigInt(a[1]) << 64) + BigInt(a[0]);
-        return (a2 / b).to!ulong;
+        return (a2 / b).to!string.to!ulong;
     }
     ulong[2][] li;
     ulong[] ri;
