@@ -1,7 +1,7 @@
 module dcomp.bigint;
 
 import core.checkedint;
-import dcomp.int128;
+import dcomp.int128, dcomp.foundation;
 
 
 
