@@ -142,3 +142,59 @@ unittest {
     auto ti = benchmark!(f)(5000);
     writeln(ti[0].msecs, "ms");
 }
+
+unittest {
+    import std.algorithm, std.conv, std.stdio, std.range, std.math;
+    import std.random;
+    import std.typecons;
+    import std.datetime;
+
+    struct E {
+        int to;
+        double cap;
+        int rev;
+    }
+    void addEdge(E[][] g, int from, int to, double cap) {
+        g[from] ~= E(to, cap, g[to].length.to!int);
+        g[to] ~= E(from, 0.0, g[from].length.to!int-1);
+    }
+    immutable double EPS = 1e-9;
+
+    writeln("MaxFlow Double Random5000");
+
+    void f() {
+        int n = uniform(2, 20);
+        int m = uniform(0, 200);
+        int s = 0, t = 1;
+        auto g = new E[][n];
+        E[][] elist = new E[][n];
+
+        foreach (i; 1..m) {
+            int x, y;
+            while (true) {
+                x = uniform(0, n);
+                y = uniform(0, n);
+                if (x == y) continue;
+                break;
+            }
+            double c = uniform(0.0, 100.0);
+            addEdge(g, x, y, c);
+            elist[x] ~= E(y, c, -1);
+        }
+
+        auto res = maxFlow!(double, EPS)(g, 0, 1);
+        assert(res.dual[0] == false);
+        assert(res.dual[1] == true);
+        double sm = 0;
+        foreach (i, v; elist) {
+            foreach (e; v) {
+                if (res.dual[i] == false && res.dual[e.to] == true) {
+                    sm += e.cap;
+                }
+            }
+        }
+        assert(abs(res.flow - sm) < EPS);
+    }
+    auto ti = benchmark!(f)(5000);
+    writeln(ti[0].msecs, "ms");
+}
