@@ -110,7 +110,7 @@ ulong div128(ulong[2] a, ulong b) {
         return res;
     } else {
         import std.bigint, std.conv;
-        return (((BigInt(a[1]) << 64) + BigInt(a[0])) / BigInt(b)).to!ulong;
+        return (((BigInt(a[1]) << 64) + BigInt(a[0])) / BigInt(b)).toString.to!ulong;
     }
 }
 
