@@ -1,6 +1,6 @@
 module dcomp.bigint;
 
-import core.checkedint;
+import core.checkedint, core.bitop;
 import dcomp.int128, dcomp.foundation;
 
 void addMultiWord(in ulong[] l, in ulong[] r, ulong[] res) {
@@ -232,7 +232,6 @@ struct uintN(int N) if (N >= 1) {
     }
 
     uintN opBinary(string op : "/")(in uintN rr) const {
-        import core.bitop;
         int up = -1, shift;
         foreach_reverse (i; 0..N) {
             if (rr[i]) {

@@ -19,6 +19,7 @@ static if (__VERSION__ <= 2070) {
     }
 }
 version (X86) static if (__VERSION__ < 2071) {
+    import core.bitop : bsf, bsr, popcnt;
     int bsf(ulong v) {
         foreach (i; 0..64) {
             if (v & (1UL << i)) return i;
