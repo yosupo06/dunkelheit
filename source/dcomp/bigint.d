@@ -3,8 +3,6 @@ module dcomp.bigint;
 import core.checkedint;
 import dcomp.int128, dcomp.foundation;
 
-
-
 void addMultiWord(in ulong[] l, in ulong[] r, ulong[] res) {
     auto N = res.length;
     bool of = false;
@@ -103,7 +101,7 @@ struct uintN(int N) if (N >= 1) {
     this(ulong x) { d[0] = x; }
     this(string s) {
         foreach (c; s) {
-            this *= uintN(10);
+            this *= 10;
             this += uintN(c-'0');
         }
     }
@@ -166,7 +164,7 @@ struct uintN(int N) if (N >= 1) {
         foreach_reverse (i; 0..N-ws-1) {
             res[i] = (d[i+ws+1] >> (64-bs)) | (d[i+ws] << bs);
         }
-        res[dim-ws-1] = (d[N-1] << bs);
+        res[N-ws-1] = (d[N-1] << bs);
         return res;
     }
     //cmp
@@ -227,11 +225,16 @@ struct uintN(int N) if (N >= 1) {
         }
         return res;
     }
-    
+    uintN opBinary(string op : "*")(in ulong r) const {
+        uintN res;
+        mulMultiWord(d, r, res.d);
+        return res;
+    }
+
     uintN opBinary(string op : "/")(in uintN rr) const {
         import core.bitop;
         int up = -1, shift;
-        foreach_reverse(i; 0..N) {
+        foreach_reverse (i; 0..N) {
             if (rr[i]) {
                 up = i;
                 shift = 63 - bsr(rr[i]);
@@ -239,9 +242,9 @@ struct uintN(int N) if (N >= 1) {
             }
         }
         assert(up != -1);
+
         ulong[N+1] l;
         l[0..N] = d[0..N];
-        import std.stdio;
         shiftLeftMultiWord(l, shift, l);
         auto r = (rr << shift);
         uintN res;
@@ -252,7 +255,6 @@ struct uintN(int N) if (N >= 1) {
             ulong[N+1] buf;
             mulMultiWord(r.d[], pred, buf); // r * pred
             subMultiWord(l[i..i+up+2], buf[], l[i..i+up+2]);
-
             while (cmpMultiWord(l[i..i+up+2], r.d[]) != -1) {
                 res[i]++;
                 subMultiWord(l[i..i+up+2], r.d[], l[i..i+up+2]);
@@ -260,7 +262,10 @@ struct uintN(int N) if (N >= 1) {
         }
         return res;
     }
-    uintN opBinary(string op : "%")(in uintN r) const {
+    uintN opBinary(string op : "/")(in ulong r) const {
+        return this / uintN(r);
+    }
+    uintN opBinary(string op : "%", T)(in T r) const {
         return this - this/r*r;
     }
 

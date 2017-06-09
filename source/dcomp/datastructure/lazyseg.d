@@ -1,20 +1,23 @@
 module dcomp.datastructure.lazyseg;
 
 struct LazySeg(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) {
-    const int n, sz;
+    const int n, sz, lg;
     T[] d;
     L[] lz;
     @disable this();
     this(int n) {
-        import std.algorithm : fill;
+        import std.algorithm : fill, each;
         import core.bitop : bsr;
         if (n == 0) return;
         int lg = n.bsr;
         if ((2^^lg) < n) lg++;
         this.n = n;
         this.sz = 2^^lg;
-        d = new T[](2*this.sz); d[] = eT;
-        lz = new L[](2*this.sz); lz[] = eL;
+        this.lg = lg;
+        d = new T[](2*this.sz);
+        d.each!((ref x) => x = eT);
+        lz = new L[](2*this.sz);
+        lz.each!((ref x) => x = eL);
     }
     private void lzAdd(int k, L x) {
         d[k] = opTL(d[k], x);
@@ -33,6 +36,13 @@ struct LazySeg(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) {
         int md = (l+r)/2;
         return opTT(sum(a, b, l, md, 2*k),
             sum(a, b, md, r, 2*k+1));
+    }
+    T single(int k) {
+        k += sz;
+        foreach_reverse (int i; 1..lg+1) {
+            push(k>>i);
+        }
+        return d[k];
     }
     T sum(int a, int b) {
         assert(0 <= a && a <= b && b <= n);
@@ -69,7 +79,13 @@ struct LazySeg(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) {
     Range opIndex(int[2] rng) {
         return Range(&this, rng[0], rng[1]);
     }
-    void opIndexOpAssign(string op)(L x, int[2] rng) {
+    void opIndexOpAssign(string op : "+")(L x, int[2] rng) {
         add(rng[0], rng[1], x);
     }
+}
+
+unittest {
+    //issue 17466
+    auto seg = LazySeg!(long[2], long[2],
+        (a, b) => a, (a, b) => a, (a, b) => a, [0L, 0L], [0L, 0L])(10);
 }
