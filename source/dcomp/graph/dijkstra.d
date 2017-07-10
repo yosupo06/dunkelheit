@@ -1,4 +1,4 @@
-module dcomp.graph.djikstra;
+module dcomp.graph.dijkstra;
 
 import dcomp.algorithm;
 
