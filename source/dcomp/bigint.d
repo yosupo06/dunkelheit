@@ -94,7 +94,12 @@ int cmpMultiWord(in ulong[] l, in ulong[] r) {
     return 0;
 }
 
-
+/**
+多倍長整数.
+静的に長さを指定しする, $(D N*64bit)となる.
+例えば$(D uintN!2)とすれば、$(D uint128)として使える.
+テストをほとんど書いていないためバグが(ほぼ確実に)含まれている
+ */
 struct uintN(int N) if (N >= 1) {
     import core.checkedint;
     ulong[N] d;
@@ -273,9 +278,10 @@ struct uintN(int N) if (N >= 1) {
     }
 }
 
+///
 unittest {
+    import std.conv;
     alias Uint = uintN!20;
-    import std.stdio, std.conv;
     auto x = Uint("31415926535897969393238462");
     auto y = Uint("1145141919810893");
     assert((x*y).to!string == "35975694425956177975650270094479894166566");

@@ -3,8 +3,8 @@ module dcomp.functional;
 /**
 メモ化ライブラリ
 
-std.functionalとは違い, 引数が連続している必要がある
-ハッシュテーブルではなく配列で値を保存するため, プロコン向き
+std.functionalとは違い, 引数が連続している必要がある.
+ハッシュテーブルではなく配列で値を保存するため高速である.
  */
 struct memoCont(alias pred) {
     import core.exception : RangeError;

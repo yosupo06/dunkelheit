@@ -7,7 +7,6 @@ struct maxFlowInfo(C) {
     bool[] dual;
 }
 
-/// 最大流
 maxFlowInfo!(C) maxFlow(C, C EPS, T)(T g, int s, int t) {
     assert(s != t);
     import std.algorithm : map;
@@ -69,7 +68,7 @@ maxFlowInfo!(C) maxFlow(C, C EPS, T)(T g, int s, int t) {
 }
 
 
-///
+
 unittest {
     import std.conv : to;
     struct Edge {

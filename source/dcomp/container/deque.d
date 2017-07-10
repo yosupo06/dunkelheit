@@ -1,5 +1,8 @@
 module dcomp.container.deque;
 
+/**
+Deque リングバッファ実装でDListより速い
+ */
 struct Deque(T, bool mayNull = true) {
     import core.exception : RangeError;
     import core.memory : GC;
@@ -87,7 +90,7 @@ struct Deque(T, bool mayNull = true) {
     alias Range = RangeT!Deque;
     alias ConstRange = RangeT!(const Deque);
     alias ImmutableRange = RangeT!(immutable Deque);
-
+    
     Payload* p;
     private void I() { if (mayNull && !p) p = new Payload(); }
     private void C() const {
@@ -118,19 +121,32 @@ struct Deque(T, bool mayNull = true) {
     }
     static Deque make() { return Deque(new Payload()); }
     @property bool havePayload() const { return (!mayNull || p); }
+    /// 空かどうか取得
     @property bool empty() const { return (!havePayload || p.empty); }
+    /// 長さを取得
     @property size_t length() const { return (havePayload ? p.length : 0); }
+    /// ditto
     alias opDollar = length;
     ref inout(T) opIndex(size_t i) inout {C; return (*p)[i]; }
+    /// 先頭要素
     ref inout(T) front() inout {C; return (*p)[0]; }
+    /// 末尾要素
     ref inout(T) back() inout {C; return (*p)[$-1]; }
     void clear() { if (p) p.clear(); }
+    /// 先頭に追加 rangeが壊れるので注意
     void insertFront(T v) {I; p.insertFront(v); }
+    /// 末尾に追加
     void insertBack(T v) {I; p.insertBack(v); }
+    /// ditto
+    alias stableInsertBack = insertBack;
+    /// 先頭を削除 rangeが壊れるので注意
     void removeFront() {C; p.removeFront(); }
+    /// 末尾を削除
     void removeBack() {C; p.removeBack(); }
+    /// 全体のrangeを取得
     Range opSlice() {I; return Range(p, 0, length); }
 }
+
 
 unittest {
     import std.algorithm : equal;
@@ -171,6 +187,11 @@ unittest {
     auto a = make!(Deque!int)(1, 2, 3);
     auto b = make!(Deque!int)([1, 2, 3]);
     assert(equal(a[], b[]));
+}
+
+unittest {
+    static assert( is(typeof(Deque!(int, true)())));
+    static assert(!is(typeof(Deque!(int, false)())));
 }
 
 unittest {
