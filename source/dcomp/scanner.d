@@ -1,5 +1,8 @@
 module dcomp.scanner;
 
+/**
+Scanner 速くはないが遅くもない printf/scanfよりちょっと遅いくらい？
+*/
 class Scanner {
     import std.stdio : File;
     import std.conv : to;
@@ -66,7 +69,7 @@ class Scanner {
 }
 
 
-
+///
 unittest {
     import std.path : buildPath;
     import std.file : tempDir;
@@ -87,10 +90,10 @@ unittest {
     double[] f;
     sc.read(a, b, c, d, e, f);
     assert(a == 1);
-    assert(equal(b[], [2, 3]));
-    assert(equal(c[], "ab"));
-    assert(equal(d, "cde"));
-    assert(e == 1.0);
+    assert(equal(b[], [2, 3])); // 配列型は行末まで読み込む
+    assert(equal(c[], "ab")); // char型配列はトークンをそのまま返す
+    assert(equal(d, "cde")); // stringもchar型配列と同様
+    assert(e == 1.0); // 小数も可
     assert(equal(f, [1.0, 2.0]));
 }
 

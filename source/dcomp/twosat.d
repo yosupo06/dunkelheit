@@ -40,6 +40,22 @@ struct TwoSat {
     }
 }
 
+///
+unittest {
+    /+
+    (x0 v x1) ^ (~x0 v x2) ^ (~x1 v ~x2) を解く
+    +/
+    auto sat = TwoSat(3);
+    sat.addCond(0, true,  1, true);   //(x0 == true || x1 == true)
+    sat.addCond(0, false, 2, true);  //(x0 == false || x2 == true)
+    sat.addCond(1, false, 2, false); //(x1 == false || x2 == false)
+    assert(sat.exec() == true);
+    auto res = sat.res;
+    assert(res[0] == true  || res[1] == true);
+    assert(res[0] == false || res[2] == true);
+    assert(res[1] == false || res[2] == false);
+}
+
 unittest {
     import std.algorithm, std.conv, std.stdio, std.range;
     import std.random;
