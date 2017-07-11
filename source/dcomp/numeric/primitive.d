@@ -1,12 +1,13 @@
 module dcomp.numeric.primitive;
 
 import std.traits;
+import std.bigint;
 
-T pow(T, U)(T x, U n) if (!isFloatingPoint!T && isIntegral!U) {
+T pow(T, U)(T x, U n) if (!isFloatingPoint!T && (isIntegral!U || is(U == BigInt))) {
     return pow(x, n, T(1));
 }
 
-T pow(T, U)(T x, U n, T e) if (isIntegral!U) {
+T pow(T, U)(T x, U n, T e) if (isIntegral!U || is(U == BigInt)) {
     while (n) {
         if (n & 1) e *= x;
         x *= x;
@@ -38,7 +39,7 @@ T[3] extGcd(T)(in T a, in T b)
 if (!isIntegral!T || isSigned!T) //unsignedはNG
 {
     if (b==0) {
-        return [1, 0, a];
+        return [T(1), T(0), a];
     } else {
         auto e = extGcd(b, a%b);
         return [e[1], e[0]-a/b*e[1], e[2]];
