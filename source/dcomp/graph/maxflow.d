@@ -18,7 +18,7 @@ maxFlowInfo!(C) maxFlow(C, C EPS, T)(T g, int s, int t) {
 
     void bfs() {
         level[] = -1; level[s] = 0;
-        auto que = Deque!int(0);
+        auto que = Deque!int(s);
         while (!que.empty) {
             int v = que.back; que.removeBack();
             foreach (e; g[v]) {
@@ -109,7 +109,12 @@ unittest {
     void f() {
         int n = uniform(2, 20);
         int m = uniform(0, 200);
-        int s = 0, t = 1;
+        int s, t;
+        while (true) {
+            s = uniform(0, n);
+            t = uniform(0, n);
+            if (s != t) break;
+        }
         auto g = new E[][n];
         E[][] elist = new E[][n];
 
@@ -126,7 +131,7 @@ unittest {
             elist[x] ~= E(y, c, -1);
         }
 
-        auto res = maxFlow!(int, 0)(g, 0, 1);
+        auto res = maxFlow!(int, 0)(g, s, t);
         assert(res.dual[0] == false);
         assert(res.dual[1] == true);
         int sm = 0;
