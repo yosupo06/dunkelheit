@@ -1,5 +1,6 @@
 module dcomp.matrix;
 
+/// 行列ライブラリ
 struct SMatrix(T, size_t H, size_t W) {
     T[W][H] data;
     this(Args...)(Args args) {
@@ -36,6 +37,7 @@ struct SMatrix(T, size_t H, size_t W) {
     auto opOpAssign(string op, T)(T r) {return mixin ("this=this"~op~"r");}    
 }
 
+/// ditto
 struct DMatrix(T) {
     size_t h, w;
     T[] data;
@@ -76,10 +78,11 @@ struct DMatrix(T) {
     auto opOpAssign(string op, T)(T r) {return mixin ("this=this"~op~"r");}    
 }
 
+///
 unittest {
     import dcomp.numeric.primitive;
     auto mat = DMatrix!int(2, 2, [0, 1, 1, 1]);
-    assert(pow(mat, 10, DMatrix!int(2, 2, [1, 0, 0, 1]))[0, 0] == 34); //F_10
+    assert(pow(mat, 10, DMatrix!int(2, 2, [1, 0, 0, 1]))[0, 0] == 34); //Fib_10
 }
 
 auto matrix(size_t H, size_t W, alias pred)() {

@@ -1,16 +1,19 @@
 module dcomp.datastructure.unionfind;
 
+///UnionFind(Disjoint Set Union)
 struct UnionFind {
     import std.algorithm : map, swap, each;
     import std.range : iota, array;
     int[] id; // group id
     int[][] groups; // group list
     int count; // group count
+    /// n:頂点数
     this(int n) {
         id = iota(n).array;
         groups = iota(n).map!(a => [a]).array;
         count = n;
     }
+    /// a, bをmerge
     void merge(int a, int b) {
         if (same(a, b)) return;
         count--;
@@ -20,14 +23,17 @@ struct UnionFind {
         groups[x] ~= groups[y];
         groups[y] = [];
     }
+    /// iと同じgroupの頂点を返す
     int[] group(int i) {
         return groups[id[i]];
     }
+    /// a, bは同じgroupか？
     bool same(int a, int b) {
         return id[a] == id[b];
     }
 }
 
+///
 unittest {
     import std.algorithm : equal, sort;
     auto uf = UnionFind(5);

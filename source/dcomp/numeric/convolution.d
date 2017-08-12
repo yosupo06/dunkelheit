@@ -1,7 +1,6 @@
 module dcomp.numeric.convolution;
 
-// f([10]) = [1*] 
-// &演算での畳み込みを内積に変換する
+/// Zeta変換
 T[] zeta(T)(T[] v, bool rev) {
     import core.bitop : bsr;
     int n = bsr(v.length);
@@ -19,7 +18,7 @@ T[] zeta(T)(T[] v, bool rev) {
     return v;
 }
 
-// xor演算での畳み込みを内積に変換する、サイズ2のFFT
+/// hadamard変換
 T[] hadamard(T)(T[] v, bool rev) {
     import core.bitop : bsr;
     int n = bsr(v.length);
