@@ -1,6 +1,6 @@
 module dcomp.datastructure.lazyseg;
 
-/// 遅延評価Segment Tree
+/// 遅延伝搬Segment Tree
 struct LazySeg(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) {
     const int n, sz, lg;
     T[] d;
@@ -107,6 +107,7 @@ struct LazySeg(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) {
 ///
 unittest {
     import std.algorithm : max;
+    ///区間max, 区間加算
     auto seg = LazySeg!(int, int,
         (a, b) => max(a, b), (a, b) => a+b, (a, b) => a+b, 0, 0)(3);
     

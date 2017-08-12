@@ -4,6 +4,7 @@ import dcomp.array;
 import dcomp.graph.primitive;
 import dcomp.container.deque;
 
+/// 強連結成分の情報
 struct SCCInfo {
     int[] id; // vertex id -> scc id
     int[][] groups; // scc id -> scc vertexs
@@ -12,6 +13,7 @@ struct SCCInfo {
     }
 }
 
+/// 強連結成分分解
 SCCInfo scc(T)(T g) {
     import std.range;
     import std.algorithm : each, map, min, reverse;
