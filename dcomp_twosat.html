@@ -1,0 +1,279 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dcomp.twosat</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/default.css">    
+    <link rel="stylesheet" href="css/my.css">
+  </head>
+  <body class="ddoc dlang" id="ddoc_main">
+    <div class="row">
+      <div class="col-md-2 main-nav">
+        
+<h1> DComp reference </h1>
+<HR>
+
+<ul>	<li><a href="dcomp_algorithm.html">algorithm</a></li>
+	<li><a href="dcomp_array.html">array</a></li>
+	<li><a href="dcomp_ascii.html">ascii</a></li>
+	<li><a href="dcomp_bigint.html">bigint</a></li>
+	<li>container <ul>		<li><a href="dcomp_container_deque.html">deque</a></li>
+		<li><a href="dcomp_container_package.html">package</a></li>
+	</ul></li>
+	<li>datastructure <ul>		<li><a href="dcomp_datastructure_convexhull.html">convexhull</a></li>
+		<li><a href="dcomp_datastructure_lazyseg.html">lazyseg</a></li>
+		<li><a href="dcomp_datastructure_package.html">package</a></li>
+		<li><a href="dcomp_datastructure_simpleseg.html">simpleseg</a></li>
+		<li><a href="dcomp_datastructure_unionfind.html">unionfind</a></li>
+	</ul></li>
+	<li><a href="dcomp_dungeon.html">dungeon</a></li>
+	<li><a href="dcomp_fastdiv.html">fastdiv</a></li>
+	<li><a href="dcomp_foundation.html">foundation</a></li>
+	<li><a href="dcomp_functional.html">functional</a></li>
+	<li><a href="dcomp_geo.html">geo</a></li>
+	<li>graph <ul>		<li><a href="dcomp_graph_ariticulation.html">ariticulation</a></li>
+		<li><a href="dcomp_graph_bridge.html">bridge</a></li>
+		<li><a href="dcomp_graph_dfstree.html">dfstree</a></li>
+		<li><a href="dcomp_graph_dijkstra.html">dijkstra</a></li>
+		<li><a href="dcomp_graph_lca.html">lca</a></li>
+		<li><a href="dcomp_graph_maxflow.html">maxflow</a></li>
+		<li><a href="dcomp_graph_mincostflow.html">mincostflow</a></li>
+		<li><a href="dcomp_graph_namori.html">namori</a></li>
+		<li><a href="dcomp_graph_package.html">package</a></li>
+		<li><a href="dcomp_graph_primitive.html">primitive</a></li>
+		<li><a href="dcomp_graph_scc.html">scc</a></li>
+	</ul></li>
+	<li><a href="dcomp_int128.html">int128</a></li>
+	<li>ldc <ul>		<li><a href="dcomp_ldc_inline.html">inline</a></li>
+	</ul></li>
+	<li><a href="dcomp_matrix.html">matrix</a></li>
+	<li><a href="dcomp_modint.html">modint</a></li>
+	<li>numeric <ul>		<li><a href="dcomp_numeric_convolution.html">convolution</a></li>
+		<li><a href="dcomp_numeric_package.html">package</a></li>
+		<li><a href="dcomp_numeric_prime.html">prime</a></li>
+		<li><a href="dcomp_numeric_primitive.html">primitive</a></li>
+	</ul></li>
+	<li><a href="dcomp_package.html">package</a></li>
+	<li><a href="dcomp_scanner.html">scanner</a></li>
+	<li><a href="dcomp_string.html">string</a></li>
+	<li><a href="dcomp_twosat.html">twosat</a></li>
+</ul>
+      </div>
+      <div class="col-md-10 content_wrapper main-dlang">
+        <article class="module">
+          <h1 class="module_name">dcomp.twosat</h1>
+          <section id="module_content"><section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    2-SAT を解くライブラリ
+  </p>
+</div>
+
+</section>
+<section class="section ddoc_module_members_section">
+  <div class="ddoc_module_members">
+    <ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#TwoSat" id="TwoSat"><code class="code">TwoSat</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="TwoSat"></span>struct <span class="color_yellow">TwoSat</span>;
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    2-SAT を解く構造体
+  </p>
+</div>
+<div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code"><span class="color_red">/+
+(x0 v x1) ^ (~x0 v x2) ^ (~x1 v ~x2) を解く
++/</span>
+<span class="color_blue">auto</span> sat = <span class="color_yellow">TwoSat</span>(3);
+sat.addCond(0, <span class="color_blue">true</span>,  1, <span class="color_blue">true</span>);  <span class="color_red">//(x0 == true  || x1 == true)
+</span>sat.addCond(0, <span class="color_blue">false</span>, 2, <span class="color_blue">true</span>);  <span class="color_red">//(x0 == false || x2 == true)
+</span>sat.addCond(1, <span class="color_blue">false</span>, 2, <span class="color_blue">false</span>); <span class="color_red">//(x1 == false || x2 == false)
+</span><span class="color_blue">assert</span>(sat.exec() == <span class="color_blue">true</span>);
+<span class="color_blue">auto</span> res = sat.res;
+<span class="color_blue">assert</span>(res[0] == <span class="color_blue">true</span>  || res[1] == <span class="color_blue">true</span>);
+<span class="color_blue">assert</span>(res[0] == <span class="color_blue">false</span> || res[2] == <span class="color_blue">true</span>);
+<span class="color_blue">assert</span>(res[1] == <span class="color_blue">false</span> || res[2] == <span class="color_blue">false</span>);
+</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div>
+</section>
+<ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#TwoSat.res" id="TwoSat.res"><code class="code">res</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="TwoSat.res"></span>bool[] <span class="color_yellow">res</span>;
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    execをした後, 解けたならば答えが入る
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#TwoSat.addCond" id="TwoSat.addCond"><code class="code">addCond</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="TwoSat.addCond"></span>void <span class="color_yellow">addCond</span>(int a, bool aExp, int b, bool bExp);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    <code class="code">(a == aExp) || (b == bExp)</code> という条件を追加
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#TwoSat.exec" id="TwoSat.exec"><code class="code">exec</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="TwoSat.exec"></span>bool <span class="color_yellow">exec</span>();
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    解けたかをreturnする, 実際の答えはresに入る
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#TwoSat.this" id="TwoSat.this"><code class="code">this</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="TwoSat.this"></span>this(int n);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_section">
+  <p class="para">
+    <span class="ddoc_section_h">n:</span>
+変数の数
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li>
+</ul>
+
+</div>
+
+</li>
+</ul>
+  </div>
+</section>
+</section>
+        </article>
+      </div>
+    </div>
+  </body>
+</html>
