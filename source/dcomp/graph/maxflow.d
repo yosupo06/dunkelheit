@@ -134,8 +134,8 @@ unittest {
         }
 
         auto res = maxFlow!(int, 0)(g, s, t);
-        assert(res.dual[0] == false);
-        assert(res.dual[1] == true);
+        assert(res.dual[s] == false);
+        assert(res.dual[t] == true);
         int sm = 0;
         foreach (i, v; elist) {
             foreach (e; v) {
