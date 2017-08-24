@@ -93,6 +93,39 @@ auto matrix(size_t H, size_t W, alias pred)() {
     return res;
 }
 
+M determinent(Mat, M)(Mat!M m) {
+    assert(m.height == m.width);
+    import std.conv, std.algorithm;
+    int N = m.height.to!int;
+    M base = 1;
+    foreach (i; 0..N) {
+        if (m[i, i] == M(0)) {
+            foreach (j; i+1..N) {
+                if (m[j, i] == M(0)) {
+                    foreach (k; 0..N) swap(m[i, k], m[j, k]);
+                    if ((j-i) % 2) base = M(0)-base;
+                    break;
+                }
+                if (m[i, i] == M(0)) return M(0);
+            }
+        }
+        base *= m[i, i];
+        M im = M(1)/m[i, i];
+        foreach (j; 0..N) {
+            m[i, j] *= im;
+        }
+        foreach (j; i+1..N) {
+            M x = m[j, i];
+            foreach (k; 0..N) {
+                m[j, k] -= m[i, k] * x;
+            }
+        }
+    }
+    foreach (i; 0..N) {
+        base *= m[i, i];
+    }
+    return base;
+}
 
 // m * v = r
 Vec solveLinear(Mat, Vec)(Mat m, Vec r) {
