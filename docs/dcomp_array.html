@@ -1,0 +1,335 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dcomp.array</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/default.css">    
+    <link rel="stylesheet" href="css/my.css">
+  </head>
+  <body class="ddoc dlang" id="ddoc_main">
+    <div class="row">
+      <div class="col-md-2 main-nav">
+        
+<h1> DComp reference </h1>
+<HR>
+
+<ul>	<li><a href="dcomp_algorithm.html">algorithm</a></li>
+	<li><a href="dcomp_array.html">array</a></li>
+	<li><a href="dcomp_ascii.html">ascii</a></li>
+	<li><a href="dcomp_bigint.html">bigint</a></li>
+	<li>container <ul>		<li><a href="dcomp_container_deque.html">deque</a></li>
+		<li><a href="dcomp_container_package.html">package</a></li>
+	</ul></li>
+	<li>datastructure <ul>		<li><a href="dcomp_datastructure_convexhull.html">convexhull</a></li>
+		<li><a href="dcomp_datastructure_lazyseg.html">lazyseg</a></li>
+		<li><a href="dcomp_datastructure_package.html">package</a></li>
+		<li><a href="dcomp_datastructure_simpleseg.html">simpleseg</a></li>
+		<li><a href="dcomp_datastructure_unionfind.html">unionfind</a></li>
+	</ul></li>
+	<li><a href="dcomp_dungeon.html">dungeon</a></li>
+	<li><a href="dcomp_fastdiv.html">fastdiv</a></li>
+	<li><a href="dcomp_foundation.html">foundation</a></li>
+	<li><a href="dcomp_functional.html">functional</a></li>
+	<li><a href="dcomp_geo.html">geo</a></li>
+	<li>graph <ul>		<li><a href="dcomp_graph_ariticulation.html">ariticulation</a></li>
+		<li><a href="dcomp_graph_bridge.html">bridge</a></li>
+		<li><a href="dcomp_graph_dfstree.html">dfstree</a></li>
+		<li><a href="dcomp_graph_dijkstra.html">dijkstra</a></li>
+		<li><a href="dcomp_graph_lca.html">lca</a></li>
+		<li><a href="dcomp_graph_maxflow.html">maxflow</a></li>
+		<li><a href="dcomp_graph_mincostflow.html">mincostflow</a></li>
+		<li><a href="dcomp_graph_namori.html">namori</a></li>
+		<li><a href="dcomp_graph_package.html">package</a></li>
+		<li><a href="dcomp_graph_primitive.html">primitive</a></li>
+		<li><a href="dcomp_graph_scc.html">scc</a></li>
+	</ul></li>
+	<li><a href="dcomp_int128.html">int128</a></li>
+	<li>ldc <ul>		<li><a href="dcomp_ldc_inline.html">inline</a></li>
+	</ul></li>
+	<li><a href="dcomp_matrix.html">matrix</a></li>
+	<li><a href="dcomp_modint.html">modint</a></li>
+	<li>numeric <ul>		<li><a href="dcomp_numeric_convolution.html">convolution</a></li>
+		<li><a href="dcomp_numeric_package.html">package</a></li>
+		<li><a href="dcomp_numeric_prime.html">prime</a></li>
+		<li><a href="dcomp_numeric_primitive.html">primitive</a></li>
+	</ul></li>
+	<li><a href="dcomp_package.html">package</a></li>
+	<li><a href="dcomp_scanner.html">scanner</a></li>
+	<li><a href="dcomp_string.html">string</a></li>
+	<li><a href="dcomp_twosat.html">twosat</a></li>
+</ul>
+      </div>
+      <div class="col-md-10 content_wrapper main-dlang">
+        <article class="module">
+          <h1 class="module_name">dcomp.array</h1>
+          <section id="module_content">
+<section class="section ddoc_module_members_section">
+  <div class="ddoc_module_members">
+    <ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#fixed" id="fixed"><code class="code">fixed</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="fixed"></span>T[N] <span class="color_yellow">fixed</span>(T, size_t N)(T[N] a);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    静的配列のリテラルであると明示的に指定する
+  </p>
+</div>
+<div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code"><span class="color_blue">auto</span> <span class="color_red">a</span> = [[1, 2].<span class="color_yellow">fixed</span>];
+<span class="color_blue">assert</span>(<span class="color_blue">is</span>(<span class="color_blue">typeof</span>(<span class="color_red">a</span>) == <span class="color_blue">int</span>[2][]));
+</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div>
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#FastAppender" id="FastAppender"><code class="code">FastAppender</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="FastAppender"></span>struct <span class="color_yellow">FastAppender</span>(A);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    std.appenderをより高速化したもの.
+
+  </p>
+</div>
+<div class="ddoc_description">
+  <h4>Discussion</h4>
+  <p class="para">
+    参照型のように動くが, コピーした後に操作するとそれ以外の参照が全部壊れる.
+ブロック外に出さない一時バッファのような使い方を想定している.
+速度が重要でないならばstd.appenderを使うこと.
+  </p>
+</div>
+
+</section>
+<ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#FastAppender.length" id="FastAppender.length"><code class="code">length</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="FastAppender.length"></span>@property size_t <span class="color_yellow">length</span>();
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    <span class="color_yellow">length</span>
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#FastAppender.reserve" id="FastAppender.reserve"><code class="code">reserve</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="FastAppender.reserve"></span>void <span class="color_yellow">reserve</span>(size_t nlen);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    C++のreserveと似たようなもの
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#FastAppender.opOpAssign" id="FastAppender.opOpAssign"><code class="code">opOpAssign</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="FastAppender.opOpAssign"></span>void <span class="color_yellow">opOpAssign</span><span class="color_red">(string op : "~")</span>(T item);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    追加演算子
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#FastAppender.clear" id="FastAppender.clear"><code class="code">clear</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="FastAppender.clear"></span>void <span class="color_yellow">clear</span>();
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    C++のvectorと似ている, 要素は空になるがメモリへの参照は手放さない
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#FastAppender.data" id="FastAppender.data"><code class="code">data</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="FastAppender.data"></span>T[] <span class="color_yellow">data</span>();
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    これで返した配列も, 元のFastAppenderに操作すると壊れる.
+    必要ならばdupしておくこと.
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li>
+</ul>
+
+</div>
+
+</li>
+</ul>
+  </div>
+</section>
+</section>
+        </article>
+      </div>
+    </div>
+  </body>
+</html>

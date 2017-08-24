@@ -2,11 +2,13 @@ module dcomp.graph.maxflow;
 
 import dcomp.container.deque;
 
+///maxflowの情報
 struct maxFlowInfo(C) {
     C flow;
     bool[] dual;
 }
 
+///最大流ライブラリ, Dinic
 maxFlowInfo!(C) maxFlow(C, C EPS, T)(T g, int s, int t) {
     assert(s != t);
     import std.algorithm : map;
@@ -68,7 +70,7 @@ maxFlowInfo!(C) maxFlow(C, C EPS, T)(T g, int s, int t) {
 }
 
 
-
+///
 unittest {
     import std.conv : to;
     struct Edge {
@@ -132,8 +134,8 @@ unittest {
         }
 
         auto res = maxFlow!(int, 0)(g, s, t);
-        assert(res.dual[0] == false);
-        assert(res.dual[1] == true);
+        assert(res.dual[s] == false);
+        assert(res.dual[t] == true);
         int sm = 0;
         foreach (i, v; elist) {
             foreach (e; v) {

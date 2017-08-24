@@ -1,5 +1,6 @@
 module dcomp.numeric.prime;
 
+/// xの約数一覧を返す
 T[] divisorList(T)(T x) {
     import std.algorithm : sort;
     T[] res;
@@ -13,6 +14,7 @@ T[] divisorList(T)(T x) {
     return res;
 }
 
+///
 unittest {
     import std.range, std.algorithm;
     assert(equal(divisorList(1), [1]));
@@ -21,6 +23,7 @@ unittest {
     assert(equal(divisorList(24), [1, 2, 3, 4, 6, 8, 12, 24]));
 }
 
+/// xの素因数一覧を返す
 T[] factorList(T)(T x) {
     T[] res;
     for (T i = 2; i*i <= x; i++) {
@@ -34,6 +37,7 @@ T[] factorList(T)(T x) {
     return res;
 }
 
+///
 unittest {
     import std.range, std.algorithm;
     assert(equal(factorList(1), new int[0]));

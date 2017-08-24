@@ -3,10 +3,12 @@ module dcomp.numeric.primitive;
 import std.traits;
 import std.bigint;
 
+/// 高速累乗
 T pow(T, U)(T x, U n) if (!isFloatingPoint!T && (isIntegral!U || is(U == BigInt))) {
     return pow(x, n, T(1));
 }
 
+/// ditto
 T pow(T, U)(T x, U n, T e) if (isIntegral!U || is(U == BigInt)) {
     while (n) {
         if (n & 1) e *= x;
@@ -21,11 +23,13 @@ unittest {
     assert(pow(3, 5, 2) == 486);
 }
 
+/// lcm
 T lcm(T)(in T a, in T b) {
     import std.numeric : gcd;
     return a / gcd(a,b) * b;
 }
 
+///
 unittest {
     assert(lcm(2, 4) == 4);
     assert(lcm(3, 5) == 15);
@@ -33,8 +37,8 @@ unittest {
     assert(lcm(0, 100) == 0);
 }
 
-//a*T[0]+b*T[1]=T[2], T[2]=gcd
 //todo: to binary extgcd
+///a*T[0]+b*T[1]=T[2], T[2]=gcd
 T[3] extGcd(T)(in T a, in T b) 
 if (!isIntegral!T || isSigned!T) //unsignedはNG
 {
@@ -46,6 +50,7 @@ if (!isIntegral!T || isSigned!T) //unsignedはNG
     }
 }
 
+///
 unittest {
     import std.numeric : gcd;
     foreach (i; 0..100) {

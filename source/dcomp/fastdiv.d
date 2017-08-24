@@ -3,6 +3,10 @@ module dcomp.fastdiv;
 import dcomp.foundation, dcomp.int128;
 import core.bitop;
 
+/**
+Barrett reductionを使用し、高速除算を行う。
+ulongをこれで置き換えれば大体うまく動く。
+ */
 struct FastDivULong {
     ulong value, m;
     int lg;
