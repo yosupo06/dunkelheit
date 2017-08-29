@@ -2,7 +2,7 @@ pipeline:
   build:
     image: asia.gcr.io/develop-156705/dmd:${D_VERSION}
     commands:
-      - dub test
+      - dub test --compiler=${COMPILER}
 
 matrix:
   D_VERSION:
@@ -34,3 +34,6 @@ matrix:
 
     - 2.068.2
     - 2.068.1
+  COMPILER:
+    - dmd
+    - dmd-x86
