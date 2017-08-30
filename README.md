@@ -1,4 +1,4 @@
-[![Build Status](http://jenkins.yosupo.com/buildStatus/icon?job=dcomp-test)](http://jenkins.yosupo.com/job/dcomp-test/)
+[![Build Status](http://drone.yosupo.com/api/badges/yosupo06/dcomp/status.svg)](http://drone.yosupo.com/yosupo06/dcomp)
 
 dubには登録していないので、
 
