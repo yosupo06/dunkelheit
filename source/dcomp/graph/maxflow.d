@@ -72,6 +72,7 @@ maxFlowInfo!(C) maxFlow(C, C EPS, T)(T g, int s, int t) {
 
 ///
 unittest {
+    import std.algorithm : equal;
     import std.conv : to;
     struct Edge {
         int to, cap, rev;
@@ -87,7 +88,10 @@ unittest {
     addEdge(g, 0, 2, 3);
     addEdge(g, 1, 3, 2);
     addEdge(g, 2, 3, 4);
-    assert(maxFlow!(int, 0)(g, 0, 3).flow == 5);
+    auto res = maxFlow!(int, 0)(g, 0, 3);
+    assert(res.flow == 5);
+    //MinCut : S={0, 1}, T={2, 3}
+    assert(equal(res.dual, [false, false, true, true]));
 }
 
 
