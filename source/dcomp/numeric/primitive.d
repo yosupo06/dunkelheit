@@ -4,18 +4,20 @@ import std.traits;
 import std.bigint;
 
 /// 高速累乗
-T pow(T, U)(T x, U n) if (!isFloatingPoint!T && (isIntegral!U || is(U == BigInt))) {
+Unqual!T pow(T, U)(T x, U n) if (!isFloatingPoint!T && (isIntegral!U || is(U == BigInt))) {
     return pow(x, n, T(1));
 }
 
 /// ditto
-T pow(T, U)(T x, U n, T e) if (isIntegral!U || is(U == BigInt)) {
-    while (n) {
-        if (n & 1) e *= x;
-        x *= x;
-        n /= 2;
+Unqual!T pow(T, U)(T x, U n, T e) if (isIntegral!U || is(U == BigInt)) {
+    Unqual!T b = x, v = e;
+    Unqual!U m = n;
+    while (m) {
+        if (m & 1) v *= b;
+        b *= b;
+        m /= 2;
     }
-    return e;
+    return v;
 }
 
 unittest {
