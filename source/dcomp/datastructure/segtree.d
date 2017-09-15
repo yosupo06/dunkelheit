@@ -7,8 +7,7 @@ struct LazySeg(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL, bool isSimp
     static if (!isSimple) L[] lz;
     @disable this();
     this(uint n) {
-        import std.algorithm : fill, each;
-        import core.bitop : bsr;
+        import std.algorithm : each;
         if (n == 0) return;
         uint lg = 0;
         while ((2^^lg) < n) lg++;
@@ -17,6 +16,28 @@ struct LazySeg(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL, bool isSimp
         sz = 2^^lg;
         d = new T[](2*sz);
         d.each!((ref x) => x = eT);
+        static if (!isSimple) {
+            lz = new L[](2*sz);
+            lz.each!((ref x) => x = eL);
+        }
+    }
+    this(T[] first) {
+        import std.conv : to;
+        import std.algorithm : each;
+        n = first.length.to!uint;
+        if (n == 0) return;
+        uint lg = 0;
+        while ((2^^lg) < n) lg++;
+        this.lg = lg;
+        sz = 2^^lg;
+        d = new T[](2*sz);
+        d.each!((ref x) => x = eT);
+        foreach (i; 0..n) {
+            d[sz+i] = first[i];
+        }
+        foreach_reverse (i; 1..sz) {
+            d[i] = opTT(d[2*i], d[2*i+1]);
+        }
         static if (!isSimple) {
             lz = new L[](2*sz);
             lz.each!((ref x) => x = eL);
@@ -119,6 +140,26 @@ unittest {
     ///区間max, 区間加算
     auto seg = LazySeg!(int, int,
         (a, b) => max(a, b), (a, b) => a+b, (a, b) => a+b, 0, 0)(3);
+    
+    //[2, 1, 4]
+    seg[0] = 2; seg[1] = 1; seg[2] = 4;
+    assert(seg[0..3].sum == 4);
+
+    //[2, 1, 5]
+    seg[2] = 5;
+    assert(seg[0..2].sum == 2);
+    assert(seg[0..3].sum == 5);
+
+    //[12, 11, 5]
+    seg[0..2] += 10;
+    assert(seg[0..3].sum == 12);
+}
+
+unittest {
+    import std.algorithm : max;
+    ///区間max, 区間加算
+    auto seg = LazySeg!(int, int,
+        (a, b) => max(a, b), (a, b) => a+b, (a, b) => a+b, 0, 0)([2, 1, 4]);
     
     //[2, 1, 4]
     seg[0] = 2; seg[1] = 1; seg[2] = 4;
