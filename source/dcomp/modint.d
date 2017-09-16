@@ -17,7 +17,7 @@ struct ModInt(uint MD) if (MD < int.max) {
     /// ditto
     auto opBinary(string op:"-")(ModInt r) const {return make(normS(v+MD-r.v));}
     /// ditto
-    auto opBinary(string op:"*")(ModInt r) const {return make((long(v)*r.v%MD).to!uint);}
+    auto opBinary(string op:"*")(ModInt r) const {return make((ulong(v)*r.v%MD).to!uint);}
     /// ditto
     auto opBinary(string op:"/")(ModInt r) const {return this*inv(r);}
     auto opOpAssign(string op)(ModInt r) {return mixin ("this=this"~op~"r");}
@@ -67,7 +67,7 @@ struct DModInt(string name) {
     /// ditto
     auto opBinary(string op:"-")(DModInt r) const {return make(normS(v+MD-r.v));}
     /// ditto
-    auto opBinary(string op:"*")(DModInt r) const {return make((long(v)*r.v%MD).to!uint);}
+    auto opBinary(string op:"*")(DModInt r) const {return make((ulong(v)*r.v%MD).to!uint);}
     /// ditto
     auto opBinary(string op:"/")(DModInt r) const {return this*inv(r);}
     auto opOpAssign(string op)(DModInt r) {return mixin ("this=this"~op~"r");}
