@@ -2,13 +2,16 @@ module dcomp.datastructure.segtree;
 
 /// 遅延伝搬Segment Tree
 struct LazySeg(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL, bool isSimple = false) {
+    import std.functional : binaryFun;
+    alias _opTT = binaryFun!opTT;
+    alias _opTL = binaryFun!opTL;
+    alias _opLL = binaryFun!opLL;
     const uint n, sz, lg;
     T[] d;
     static if (!isSimple) L[] lz;
     @disable this();
     this(uint n) {
         import std.algorithm : each;
-        if (n == 0) return;
         uint lg = 0;
         while ((2^^lg) < n) lg++;
         this.n = n;
@@ -36,7 +39,7 @@ struct LazySeg(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL, bool isSimp
             d[sz+i] = first[i];
         }
         foreach_reverse (i; 1..sz) {
-            d[i] = opTT(d[2*i], d[2*i+1]);
+            update(i);
         }
         static if (!isSimple) {
             lz = new L[](2*sz);
@@ -47,9 +50,10 @@ struct LazySeg(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL, bool isSimp
         private void lzAdd(uint k, L x) {}
         private void push(uint k) {}
     } else {
+        pragma(inline, true):
         private void lzAdd(uint k, L x) {
-            d[k] = opTL(d[k], x);
-            lz[k] = opLL(lz[k], x);
+            d[k] = _opTL(d[k], x);
+            lz[k] = _opLL(lz[k], x);
         }
         private void push(uint k) {
             if (lz[k] == eL) return;
@@ -57,6 +61,9 @@ struct LazySeg(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL, bool isSimp
             lzAdd(2*k+1, lz[k]);
             lz[k] = eL;
         }
+    }
+    void update(uint k) {
+        d[k] = _opTT(d[2*k], d[2*k+1]);
     }
     T single(uint k) {
         k += sz;
@@ -72,7 +79,7 @@ struct LazySeg(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL, bool isSimp
         }
         d[k] = x;
         foreach (uint i; 1..lg+1) {
-            d[k>>i] = opTT(d[2*(k>>i)], d[2*(k>>i)+1]);
+            d[k>>i] = _opTT(d[2*(k>>i)], d[2*(k>>i)+1]);
         }
     }
     //d[a]+d[a+1]+...+d[b-1]
@@ -81,7 +88,7 @@ struct LazySeg(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL, bool isSimp
         if (a <= l && r <= b) return d[k];
         push(k);
         uint md = (l+r)/2;
-        return opTT(sum(a, b, l, md, 2*k),
+        return _opTT(sum(a, b, l, md, 2*k),
             sum(a, b, md, r, 2*k+1));
     }    
     T sum(uint a, uint b) {
@@ -98,7 +105,7 @@ struct LazySeg(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL, bool isSimp
         uint md = (l+r)/2;
         add(a, b, x, l, md, 2*k);
         add(a, b, x, md, r, 2*k+1);
-        d[k] = opTT(d[2*k], d[2*k+1]);
+        d[k] = _opTT(d[2*k], d[2*k+1]);
     }
     void add(uint a, uint b, L x) {
         assert(0 <= a && a <= b && b <= n);
@@ -201,7 +208,109 @@ unittest {
     assert(seg[0..3].sum == 5);
 }
 
+unittest {
+    import std.typecons, std.random, std.algorithm;
+    import dcomp.modint, dcomp.matrix, dcomp.numeric.primitive;
+    static immutable uint MD = 10^^9 + 7;
+    alias Mint = ModInt!MD;
+    alias Mat = SMatrix!(Mint, 2, 2);
 
+    static immutable Mat e = (){
+        Mat m;
+        m[0, 0] = Mint(1);
+        m[1, 1] = Mint(1);
+        return m;
+    }();
+
+    Xorshift128 gen;
+
+    Mint rndI() {
+        return Mint(uniform(0, MD, gen));
+    }
+    Mat rndM() {
+        Mat m;
+        while (true) {
+            foreach (i; 0..2) {
+                foreach (j; 0..2) {
+                    m[i, j] = rndI();
+                }
+            }
+            if (m[0, 0] * m[1, 1] == m[0, 1] * m[1, 0]) continue;
+            break;
+        }
+        return m;
+    }
+    
+    Mat check(alias Seg)(int N, int M, uint seed) {
+        alias T = Tuple!(Mat, int);
+        gen = Xorshift128(seed);
+        T[] a = new T[N];
+        a.each!((ref x) => x = T(rndM(), 1));
+        alias Q = Tuple!(int, int, int, Mat);
+        Q[] que = new Q[M];
+        foreach (ref q; que) {
+            q[0] = uniform(0, 2, gen);
+            q[1] = uniform(0, N+1, gen);
+            q[2] = uniform(0, N+1, gen);
+            if (q[1] > q[2]) swap(q[1], q[2]);
+            q[3] = rndM();
+        }
+        static auto opTT(T a, T b) {
+            return T(a[0]*b[0], a[1]+b[1]);
+        }
+        static auto opTL(T a, Mat b) {
+            if (b == Mat()) return a;
+            return T(pow(b, a[1], e), a[1]);
+        }
+        static auto opLL(Mat a, Mat b) {
+            return b;
+        }
+
+        auto s = Seg!(T, Mat, opTT, opTL, opLL, T(e, 0), Mat())(a);
+        Mat res;
+        foreach (q; que) {
+            if (q[0] == 0) {
+                //sum
+                res += s.sum(q[1], q[2])[0];
+            } else {
+                //set
+                s.add(q[1], q[2], q[3]);
+            }
+        }
+        return res;
+    }
+    struct Naive(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) {
+        import std.functional : binaryFun;
+        alias _opTT = binaryFun!opTT;
+        alias _opTL = binaryFun!opTL;
+        alias _opLL = binaryFun!opLL;
+        T[] d;
+        this(T[] first) {
+            d = first.dup;
+        }
+        T sum(int l, int r) {
+            T sm = eT;
+            foreach (i; l..r) {
+                sm = _opTT(sm, d[i]);
+            }
+            return sm;
+        }
+        void add(int l, int r, L m) {
+            foreach (i; l..r) {
+                d[i] = opTL(d[i], m);
+            }
+        }
+    }
+    int n = 64;
+    Mat[] col = new Mat[n];
+    foreach (i; 0..n) {
+        col[i] = check!Naive(i, 1000, 114514);
+    }
+    foreach (i; 0..n) {
+        import std.exception;
+        assert(check!LazySeg(i, 1000, 114514) == col[i]);
+    }
+}
 
 import std.traits;
 
