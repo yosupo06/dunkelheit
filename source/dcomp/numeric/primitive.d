@@ -9,7 +9,8 @@ Unqual!T pow(T, U)(T x, U n) if (!isFloatingPoint!T && (isIntegral!U || is(U == 
 }
 
 /// ditto
-Unqual!T pow(T, U)(T x, U n, T e) if (isIntegral!U || is(U == BigInt)) {
+Unqual!T pow(T, U, V)(T x, U n, V e)
+if ((isIntegral!U || is(U == BigInt)) && is(Unqual!T == Unqual!V)) {
     Unqual!T b = x, v = e;
     Unqual!U m = n;
     while (m) {
