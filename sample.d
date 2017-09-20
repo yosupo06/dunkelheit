@@ -7,7 +7,7 @@ import std.stdio, std.algorithm, std.range, std.conv;
 import dcomp.foundation, dcomp.scanner;
 
 int main() {
-    auto sc = new Scanner(stdin);
+    Scanner sc = new Scanner(stdin);
     int a, b;
     int[] c;
     sc.read(a, b, c);
