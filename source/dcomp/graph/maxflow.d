@@ -33,14 +33,14 @@ maxFlowInfo!(C) maxFlow(C, C EPS, T)(T g, int s, int t) {
         }
     }
 
-    C dfs(int v, int t, C f) {
+    C dfs(int v, C f) {
         import std.algorithm : min;
         if (v == t) return f;
         auto edgeList = g[v][iter[v]..$];
         foreach (ref e; edgeList) {
             if (e.cap <= EPS) continue;
             if (level[v] < level[e.to]) {
-                C d = dfs(e.to, t, min(f, e.cap));
+                C d = dfs(e.to, min(f, e.cap));
                 if (d <= EPS) continue;
                 e.cap -= d;
                 g[e.to][e.rev].cap += d;
@@ -57,7 +57,7 @@ maxFlowInfo!(C) maxFlow(C, C EPS, T)(T g, int s, int t) {
         if (level[t] < 0) break;
         iter[] = 0;
         while (true) {
-            C f = dfs(s, t, C.max);
+            C f = dfs(s, C.max);
             if (!f) break;
             flow += f;
         }
