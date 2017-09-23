@@ -45,6 +45,9 @@ struct FastAppender(A) {
         }
         _data[len++] = item;
     }
+    void removeBack() {
+        len--;
+    }
     /// C++のvectorと似ている, 要素は空になるがメモリへの参照は手放さない
     void clear() {
         len = 0;
