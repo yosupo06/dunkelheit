@@ -124,7 +124,7 @@ unittest {
         auto g = new E[][n];
         E[][] elist = new E[][n];
 
-        foreach (i; 1..m) {
+        foreach (i; 0..m) {
             int x, y;
             while (true) {
                 x = uniform(0, n);
