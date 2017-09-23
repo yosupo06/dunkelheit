@@ -26,7 +26,6 @@ MinCostFlowInfo!(C, D, T) minCostFlow(C, D, T)(T g, int s, int t, bool neg) {
     import std.algorithm : map;
     import std.range : array;
     import std.conv : to;
-    int n = g.length.to!int;
     auto mcfInfo = MinCostFlowInfo!(C, D, T)(g, s, t);
     mcfInfo.dualRef(neg);
     return mcfInfo;
@@ -134,12 +133,9 @@ C singleFlow(C, D, T)(ref MinCostFlowInfo!(C, D, T) mcfInfo, C c) {
 
 void manyFlow(C, D, T)(ref MinCostFlowInfo!(C, D, T) mcfInfo, C c) {
     with (mcfInfo) {
-        D res = 0;
         while (c) {
-            D d = nd;
             C f = singleFlow(mcfInfo, c);
             if (!f) break;
-            res += D(f) * d;
             c -= f;
         }
     }
