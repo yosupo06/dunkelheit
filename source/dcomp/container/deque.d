@@ -1,61 +1,64 @@
 module dcomp.container.deque;
 
-/**
-Deque リングバッファ実装でDListより速い
- */
-struct Deque(T, bool mayNull = true) {
+struct DequePayload(T) {
     import core.exception : RangeError;
     import core.memory : GC;
     import std.range : ElementType, isInputRange;
     import std.traits : isImplicitlyConvertible;
-
-    struct Payload {
-        T *d;
-        size_t st, length, cap;
-        @property bool empty() const { return length == 0; }
-        alias opDollar = length;
-        ref inout(T) opIndex(size_t i) inout {
-            version(assert) if (length <= i) throw new RangeError();
-            return d[(st+i >= cap) ? (st+i-cap) : st+i];
-        }
-        private void expand() {
-            import std.algorithm : max;
-            assert(length == cap);
-            auto nc = max(size_t(4), 2*cap);
-            T* nd = cast(T*)GC.malloc(nc * T.sizeof);
-            foreach (i; 0..length) {
-                nd[i] = this[i];
-            }
-            d = nd; st = 0; cap = nc;
-        }
-        void clear() {
-            st = length = 0;
-        }
-        void insertFront(T v) {
-            if (length == cap) expand();
-            if (st == 0) st += cap;
-            st--; length++;
-            this[0] = v; 
-        }
-        void insertBack(T v) {
-            if (length == cap) expand();
-            length++;
-            this[length-1] = v; 
-        }
-        void removeFront() {
-            assert(!empty, "Deque.removeFront: Deque is empty");        
-            st++; length--;
-            if (st == cap) st = 0;
-        }
-        void removeBack() {
-            assert(!empty, "Deque.removeBack: Deque is empty");        
-            length--;
-        }
+    T *d;
+    size_t st, length, cap;
+    @property bool empty() const { return length == 0; }
+    alias opDollar = length;
+    ref inout(T) opIndex(size_t i) inout {
+        version(assert) if (length <= i) throw new RangeError();
+        return d[(st+i >= cap) ? (st+i-cap) : st+i];
     }
-    struct RangeT(A) {
-        alias T = typeof(*(A.p));
-        alias E = typeof(A.p.d[0]);
-        T *p;
+    private void expand() {
+        import std.algorithm : max;
+        assert(length == cap);
+        auto nc = max(size_t(4), 2*cap);
+        T* nd = cast(T*)GC.malloc(nc * T.sizeof);
+        foreach (i; 0..length) {
+            nd[i] = this[i];
+        }
+        d = nd; st = 0; cap = nc;
+    }
+    void clear() {
+        st = length = 0;
+    }
+    void insertFront(T v) {
+        if (length == cap) expand();
+        if (st == 0) st += cap;
+        st--; length++;
+        this[0] = v; 
+    }
+    void insertBack(T v) {
+        if (length == cap) expand();
+        length++;
+        this[length-1] = v; 
+    }
+    void removeFront() {
+        assert(!empty, "Deque.removeFront: Deque is empty");        
+        st++; length--;
+        if (st == cap) st = 0;
+    }
+    void removeBack() {
+        assert(!empty, "Deque.removeBack: Deque is empty");        
+        length--;
+    }
+    
+    ref inout(T) front() inout { return this[0]; }
+    ref inout(T) back() inout { return this[$-1]; }
+    Range opSlice() {return Range(&this, 0, length); }
+    
+    alias Range = RangeT!(DequePayload!T);
+    alias ConstRange = RangeT!(const DequePayload!T);
+    alias ImmutableRange = RangeT!(immutable DequePayload!T);
+
+    static struct RangeT(A) {
+        import std.traits : CopyTypeQualifiers;
+        alias E = CopyTypeQualifiers!(A, T);
+        A *p;
         size_t a, b;
         @property bool empty() const { return b <= a; }
         @property size_t length() const { return b-a; }
@@ -86,10 +89,22 @@ struct Deque(T, bool mayNull = true) {
             return typeof(return)(p, a+i, a+j);
         }
     }
-    
-    alias Range = RangeT!Deque;
-    alias ConstRange = RangeT!(const Deque);
-    alias ImmutableRange = RangeT!(immutable Deque);
+}
+
+
+/**
+Deque リングバッファ実装でDListより速い
+ */
+struct Deque(T, bool mayNull = true) {
+    import core.exception : RangeError;
+    import core.memory : GC;
+    import std.range : ElementType, isInputRange;
+    import std.traits : isImplicitlyConvertible;
+
+    alias Payload = DequePayload!T;
+    alias Range = Payload.Range;
+    alias ConstRange = Payload.ConstRange;
+    alias ImmutableRange = Payload.ImmutableRange;
     
     Payload* p;
     private void I() { if (mayNull && !p) p = new Payload(); }
