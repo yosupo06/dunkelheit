@@ -1,6 +1,6 @@
 module dcomp.graph.maxflow;
 
-import dcomp.container.deque;
+import dcomp.container.deque, dcomp.array;
 
 ///maxflowの情報
 struct MaxFlowInfo(C) {
@@ -20,9 +20,10 @@ MaxFlowInfo!(C) maxFlow(C, C EPS, T)(T g, int s, int t) {
 
     void bfs() {
         level[] = -1; level[s] = 0;
-        auto que = Deque!int(s);
+        auto que = FastAppender!(int[])();
+        que ~= s;
         while (!que.empty) {
-            int v = que.back; que.removeBack();
+            int v = que.back; que.removeBack;
             foreach (e; g[v]) {
                 if (e.cap <= EPS) continue;
                 if (level[e.to] < 0) {
@@ -36,19 +37,20 @@ MaxFlowInfo!(C) maxFlow(C, C EPS, T)(T g, int s, int t) {
     C dfs(int v, C f) {
         import std.algorithm : min;
         if (v == t) return f;
+        C res = 0;
         auto edgeList = g[v][iter[v]..$];
         foreach (ref e; edgeList) {
             if (e.cap <= EPS) continue;
-            if (level[v] < level[e.to]) {
-                C d = dfs(e.to, min(f, e.cap));
-                if (d <= EPS) continue;
-                e.cap -= d;
-                g[e.to][e.rev].cap += d;
-                return d;
-            }
+            if (level[v] >= level[e.to]) continue;            
+            C d = dfs(e.to, min(f, e.cap));
+            e.cap -= d;
+            g[e.to][e.rev].cap += d;
+            res += d;
+            f -= d;
+            if (f == 0) break;
             iter[v]++;
         }
-        return 0;
+        return res;
     }
 
     C flow = 0;
