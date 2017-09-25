@@ -19,9 +19,11 @@ if (isSigned!(typeof(unaryFun!_pred(T())))) {
     alias RadixHeap = RadixHeap!(T, pred2);
 }
 
+import core.bitop;
+
 struct RadixHeap(T, alias _pred = "a")
 if (isUnsigned!(typeof(unaryFun!_pred(T())))) {
-    import std.algorithm, core.bitop;
+    import std.algorithm;
     import core.exception : RangeError;
     alias pred = unaryFun!_pred;
     alias U = typeof(pred(T()));
