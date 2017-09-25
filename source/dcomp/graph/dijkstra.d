@@ -1,6 +1,6 @@
 module dcomp.graph.dijkstra;
 
-import dcomp.algorithm;
+import dcomp.algorithm, dcomp.container.radixheap;
 
 struct DijkstraInfo(T) {
     T[] dist;
@@ -15,17 +15,25 @@ DijkstraInfo!D dijkstra(D, T)(T g, int s, D inf = D.max) {
     import std.conv : to;
     import std.typecons : Tuple;
     import std.container : make, Array, heapify;
+    import std.container.binaryheap : BinaryHeap;
+    import std.traits : isIntegral;
 
     int V = g.length.to!int;
     auto dijk = DijkstraInfo!D(V, inf);
     with (dijk) {        
         alias P = Tuple!(int, "to", D, "dist");
-        auto q = heapify!"a.dist>b.dist"(make!(Array!P)([P(s, D(0))]));
-
+        auto q = (){
+            static if (isIntegral!D) {
+                return RadixHeap!(P, "a.dist")();
+            } else {
+                return heapify!"a.dist>b.dist"(make!(Array!P));
+            }
+        }();
+        q.insert(P(s, D(0)));
         dist[s] = D(0);
         from[s] = -1;
         while (!q.empty) {
-            P p = q.front; q.popFront();
+            P p = q.front; q.removeFront();
             if (dist[p.to] < p.dist) continue;
             foreach (e; g[p.to]) {
                 if (p.dist+e.dist < dist[e.to]) {
