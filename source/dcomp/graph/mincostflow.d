@@ -72,9 +72,8 @@ unittest {
     }
 
 
-    writeln("MinCostFlow Random5000");
 
-    void f() {
+    void f(bool neg)() {
         int n = uniform(2, 20);
         int m = uniform(0, 200);
         int s, t;
@@ -100,18 +99,20 @@ unittest {
             elist[x] ~= E(y, c, d, -1);
         }
 
-        auto res = minCostFlow!(int, int)(g, s, t, false);
+        auto res = minCostFlow!(int, int)(g, s, t, neg);
         res.manyFlow(10^^9);
         int sm = (res.dual[t]-res.dual[s]) * res.capFlow;
         foreach (i, v; elist) {
             foreach (e; v) {
-                sm -= max(0, (res.dual[e.to] - res.dual[i]) - e.dist) * e.cap;
+                sm -= (max(0L, (long(res.dual[e.to]) - res.dual[i]) - e.dist) * e.cap).to!long;
             }
         }
         assert(res.flow == sm);
     }
-    auto ti = benchmark!(f)(5000);
+    writeln("MinCostFlow Random5000, Neg5000");
+    auto ti = benchmark!(f!false, f!true)(5000);
     writeln(ti[0].msecs, "ms");
+    writeln(ti[1].msecs, "ms");
 }
 
 C singleFlow(C, D, T)(ref MinCostFlowInfo!(C, D, T) mcfInfo, C c) {
@@ -141,26 +142,33 @@ void manyFlow(C, D, T)(ref MinCostFlowInfo!(C, D, T) mcfInfo, C c) {
     }
 }
 
-import dcomp.container.deque;
+import dcomp.array;
+import dcomp.container.radixheap;
 
 void dualRef(bool neg, C, D, T)(ref MinCostFlowInfo!(C, D, T) mcfInfo) {
     import std.conv : to;
+    import std.traits : isIntegral;
     import std.typecons;
     import std.container;
     import std.algorithm;
     alias P = Tuple!(int, "to", D, "dist");
-    immutable string INIT = !neg
-        ? `heapify!"a.dist>b.dist"(Array!P())`
-        : "Deque!P()";
-    
 
     with(mcfInfo) {
         int n = g.length.to!int;
         D[] dist = new D[n]; dist[] = D.max;
         pv[] = -1; pe[] = -1;
-        Deque!int refV;
-        auto que = mixin(INIT);
-
+        FastAppender!(int[]) refV;
+        auto que = (){
+            static if (!neg) {
+                static if (isIntegral!D) {
+                    return RadixHeap!(P, "a.dist")();
+                } else {
+                    return heapify!"a.dist>b.dist"(make!(Array!P));
+                }
+            } else {
+                return Deque!P();
+            }
+        }();
         void insert(P p) {
             static if (!neg) {
                 que.insert(p);
@@ -172,7 +180,7 @@ void dualRef(bool neg, C, D, T)(ref MinCostFlowInfo!(C, D, T) mcfInfo) {
             P p;
             static if (!neg) {
                 p = que.front();
-                que.popFront();
+                que.removeFront();
             } else {
                 p = que.back();
                 que.removeBack();
@@ -187,7 +195,7 @@ void dualRef(bool neg, C, D, T)(ref MinCostFlowInfo!(C, D, T) mcfInfo) {
             if (dist[v] < p.dist) continue;
             if (!neg) {
                 if (v == t) break;
-                refV.insertBack(v);
+                refV ~= v;
             }
             foreach (int i, e; g[v]) {
                 D ed = e.dist + dual[v] - dual[e.to];
@@ -204,14 +212,14 @@ void dualRef(bool neg, C, D, T)(ref MinCostFlowInfo!(C, D, T) mcfInfo) {
             return;
         }
         static if (!neg) {
-            while (!refV.empty()) {
-                int v = refV.back(); refV.removeBack();
+            foreach (v; refV.data) {
                 if (dist[v] >= dist[t]) continue;
                 dual[v] += dist[v]-dist[t];
             }
         } else {
             for (int v = 0; v < n; v++) {
-                dual[v] += dist[v];
+                if (dist[v] == D.max) dual[v] = D.max;
+                else dual[v] += dist[v];
             }
         }
         

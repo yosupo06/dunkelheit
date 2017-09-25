@@ -21,12 +21,11 @@ if (isSigned!(typeof(unaryFun!_pred(T())))) {
 
 struct RadixHeap(T, alias _pred = "a")
 if (isUnsigned!(typeof(unaryFun!_pred(T())))) {
-    import std.algorithm;
+    import std.algorithm, core.bitop;
     import core.exception : RangeError;
     alias pred = unaryFun!_pred;
     alias U = typeof(pred(T()));
     static int bsr1(U x) {
-        import core.bitop : bsr;
         return (x == 0) ? 0 : bsr(x)+1;
     }
     static struct Payload {
