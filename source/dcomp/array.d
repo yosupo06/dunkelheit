@@ -45,6 +45,9 @@ struct FastAppender(A) {
         }
         _data[len++] = item;
     }
+    void insertBack(T item) {
+        this ~= item;
+    }
     void removeBack() {
         len--;
     }
@@ -52,6 +55,8 @@ struct FastAppender(A) {
     void clear() {
         len = 0;
     }
+    bool empty() const { return len == 0; }
+    ref inout(T) back() inout { assert(len); return _data[len-1]; }
     /**
     これで返した配列も, 元のFastAppenderに操作すると壊れる.
     必要ならばdupしておくこと.
