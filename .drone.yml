@@ -5,28 +5,53 @@ pipeline:
       - dub test --compiler=${COMPILER}
 
 matrix:
-  D_VERSION:
-    - 2.075.1
-    - 2.075.0
-
-    - 2.074.1
-    - 2.074.0
-
-    - 2.073.2
-    - 2.073.0
-
-    - 2.072.2
-    - 2.072.0
-
-    - 2.071.2
-    - 2.071.0
-
-  COMPILER:
-    - dmd
-    - dmd-x86
-
-matrix:
   include:
+    - D_VERSION: 2.075.1
+      COMPILER: dmd
+    - D_VERSION: 2.075.1
+      COMPILER: dmd-x86
+    - D_VERSION: 2.075.0
+      COMPILER: dmd
+    - D_VERSION: 2.075.0
+      COMPILER: dmd-x86
+
+    - D_VERSION: 2.074.1
+      COMPILER: dmd
+    - D_VERSION: 2.074.1
+      COMPILER: dmd-x86
+    - D_VERSION: 2.074.0
+      COMPILER: dmd
+    - D_VERSION: 2.074.0
+      COMPILER: dmd-x86
+
+    - D_VERSION: 2.073.2
+      COMPILER: dmd
+    - D_VERSION: 2.073.2
+      COMPILER: dmd-x86
+    - D_VERSION: 2.073.0
+      COMPILER: dmd
+    - D_VERSION: 2.073.0
+      COMPILER: dmd-x86
+
+    - D_VERSION: 2.072.2
+      COMPILER: dmd
+    - D_VERSION: 2.072.2
+      COMPILER: dmd-x86
+    - D_VERSION: 2.072.0
+      COMPILER: dmd
+    - D_VERSION: 2.072.0
+      COMPILER: dmd-x86
+    
+    - D_VERSION: 2.071.2
+      COMPILER: dmd
+    - D_VERSION: 2.071.2
+      COMPILER: dmd-x86
+    - D_VERSION: 2.071.0
+      COMPILER: dmd
+    - D_VERSION: 2.071.0
+      COMPILER: dmd-x86
+
+
     - D_VERSION: 2.070.2
       COMPILER: dmd
     - D_VERSION: 2.070.1
