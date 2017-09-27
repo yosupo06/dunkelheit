@@ -31,13 +31,14 @@ struct LazySegBlockEngine(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) 
             }
         }
     }
-    const uint n, sz, lg;
+    const uint N, n, sz, lg;
     Block[] blks;
     alias S = Tuple!(T, "d", L, "lz");
     S[] s;
     this(uint N) {
         import std.conv : to;
         import std.algorithm : each;
+        this.N = N;
         n = N / B + 1;
         blks = new Block[n+1];
         foreach (i; 0..n+1) {
@@ -53,6 +54,7 @@ struct LazySegBlockEngine(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) 
     this(T[] first) {
         import std.conv : to;
         import std.algorithm : each;
+        this.N = first.length.to!uint;
         n = first.length.to!uint / B + 1;
         blks = new Block[n+1];
         foreach (i; 0..n) {
@@ -72,7 +74,7 @@ struct LazySegBlockEngine(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) 
             update(i);
         }
     }
-    @property size_t length() const { return sz*B; }
+    @property size_t length() const { return N; }
     pragma(inline):
     private void lzAdd(uint k, in L x) {
         s[k].lz = opLL(s[k].lz, x);
@@ -190,7 +192,7 @@ struct LazySegNaiveEngine(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) 
     const uint n, sz, lg;
     T[] d; L[] lz;
     @disable this();
-    @property size_t length() const {return sz;}
+    @property size_t length() const {return n;}
     this(uint n) {
         import std.algorithm : each;
         uint lg = 0;

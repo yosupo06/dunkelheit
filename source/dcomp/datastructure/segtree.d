@@ -16,7 +16,8 @@ struct SegTree(alias E, Args...) {
     this(T[] first) {
         eng = Engine(first);
     }
-    @property size_t opDollar() const {return eng.length();}
+    @property size_t length() const { return eng.length(); }
+    @property size_t opDollar() const { return eng.length(); }
     struct Range {
         Engine* eng;
         size_t start, end;
@@ -73,7 +74,7 @@ unittest {
     assert(seg[0..3].sum == 12);
 
     //n=10
-    LazySeg!(int, int, "a+b", "a+b", "a+b", 0, 0)(10);
+    assert(LazySeg!(int, int, "a+b", "a+b", "a+b", 0, 0)(10).length == 10);
 }
 
 template SimpleSeg(T, alias opTT, T eT, alias Engine = SimpleSegEngine) {
@@ -109,6 +110,7 @@ struct LazySegEngine(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) {
     this(uint n) {
         import std.conv : to;
         import std.algorithm : each;
+        this.n = n;
         uint lg = 0;
         while ((2^^lg) < n) lg++;
         this.lg = lg;
@@ -324,6 +326,53 @@ unittest {
     auto seg = LazySeg!(long[2], long[2],
         (a, b) => a, (a, b) => a, (a, b) => a, [0L, 0L], [0L, 0L])(10);
 }
+
+
+unittest {
+    //some func test
+    import std.typecons, std.random, std.algorithm;
+    import dcomp.datastructure.segex;
+
+    void check(alias Seg)() {
+        import std.algorithm : max;
+        ///区間max, 区間加算
+
+        auto seg = SegTree!(Seg, int, int,
+            (a, b) => max(a, b), (a, b) => a+b, (a, b) => a+b, 0, 0)([2, 1, 4]);
+        
+        //[2, 1, 4]
+        seg[0] = 2; seg[1] = 1; seg[2] = 4;
+        assert(seg[0..3].sum == 4);
+
+        //[2, 1, 5]
+        seg[2] = 5;
+        assert(seg[0..2].sum == 2);
+        assert(seg[0..3].sum == 5);
+
+        //[12, 11, 5]
+        seg[0..2] += 10;
+        assert(seg[0..3].sum == 12);
+
+        //n=10
+        auto seg2 = SegTree!(Seg, int, int,
+            (a, b) => max(a, b), (a, b) => a+b, (a, b) => a+b, 0, 0)(10);
+        assert(seg2.length == 10);
+    }
+    void checkSimple(alias Seg)() {
+        import std.algorithm : max;
+        ///区間max, 区間加算
+
+        auto seg = SegTree!(Seg, int, (a, b) => a+b, 0)(10);
+//        assert(seg.length == 10);
+    }
+    check!LazySegEngine();
+    check!LazySegBlockEngine();
+    check!LazySegNaiveEngine();
+    checkSimple!SimpleSegEngine();
+    checkSimple!SimpleSegNaiveEngine();
+}
+
+
 
 unittest {
     //stress test
