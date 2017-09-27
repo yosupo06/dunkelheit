@@ -21,10 +21,14 @@ matrix:
     - 2.071.2
     - 2.071.0
 
-    - 2.070.2
-    - 2.070.1
-    - 2.070.0
-
   COMPILER:
     - dmd
     - dmd-x86
+
+  include:
+    - D_VERSION: 2.070.2
+      COMPILER: dmd
+    - D_VERSION: 2.070.1
+      COMPILER: dmd
+    - D_VERSION: 2.070.0
+      COMPILER: dmd
