@@ -25,6 +25,7 @@ matrix:
     - dmd
     - dmd-x86
 
+matrix:
   include:
     - D_VERSION: 2.070.2
       COMPILER: dmd
