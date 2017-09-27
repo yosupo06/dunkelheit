@@ -9,7 +9,6 @@ struct SegTree(alias E, Args...) {
     alias T = Engine.DataType;
     alias L = Engine.LazyType;
     Engine eng;
-    @disable this();
     this(uint n) {
         eng = Engine(n);
     }
@@ -105,7 +104,7 @@ struct LazySegEngine(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) {
     alias DataType = T;
     alias LazyType = L;
     alias S = Tuple!(T, "d", L, "lz");
-    const uint n, sz, lg;
+    uint n, sz, lg;
     S[] s;
     this(uint n) {
         import std.conv : to;
@@ -260,10 +259,9 @@ struct SimpleSegEngine(T, alias opTT, T eT) {
     alias DataType = T;
     alias LazyType = void;
     import std.functional : binaryFun;
-    const uint n, sz, lg;
+    uint n, sz, lg;
     T[] d;
-    @disable this();
-    @property size_t length() const {return sz;}
+    @property size_t length() const {return n;}
     this(uint n) {
         import std.algorithm : each;
         uint lg = 0;
@@ -336,9 +334,10 @@ unittest {
     void check(alias Seg)() {
         import std.algorithm : max;
         ///区間max, 区間加算
-
-        auto seg = SegTree!(Seg, int, int,
-            (a, b) => max(a, b), (a, b) => a+b, (a, b) => a+b, 0, 0)([2, 1, 4]);
+        alias S = SegTree!(Seg, int, int,
+            (a, b) => max(a, b), (a, b) => a+b, (a, b) => a+b, 0, 0); 
+        S seg;
+        seg = S([2, 1, 4]);
         
         //[2, 1, 4]
         seg[0] = 2; seg[1] = 1; seg[2] = 4;
@@ -361,9 +360,11 @@ unittest {
     void checkSimple(alias Seg)() {
         import std.algorithm : max;
         ///区間max, 区間加算
-
-        auto seg = SegTree!(Seg, int, (a, b) => a+b, 0)(10);
-//        assert(seg.length == 10);
+        
+        alias S = SegTree!(Seg, int, (a, b) => a+b, 0);
+        S seg;
+        seg = S(10);
+        assert(seg.length == 10);
     }
     check!LazySegEngine();
     check!LazySegBlockEngine();

@@ -31,7 +31,7 @@ struct LazySegBlockEngine(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) 
             }
         }
     }
-    const uint N, n, sz, lg;
+    uint N, n, sz, lg;
     Block[] blks;
     alias S = Tuple!(T, "d", L, "lz");
     S[] s;
@@ -189,9 +189,8 @@ struct LazySegNaiveEngine(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) 
     alias DataType = T;
     alias LazyType = L;
     import std.functional : binaryFun;
-    const uint n, sz, lg;
+    uint n, sz, lg;
     T[] d; L[] lz;
-    @disable this();
     @property size_t length() const {return n;}
     this(uint n) {
         import std.algorithm : each;
@@ -422,10 +421,9 @@ struct SimpleSegNaiveEngine(T, alias opTT, T eT) {
     alias DataType = T;
     alias LazyType = void;
     import std.functional : binaryFun;
-    const uint n, sz, lg;
+    uint n, sz, lg;
     T[] d;
-    @disable this();
-    @property size_t length() const {return sz;}
+    @property size_t length() const {return n;}
     this(uint n) {
         import std.algorithm : each;
         uint lg = 0;
