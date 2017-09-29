@@ -4,16 +4,16 @@ pipeline:
     commands:
       - dub test --compiler=${COMPILER}
 
-  doc:
-    image: asia.gcr.io/develop-156705/dmd:${D_VERSION}
-    commands:
-      - dub run dcomp:document
-      - git commit -a -m 'make documents'
-      - git subtree push --prefix docs/ origin gh-pages
-    when:
-      matrix:
-        D_VERSION: 2.076.0
-        COMPILER: dmd
+  # doc:
+  #   image: asia.gcr.io/develop-156705/dmd:${D_VERSION}
+  #   commands:
+  #     - dub run dcomp:document
+  #     - git commit -a -m 'make documents'
+  #     - git subtree push --prefix docs/ origin gh-pages
+  #   when:
+  #     matrix:
+  #       D_VERSION: 2.076.0
+  #       COMPILER: dmd
 
 matrix:
   include:
