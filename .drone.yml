@@ -10,8 +10,8 @@ pipeline:
       - dnf install git
     when:
       matrix:
-        - D_VERSION: 2.075.1
-          COMPILER: dmd
+        D_VERSION: 2.075.1
+        COMPILER: dmd
 
 matrix:
   include:
