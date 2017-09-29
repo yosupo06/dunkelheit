@@ -26,6 +26,18 @@ ubyte[] trimComment(ubyte[] fileBytes) {
     return res;
 }
 
+ubyte[] trimUnittest(ubyte[] fileBytes) {
+    StringCache cache = StringCache(StringCache.defaultBucketCount);
+    LexerConfig config;
+    config.stringBehavior = StringBehavior.source;
+    auto tokens = getTokensForParser(fileBytes, config, &cache);
+    RollbackAllocator rba;
+    auto mod = parseModule(tokens, null, &rba);
+    auto visitor = new Visitor(fileBytes);
+    visitor.visit(mod);
+    return visitor.getResult;
+}
+
 class Visitor : ASTVisitor {
     alias visit = ASTVisitor.visit;
     ubyte[] fileBytes;
@@ -70,16 +82,4 @@ class Visitor : ASTVisitor {
     override void visit(const Token n) {
         super.visit(n);
     }
-}
-
-ubyte[] trimUnittest(ubyte[] fileBytes) {
-    StringCache cache = StringCache(StringCache.defaultBucketCount);
-    LexerConfig config;
-    config.stringBehavior = StringBehavior.source;
-    auto tokens = getTokensForParser(fileBytes, config, &cache);
-    RollbackAllocator rba;
-    auto mod = parseModule(tokens, null, &rba, null);
-    auto visitor = new Visitor(fileBytes);
-    visitor.visit(mod);
-    return visitor.getResult;
 }

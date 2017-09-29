@@ -5,13 +5,12 @@ import std.getopt;
 import shrink;
 
 string basePath = "";
+bool removeComment, removeUnittest;
 
 int main(string[] args) {
-    string inputName;
-    string outputName;
-    bool removeComment;
-    bool removeUnittest;
-    auto rslt = getopt(args,
+    //read opt
+    string inputName, outputName;
+    auto opt = getopt(args,
         config.required,
         "input|i", &inputName,
         config.required,
@@ -19,25 +18,26 @@ int main(string[] args) {
         "c", &removeComment,
         "u", &removeUnittest,
         );
-    if (rslt.helpWanted) {
+    if (opt.helpWanted) {
         defaultGetoptPrinter("dlang source combiner.",
-            rslt.options);
+            opt.options);
     }
 
+    //search dcomp home
     auto f = execute(["dub", "list"]);
-    enforce(f.status == 0, "failed execute");
-    foreach (s; f.output.splitLines) {
-        auto l = s.split;
-        if (l.length == 0 || l[0] != "dcomp") continue;
-        basePath = l[2];
-        break;
-    }
-    enforce(basePath != "", "dcomp not found");
+    enforce(!f.status, "failed execute");
+    basePath = f.output.splitLines
+        .map!split
+        .filter!`a.length && a[0] == "dcomp"`
+        .front[2];
+    enforce(basePath, "dcomp not found");
     writeln(basePath);
+
 
     string[] imported = enumImport(inputName);
     writeln(imported);
 
+    bool[string] visited;
     auto ouf = File(outputName, "w");
     foreach (ph; imported) {
         auto inf = File(ph, "r");
@@ -46,12 +46,7 @@ int main(string[] args) {
         bool first = (ph == inputName);
         if (!first) {
             ouf.writeln("/* IMPORT " ~ ph ~ " */");
-            if (removeComment) {
-                data = data.trimComment;
-            }
-            if (removeUnittest) {
-                data = data.trimUnittest;
-            }
+            data = someTrim(data);
         }
         foreach (line; data.map!(to!char).array.splitLines) {
             if (willCommentOut(line.idup, first)) {
@@ -64,27 +59,42 @@ int main(string[] args) {
     return 0;
 }
 
-
-string[] line2Imp(string s) {
+ubyte[] someTrim(ubyte[] fileBytes) {
+    if (removeComment) {
+        fileBytes = fileBytes.trimComment;
+    }
+    if (removeUnittest) {
+        fileBytes = fileBytes.trimUnittest;
+    }
+    return fileBytes;
+}
+    
+string[] findImport(string line) {
+    import std.regex : regex, replaceAll;
     string[] res;
-    auto l = s.split;
+    auto l = line.split;
     if (l.length >= 2 && l[0] == "import") {
         if (l[1].split(".")[0] == "dcomp") {
             //dcomp import
             foreach (ph; l[1..$]) {
                 ph = ph.replace(".", "/");
-                ph = ph.removechars([';', ',']);
+                ph = ph.replaceAll(regex("[;,]"), "");
                 res ~= basePath ~ "source/" ~ ph ~ ".d";
             }
         }
     }
-    return res;
+    return res;    
+}
+
+string[] findImport(string[] lines) {
+    import std.regex : regex, replaceAll;
+    return lines.map!findImport.join;
 }
 
 bool willCommentOut(string s, bool first) {
     auto l = s.split;
     if (l.length && l[0] == "module" && !first) return true;
-    if (line2Imp(s).length) return true;
+    if (findImport(s).length) return true;
     return false;
 }
 
@@ -98,10 +108,11 @@ string[] enumImport(string fn) {
         if (path in visited) continue;
         visited[path] = true;
         auto f = File(path, "r");
-        foreach (line; f.byLine) {
-            auto imp = line2Imp(line.idup);
-            stack ~= imp;
-        }
+        ubyte[] data = new ubyte[f.size()];
+        f.rawRead(data);
+        data = data.someTrim;
+        stack ~= data.map!(to!char).array
+            .splitLines.map!(to!string).array.findImport;
     }
 
     string[] res;
@@ -112,4 +123,3 @@ string[] enumImport(string fn) {
     }
     return res;
 }
-
