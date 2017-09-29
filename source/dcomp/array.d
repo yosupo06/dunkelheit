@@ -9,7 +9,7 @@ unittest {
     assert(is(typeof(a) == int[2][]));
 }
 
-//this is not reference type!(please attention to copy)
+//this isn't reference type!(please attention to copy)
 /**
 std.appenderをより高速化したもの.
 
