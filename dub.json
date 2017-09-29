@@ -13,16 +13,13 @@
 			"sourcePaths": ["combine"],
 			"targetType": "executable",
 			"dependencies": {
-				"libdparse" : ">=0.7.0-beta.2"
+				"libdparse" : "~>0.7.1"
 			}
 		},
 		{
 			"name": "document",
 			"sourcePaths": ["document"],
-			"targetType": "executable",
-			"dependencies": {
-				"libdparse" : ">=0.7.0-beta.2"
-			}
+			"targetType": "executable"
 		}
 	]
 }
