@@ -9,7 +9,7 @@ pipeline:
     commands:
       - apt-get install -y git
       - dub run dcomp:document
-      - git commit -a -m 'make document'
+      - git commit -a -m 'make documents'
       - git subtree push --prefix docs/ origin gh-pages
     when:
       matrix:
