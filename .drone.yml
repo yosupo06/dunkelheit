@@ -7,7 +7,10 @@ pipeline:
   doc:
     image: asia.gcr.io/develop-156705/dmd:${D_VERSION}
     commands:
-      - dnf install git
+      - apt-get install -y git
+      - dub run dcomp:document
+      - git commit -a -m 'make document'
+      - git subtree push --prefix docs/ origin gh-pages
     when:
       matrix:
         D_VERSION: 2.075.1
