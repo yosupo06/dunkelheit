@@ -12,7 +12,7 @@ pipeline:
       - git subtree pull --prefix docs/ origin gh-pages -m 'Merge branch'
       - dub run dcomp:document
       - git add -A
-      - git commit -m 'make documents'
+      - git commit --allow-empty -m 'make documents'
       - git subtree push --prefix docs/ origin gh-pages
     when:
       matrix:
