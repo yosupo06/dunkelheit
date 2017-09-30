@@ -1,0 +1,309 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dcomp.string</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/default.css">    
+    <link rel="stylesheet" href="css/my.css">
+  </head>
+  <body class="ddoc dlang" id="ddoc_main">
+    <div class="row">
+      <div class="col-md-2 main-nav">
+        
+<h1> DComp reference </h1>
+<HR>
+
+<ul>	<li><a href="dcomp_algorithm.html">algorithm</a></li>
+	<li><a href="dcomp_array.html">array</a></li>
+	<li><a href="dcomp_ascii.html">ascii</a></li>
+	<li><a href="dcomp_bigint.html">bigint</a></li>
+	<li>container <ul>		<li><a href="dcomp_container_deque.html">deque</a></li>
+		<li><a href="dcomp_container_package.html">package</a></li>
+		<li><a href="dcomp_container_radixheap.html">radixheap</a></li>
+	</ul></li>
+	<li>datastructure <ul>		<li><a href="dcomp_datastructure_convexhull.html">convexhull</a></li>
+		<li><a href="dcomp_datastructure_package.html">package</a></li>
+		<li><a href="dcomp_datastructure_segex.html">segex</a></li>
+		<li><a href="dcomp_datastructure_segtree.html">segtree</a></li>
+		<li><a href="dcomp_datastructure_unionfind.html">unionfind</a></li>
+	</ul></li>
+	<li><a href="dcomp_dungeon.html">dungeon</a></li>
+	<li><a href="dcomp_fastdiv.html">fastdiv</a></li>
+	<li><a href="dcomp_foundation.html">foundation</a></li>
+	<li><a href="dcomp_functional.html">functional</a></li>
+	<li><a href="dcomp_geo.html">geo</a></li>
+	<li>graph <ul>		<li><a href="dcomp_graph_ariticulation.html">ariticulation</a></li>
+		<li><a href="dcomp_graph_bridge.html">bridge</a></li>
+		<li><a href="dcomp_graph_dfstree.html">dfstree</a></li>
+		<li><a href="dcomp_graph_dijkstra.html">dijkstra</a></li>
+		<li><a href="dcomp_graph_lca.html">lca</a></li>
+		<li><a href="dcomp_graph_maxflow.html">maxflow</a></li>
+		<li><a href="dcomp_graph_mincostflow.html">mincostflow</a></li>
+		<li><a href="dcomp_graph_namori.html">namori</a></li>
+		<li><a href="dcomp_graph_package.html">package</a></li>
+		<li><a href="dcomp_graph_primitive.html">primitive</a></li>
+		<li><a href="dcomp_graph_scc.html">scc</a></li>
+	</ul></li>
+	<li><a href="dcomp_int128.html">int128</a></li>
+	<li>ldc <ul>		<li><a href="dcomp_ldc_inline.html">inline</a></li>
+	</ul></li>
+	<li><a href="dcomp_matrix.html">matrix</a></li>
+	<li><a href="dcomp_modint.html">modint</a></li>
+	<li>numeric <ul>		<li><a href="dcomp_numeric_convolution.html">convolution</a></li>
+		<li><a href="dcomp_numeric_package.html">package</a></li>
+		<li><a href="dcomp_numeric_prime.html">prime</a></li>
+		<li><a href="dcomp_numeric_primitive.html">primitive</a></li>
+	</ul></li>
+	<li><a href="dcomp_package.html">package</a></li>
+	<li><a href="dcomp_scanner.html">scanner</a></li>
+	<li><a href="dcomp_string.html">string</a></li>
+	<li><a href="dcomp_twosat.html">twosat</a></li>
+</ul>
+      </div>
+      <div class="col-md-10 content_wrapper main-dlang">
+        <article class="module">
+          <h1 class="module_name">dcomp.string</h1>
+          <section id="module_content">
+<section class="section ddoc_module_members_section">
+  <div class="ddoc_module_members">
+    <ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#SA" id="SA"><code class="code">SA</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="SA"></span>struct <span class="color_yellow">SA</span>(T);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    Suffix Arrayのデータを保持する構造体
+  </p>
+</div>
+
+</section>
+<ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#SA.s" id="SA.s"><code class="code">s</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="SA.s"></span>T[] <span class="color_yellow">s</span>;
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    元の文字列
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#SA.sa" id="SA.sa"><code class="code">sa</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="SA.sa"></span>int[] <span class="color_yellow">sa</span>;
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    <span class="color_yellow">sa</span>, rsa, lcp
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#SA.rsa" id="SA.rsa"><code class="code">rsa</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="SA.rsa"></span>int[] <span class="color_yellow">rsa</span>;
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    sa, <span class="color_yellow">rsa</span>, lcp
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#SA.lcp" id="SA.lcp"><code class="code">lcp</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="SA.lcp"></span>int[] <span class="color_yellow">lcp</span>;
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    sa, rsa, <span class="color_yellow">lcp</span>
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li>
+</ul>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#suffixArray" id="suffixArray"><code class="code">suffixArray</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="suffixArray"></span>SA!T <span class="color_yellow">suffixArray</span><span class="color_red">(T)</span>(in T[] _s, int B = 200);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    SAを返す. 内部でSA-ISを使用しており, 各文字は[0, B)に収まっている必要がある
+  </p>
+</div>
+<div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code"><span class="color_blue">import</span> std.algorithm : equal, map;
+string s = <span class="color_red">"abracadabra"</span>;
+<span class="color_blue">auto</span> saInfo = s.<span class="color_yellow">suffixArray</span>;
+<span class="color_blue">assert</span>(equal(saInfo.sa.map!(i =&gt; s[i..$]), [
+    <span class="color_red">""</span>,
+    <span class="color_red">"a"</span>,
+    <span class="color_red">"abra"</span>,
+    <span class="color_red">"abracadabra"</span>,
+    <span class="color_red">"acadabra"</span>,
+    <span class="color_red">"adabra"</span>,
+    <span class="color_red">"bra"</span>,
+    <span class="color_red">"bracadabra"</span>,
+    <span class="color_red">"cadabra"</span>,
+    <span class="color_red">"dabra"</span>,
+    <span class="color_red">"ra"</span>,
+    <span class="color_red">"racadabra"</span>,
+]));
+</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div>
+</section>
+
+</div>
+
+</li>
+</ul>
+  </div>
+</section>
+</section>
+        </article>
+      </div>
+    </div>
+  </body>
+</html>

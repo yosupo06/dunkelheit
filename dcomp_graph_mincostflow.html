@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dcomp.graph.mincostflow</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/default.css">    
+    <link rel="stylesheet" href="css/my.css">
+  </head>
+  <body class="ddoc dlang" id="ddoc_main">
+    <div class="row">
+      <div class="col-md-2 main-nav">
+        
+<h1> DComp reference </h1>
+<HR>
+
+<ul>	<li><a href="dcomp_algorithm.html">algorithm</a></li>
+	<li><a href="dcomp_array.html">array</a></li>
+	<li><a href="dcomp_ascii.html">ascii</a></li>
+	<li><a href="dcomp_bigint.html">bigint</a></li>
+	<li>container <ul>		<li><a href="dcomp_container_deque.html">deque</a></li>
+		<li><a href="dcomp_container_package.html">package</a></li>
+		<li><a href="dcomp_container_radixheap.html">radixheap</a></li>
+	</ul></li>
+	<li>datastructure <ul>		<li><a href="dcomp_datastructure_convexhull.html">convexhull</a></li>
+		<li><a href="dcomp_datastructure_package.html">package</a></li>
+		<li><a href="dcomp_datastructure_segex.html">segex</a></li>
+		<li><a href="dcomp_datastructure_segtree.html">segtree</a></li>
+		<li><a href="dcomp_datastructure_unionfind.html">unionfind</a></li>
+	</ul></li>
+	<li><a href="dcomp_dungeon.html">dungeon</a></li>
+	<li><a href="dcomp_fastdiv.html">fastdiv</a></li>
+	<li><a href="dcomp_foundation.html">foundation</a></li>
+	<li><a href="dcomp_functional.html">functional</a></li>
+	<li><a href="dcomp_geo.html">geo</a></li>
+	<li>graph <ul>		<li><a href="dcomp_graph_ariticulation.html">ariticulation</a></li>
+		<li><a href="dcomp_graph_bridge.html">bridge</a></li>
+		<li><a href="dcomp_graph_dfstree.html">dfstree</a></li>
+		<li><a href="dcomp_graph_dijkstra.html">dijkstra</a></li>
+		<li><a href="dcomp_graph_lca.html">lca</a></li>
+		<li><a href="dcomp_graph_maxflow.html">maxflow</a></li>
+		<li><a href="dcomp_graph_mincostflow.html">mincostflow</a></li>
+		<li><a href="dcomp_graph_namori.html">namori</a></li>
+		<li><a href="dcomp_graph_package.html">package</a></li>
+		<li><a href="dcomp_graph_primitive.html">primitive</a></li>
+		<li><a href="dcomp_graph_scc.html">scc</a></li>
+	</ul></li>
+	<li><a href="dcomp_int128.html">int128</a></li>
+	<li>ldc <ul>		<li><a href="dcomp_ldc_inline.html">inline</a></li>
+	</ul></li>
+	<li><a href="dcomp_matrix.html">matrix</a></li>
+	<li><a href="dcomp_modint.html">modint</a></li>
+	<li>numeric <ul>		<li><a href="dcomp_numeric_convolution.html">convolution</a></li>
+		<li><a href="dcomp_numeric_package.html">package</a></li>
+		<li><a href="dcomp_numeric_prime.html">prime</a></li>
+		<li><a href="dcomp_numeric_primitive.html">primitive</a></li>
+	</ul></li>
+	<li><a href="dcomp_package.html">package</a></li>
+	<li><a href="dcomp_scanner.html">scanner</a></li>
+	<li><a href="dcomp_string.html">string</a></li>
+	<li><a href="dcomp_twosat.html">twosat</a></li>
+</ul>
+      </div>
+      <div class="col-md-10 content_wrapper main-dlang">
+        <article class="module">
+          <h1 class="module_name">dcomp.graph.mincostflow</h1>
+          <section id="module_content">
+<section class="section ddoc_module_members_section">
+  <div class="ddoc_module_members">
+    <ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#minCostFlow" id="minCostFlow"><code class="code">minCostFlow</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="minCostFlow"></span>MinCostFlowInfo!<span class="color_red">(C, D, T)</span> <span class="color_yellow">minCostFlow</span>(C, D, T)(T g, int s, int t, bool neg);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    最小費用流
+  </p>
+</div>
+<div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code"><span class="color_blue">import</span> std.conv : to;
+<span class="color_blue">struct</span> Edge {
+    <span class="color_blue">int</span> to, cap, dist, rev;
+}
+
+<span class="color_blue">void</span> addEdge(Edge[][] <span class="color_red">g</span>, <span class="color_blue">int</span> from, <span class="color_blue">int</span> to, <span class="color_blue">int</span> cap, <span class="color_blue">int</span> dist) {
+    <span class="color_red">g</span>[from] ~= Edge(to, cap, dist, <span class="color_red">g</span>[to].length.to!<span class="color_blue">int</span>);
+    <span class="color_red">g</span>[to] ~= Edge(from, 0, -dist, <span class="color_red">g</span>[from].length.to!<span class="color_blue">int</span>-1);
+}
+
+<span class="color_blue">auto</span> <span class="color_red">g</span> = <span class="color_blue">new</span> Edge[][](4);
+
+addEdge(<span class="color_red">g</span>, 0, 1, 10, 3);
+addEdge(<span class="color_red">g</span>, 0, 2, 15, 3);
+addEdge(<span class="color_red">g</span>, 1, 3, 3, 2);
+addEdge(<span class="color_red">g</span>, 2, 3, 20, 4);
+
+<span class="color_blue">auto</span> mcfInfo = <span class="color_yellow">minCostFlow</span>!(<span class="color_blue">int</span>, <span class="color_blue">int</span>)(<span class="color_red">g</span>, 0, 3, <span class="color_blue">false</span>);
+mcfInfo.manyFlow(10^^9);
+<span class="color_blue">assert</span>(mcfInfo.capFlow == 18);
+<span class="color_blue">assert</span>(mcfInfo.flow == 3*(3+2) + 15*(3+4));
+</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div>
+</section>
+
+</div>
+
+</li>
+</ul>
+  </div>
+</section>
+</section>
+        </article>
+      </div>
+    </div>
+  </body>
+</html>
