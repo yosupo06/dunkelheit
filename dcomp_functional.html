@@ -111,8 +111,8 @@
         <li><code class="code"><span class="color_blue">import</span> dcomp.numeric.primitive;
 <span class="color_blue">import</span> dcomp.modint;
 <span class="color_blue">alias</span> Mint = ModInt!(10^^9+7);
-<span class="color_red">// unittest中では前方参照が出来ないためstructで囲っている
-</span><span class="color_blue">struct</span> A {
+
+<span class="color_blue">struct</span> A {
     <span class="color_blue">static</span> <span class="color_blue">auto</span> fact = factTable!Mint(100);
     <span class="color_blue">static</span> <span class="color_blue">auto</span> iFac = invFactTable!Mint(100);
     <span class="color_blue">static</span> Mint C1(<span class="color_blue">int</span> n, <span class="color_blue">int</span> k) {

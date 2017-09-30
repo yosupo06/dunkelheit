@@ -92,7 +92,43 @@
     <span class="color_yellow">Deque</span> リングバッファ実装でDListより速い
   </p>
 </div>
+<div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code"><span class="color_blue">import</span> std.algorithm : equal;
+<span class="color_blue">import</span> std.range.primitives : isRandomAccessRange;
+<span class="color_blue">import</span> std.container.util : make;
+<span class="color_blue">auto</span> q = <span class="color_yellow">Deque</span>!<span class="color_blue">int</span>();
 
+<span class="color_red">//insert,remove
+</span><span class="color_blue">assert</span>(equal(q[], <span class="color_blue">new</span> <span class="color_blue">int</span>[](0)));
+q.insertBack(1);
+<span class="color_blue">assert</span>(equal(q[], [1]));
+q.insertBack(2);
+<span class="color_blue">assert</span>(equal(q[], [1, 2]));
+q.insertFront(3);
+<span class="color_blue">assert</span>(equal(q[], [3, 1, 2]));
+q.removeFront;
+<span class="color_blue">assert</span>(equal(q[], [1, 2]));
+q.insertBack(4);
+<span class="color_blue">assert</span>(equal(q[], [1, 2, 4]));
+q.insertFront(5);
+<span class="color_blue">assert</span>(equal(q[], [5, 1, 2, 4]));
+q.removeBack();
+<span class="color_blue">assert</span>(equal(q[], [5, 1, 2]));
+</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div>
 </section>
 <ul class="ddoc_members">
   <li class="ddoc_member">
