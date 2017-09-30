@@ -42,4 +42,4 @@ dub run dcomp:combine -- -h
 ```
 dub run dcomp:document
 ```
-で `/docs` 以下に作成されます。
+で `./docs` 以下に作成されます。
