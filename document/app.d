@@ -3,9 +3,11 @@ import std.algorithm, std.string, std.range;
 import std.file, std.path;
 
 string toHTMLFileName(string s) {
+    if (s == "dcomp/package.d") return "index.html";
     return s
         .stripExtension
         .replace("/", "_")
+        .replace("package", "index")
         ~ ".html";
 }
 
@@ -40,6 +42,7 @@ void makeNav(string[] sources) {
     auto f = File("navbar.ddoc", "w");
     f.writeln("NAVBODY = \n$(UL");
     void dump(Node n, int dps, string[] path) {
+        if (n.name == "package") return;
         path = path ~ n.name;
         if (dps == 0) {
             foreach (c; n.children) {
@@ -54,7 +57,7 @@ void makeNav(string[] sources) {
             f.writefln("$(LI $(LINK2 %s, %s))", url, name);
         } else {
             f.write("\t".repeat.take(dps).join(""));
-            f.writefln("$(LI %s $(UL", n.name);
+            f.writefln("$(LI $(LINK2 %s, %s) $(UL", path.join("_") ~ "_index.html", n.name);
             foreach (c; n.children) {
                 dump(c, dps+1, path);
             }
@@ -68,6 +71,7 @@ void makeNav(string[] sources) {
 }
 
 int main(string[] args) {
+    writeln(execute(["bash", "-c", "rm ./docs/*.html"]));
     auto sources = execute(["find", "./source", "-name", "*.d"])
         .output.splitLines.map!(s => s.chompPrefix("./source/")).array;
     writeln(sources);
