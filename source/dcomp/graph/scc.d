@@ -6,8 +6,12 @@ import dcomp.container.deque;
 
 /// 強連結成分の情報
 struct SCCInfo {
-    int[] id; // vertex id -> scc id
-    int[][] groups; // scc id -> scc vertexs
+    int[] id; /// 頂点id -> 強連結成分id
+    int[][] groups; /// 強連結成分id -> その連結成分の頂点idたち
+    /// iと同じgroupの頂点を返す
+    int[] group(int i) {
+        return groups[id[i]];
+    }    
     this(int n) {
         id = new int[n];
     }
@@ -60,6 +64,26 @@ SCCInfo scc(T)(T g) {
         groups.each!((i, v) => v.each!(x => id[x] = i.to!int));
     }
     return sccInfo;
+}
+
+///
+unittest {
+    import std.algorithm, std.typecons;
+    alias E = Tuple!(int, "to");
+    E[][] g = new E[][5];
+    g[0] ~= E(1);
+    g[1] ~= E(2);
+    g[2] ~= E(0); g[2] ~= E(3);
+    g[3] ~= E(4);
+    g[4] ~= E(3);
+
+    auto info = scc(g);
+
+    assert(info.id[0] == info.id[1] && info.id[1] == info.id[2]);
+    assert(info.id[3] == info.id[4]);
+    assert(info.id[0] < info.id[3]); //idはトポロジカル順
+    assert(equal(info.group(0).sort!"a<b", [0, 1, 2]));
+    assert(equal(info.group(3).sort!"a<b", [3, 4]));
 }
 
 unittest {

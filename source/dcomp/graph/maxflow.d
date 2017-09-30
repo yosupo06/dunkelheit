@@ -4,8 +4,8 @@ import dcomp.container.deque, dcomp.array;
 
 ///maxflowの情報
 struct MaxFlowInfo(C) {
-    C flow;
-    bool[] dual;
+    C flow; ///流量
+    bool[] dual; ///最小カット(S側:false, T側:true)
 }
 
 ///最大流ライブラリ, Dinic

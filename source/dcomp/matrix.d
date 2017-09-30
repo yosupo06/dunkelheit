@@ -10,8 +10,8 @@ struct SMatrix(T, size_t H, size_t W) {
         }
     }
 
-    @property static size_t height() {return H;}
-    @property static size_t width() {return W;}
+    @property static size_t height() const {return H;}
+    @property static size_t width() const {return W;}
 
     auto ref opIndex(size_t i1, size_t i2) {
         return data[i1][i2];
@@ -51,8 +51,8 @@ struct DMatrix(T) {
         data[] = d[];
     }
 
-    @property size_t height() {return h;}
-    @property size_t width() {return w;}
+    @property size_t height() const {return h;}
+    @property size_t width() const {return w;}
 
     auto ref opIndex(size_t i1, size_t i2) {
         return data[i1*width+i2];

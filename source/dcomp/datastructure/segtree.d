@@ -46,6 +46,18 @@ struct SegTree(alias E, Args...) {
     }
 }
 
+/**
+遅延伝搬SegTree
+
+T型の配列aに対して、a[l..r] += x(xはL型)、opTT(a[l..r])が高速に計算できる
+
+Params:
+    opTT = (T, T)の演算(結果をまとめる)
+    opTL = (T, L)の演算(クエリを適用する)
+    opLL = (L, L)の演算(クエリをまとめる)
+    eT = Tの単位元
+    eL = Lの単位元
+*/
 template LazySeg(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL, alias Engine = LazySegEngine) {
     import std.functional : binaryFun;
     alias LazySeg = SegTree!(Engine, T, L,
@@ -71,11 +83,14 @@ unittest {
     //[12, 11, 5]
     seg[0..2] += 10;
     assert(seg[0..3].sum == 12);
-
-    //n=10
-    assert(LazySeg!(int, int, "a+b", "a+b", "a+b", 0, 0)(10).length == 10);
 }
 
+/**
+SegTree
+
+T型の配列aについて、opTT(a[l..r])が高速に計算できる。
+opTTは結合率を満たす2引数関数, eTは単位元。
+ */
 template SimpleSeg(T, alias opTT, T eT, alias Engine = SimpleSegEngine) {
     import std.functional : binaryFun;
     alias SimpleSeg = SegTree!(Engine, T, binaryFun!opTT, eT);
@@ -84,18 +99,21 @@ template SimpleSeg(T, alias opTT, T eT, alias Engine = SimpleSegEngine) {
 ///
 unittest {
     import std.algorithm : max;
-    ///区間加算
-    import std.typecons;
+    ///int型でmax(...)が計算できる、つまりRMQ
     auto seg = SimpleSeg!(int, (a, b) => max(a, b), 0)(3);
 
     //[2, 1, 4]
     seg[0] = 2; seg[1] = 1; seg[2] = 4;
-    assert(seg[0..3].sum == 4);
+    assert(seg[0..3].sum == 4); //max(2, 1, 4) == 4
 
     //[2, 1, 5]
     seg[2] = 5;
-    assert(seg[0..2].sum == 2);
-    assert(seg[0..3].sum == 5);
+    assert(seg[0..2].sum == 2); //max(2, 1) == 2
+    assert(seg[0..3].sum == 5); //max(2, 1, 5) == 5
+
+    //[2, 11, 5]
+    seg[1] = seg[1] + 10;
+    assert(seg[0..3].sum == 11);
 }
 
 

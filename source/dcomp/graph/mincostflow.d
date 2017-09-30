@@ -4,12 +4,14 @@ import dcomp.container.deque;
 
 import std.stdio;
 
+/// 最小費用流の乗法
 struct MinCostFlowInfo(C, D, T) {
-    T g; int s, t;
-    C nc, capFlow;
-    D nd, flow;
-    D[] dual; //potential
-    int[] pv, pe; //path
+    T g;
+    int s, t;
+    C nc, capFlow; ///今の最短路の容量, 今流した量
+    D nd, flow; ///今の最短路の長さ, 今流したコスト
+    D[] dual; /// 双対問題の答え(=ポテンシャル)
+    int[] pv, pe;
     this(T g, int s, int t) {
         this.g = g;
         this.s = s;
@@ -46,75 +48,30 @@ unittest {
     auto g = new Edge[][](4);
 
     addEdge(g, 0, 1, 10, 3);
-    addEdge(g, 0, 2, 15, 3);
+    addEdge(g, 0, 2, 12, 3);
     addEdge(g, 1, 3, 3, 2);
     addEdge(g, 2, 3, 20, 4);
     
     auto mcfInfo = minCostFlow!(int, int)(g, 0, 3, false);
-    mcfInfo.manyFlow(10^^9);
-    assert(mcfInfo.capFlow == 18);
-    assert(mcfInfo.flow == 3*(3+2) + 15*(3+4));
+    //最初は 0->1->3で容量3, 距離5を流せる
+    assert(mcfInfo.nc == 3 && mcfInfo.nd == 5);
+
+    //最短経路が変わらない間(=容量3)流す
+    mcfInfo.singleFlow(10^^9);
+
+    assert(mcfInfo.capFlow == 3 && mcfInfo.flow == 15);
+
+    //次は 0->2->3で容量12, 距離7を流せる
+    assert(mcfInfo.nc == 12 && mcfInfo.nd == 7);
+    
+    //最短経路が変わらない間(=容量12)流す
+    mcfInfo.singleFlow(10^^9);
+
+    assert(mcfInfo.capFlow == 3 + 12);
+    assert(mcfInfo.flow == 15 + 12*7);
 }
 
-
-unittest {
-    import std.algorithm, std.conv, std.stdio, std.range;
-    import std.random;
-    import std.typecons;
-    import std.datetime;
-
-    struct E {
-        int to, cap, dist, rev;
-    }
-    void addEdge(E[][] g, int from, int to, int cap, int dist) {
-        g[from] ~= E(to, cap, dist, g[to].length.to!int);
-        g[to] ~= E(from, 0, -dist, g[from].length.to!int-1);
-    }
-
-
-
-    void f(bool neg)() {
-        int n = uniform(2, 20);
-        int m = uniform(0, 200);
-        int s, t;
-        while (true) {
-            s = uniform(0, n);
-            t = uniform(0, n);
-            if (s != t) break;
-        }
-        auto g = new E[][n];
-        E[][] elist = new E[][n];
-
-        foreach (i; 0..m) {
-            int x, y;
-            while (true) {
-                x = uniform(0, n);
-                y = uniform(0, n);
-                if (x == y) continue;
-                break;
-            }
-            int c = uniform(0, 100);
-            int d = uniform(0, 100);
-            addEdge(g, x, y, c, d);
-            elist[x] ~= E(y, c, d, -1);
-        }
-
-        auto res = minCostFlow!(int, int)(g, s, t, neg);
-        res.manyFlow(10^^9);
-        int sm = (res.dual[t]-res.dual[s]) * res.capFlow;
-        foreach (i, v; elist) {
-            foreach (e; v) {
-                sm -= (max(0L, (long(res.dual[e.to]) - res.dual[i]) - e.dist) * e.cap).to!long;
-            }
-        }
-        assert(res.flow == sm);
-    }
-    writeln("MinCostFlow Random5000, Neg5000");
-    auto ti = benchmark!(f!false, f!true)(5000);
-    writeln(ti[0].msecs, "ms");
-    writeln(ti[1].msecs, "ms");
-}
-
+///min(nc, c)流す
 C singleFlow(C, D, T)(ref MinCostFlowInfo!(C, D, T) mcfInfo, C c) {
     import std.algorithm;
     with (mcfInfo) {
@@ -132,6 +89,7 @@ C singleFlow(C, D, T)(ref MinCostFlowInfo!(C, D, T) mcfInfo, C c) {
     return c;
 }
 
+///流量がcになるまで流せるだけ流し続ける
 void manyFlow(C, D, T)(ref MinCostFlowInfo!(C, D, T) mcfInfo, C c) {
     with (mcfInfo) {
         while (c) {
@@ -237,4 +195,62 @@ void dualRef(C, D, T)(ref MinCostFlowInfo!(C, D, T) mcfInfo, bool neg) {
     } else {
         dualRef!true(mcfInfo);
     }
+}
+
+unittest {
+    import std.algorithm, std.conv, std.stdio, std.range;
+    import std.random;
+    import std.typecons;
+    import std.datetime;
+
+    struct E {
+        int to, cap, dist, rev;
+    }
+    void addEdge(E[][] g, int from, int to, int cap, int dist) {
+        g[from] ~= E(to, cap, dist, g[to].length.to!int);
+        g[to] ~= E(from, 0, -dist, g[from].length.to!int-1);
+    }
+
+
+
+    void f(bool neg)() {
+        int n = uniform(2, 20);
+        int m = uniform(0, 200);
+        int s, t;
+        while (true) {
+            s = uniform(0, n);
+            t = uniform(0, n);
+            if (s != t) break;
+        }
+        auto g = new E[][n];
+        E[][] elist = new E[][n];
+
+        foreach (i; 0..m) {
+            int x, y;
+            while (true) {
+                x = uniform(0, n);
+                y = uniform(0, n);
+                if (x == y) continue;
+                break;
+            }
+            int c = uniform(0, 100);
+            int d = uniform(0, 100);
+            addEdge(g, x, y, c, d);
+            elist[x] ~= E(y, c, d, -1);
+        }
+
+        auto res = minCostFlow!(int, int)(g, s, t, neg);
+        res.manyFlow(10^^9);
+        int sm = (res.dual[t]-res.dual[s]) * res.capFlow;
+        foreach (i, v; elist) {
+            foreach (e; v) {
+                sm -= (max(0L, (long(res.dual[e.to]) - res.dual[i]) - e.dist) * e.cap).to!long;
+            }
+        }
+        assert(res.flow == sm);
+    }
+    writeln("MinCostFlow Random5000, Neg5000");
+    auto ti = benchmark!(f!false, f!true)(5000);
+    writeln(ti[0].msecs, "ms");
+    writeln(ti[1].msecs, "ms");
 }
