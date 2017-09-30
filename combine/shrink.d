@@ -17,10 +17,10 @@ ubyte[] trimComment(ubyte[] fileBytes) {
         tokens.popFront;
         if (isBasicType(t.type) || isKeyword(t.type) || isOperator(t.type)) {
             res ~= str(t.type);
-        } else if (t.type == tok!"comment") {
-            res ~= " ";
-        } else {
+        } else if (t.type != tok!"comment" || t.text.count("Copyright")) {
             res ~= t.text;
+        } else {
+            res ~= " ";
         }
     }
     return res;
