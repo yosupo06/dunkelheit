@@ -29,52 +29,52 @@ matrix:
       COMPILER: dmd
     - D_VERSION: 2.075.1
       COMPILER: dmd-x86
-    # - D_VERSION: 2.075.0
-    #   COMPILER: dmd
-    # - D_VERSION: 2.075.0
-    #   COMPILER: dmd-x86
+    - D_VERSION: 2.075.0
+      COMPILER: dmd
+    - D_VERSION: 2.075.0
+      COMPILER: dmd-x86
 
-    # - D_VERSION: 2.074.1
-    #   COMPILER: dmd
-    # - D_VERSION: 2.074.1
-    #   COMPILER: dmd-x86
-    # - D_VERSION: 2.074.0
-    #   COMPILER: dmd
-    # - D_VERSION: 2.074.0
-    #   COMPILER: dmd-x86
+    - D_VERSION: 2.074.1
+      COMPILER: dmd
+    - D_VERSION: 2.074.1
+      COMPILER: dmd-x86
+    - D_VERSION: 2.074.0
+      COMPILER: dmd
+    - D_VERSION: 2.074.0
+      COMPILER: dmd-x86
 
-    # - D_VERSION: 2.073.2
-    #   COMPILER: dmd
-    # - D_VERSION: 2.073.2
-    #   COMPILER: dmd-x86
-    # - D_VERSION: 2.073.0
-    #   COMPILER: dmd
-    # - D_VERSION: 2.073.0
-    #   COMPILER: dmd-x86
+    - D_VERSION: 2.073.2
+      COMPILER: dmd
+    - D_VERSION: 2.073.2
+      COMPILER: dmd-x86
+    - D_VERSION: 2.073.0
+      COMPILER: dmd
+    - D_VERSION: 2.073.0
+      COMPILER: dmd-x86
 
-    # - D_VERSION: 2.072.2
-    #   COMPILER: dmd
-    # - D_VERSION: 2.072.2
-    #   COMPILER: dmd-x86
-    # - D_VERSION: 2.072.0
-    #   COMPILER: dmd
-    # - D_VERSION: 2.072.0
-    #   COMPILER: dmd-x86
+    - D_VERSION: 2.072.2
+      COMPILER: dmd
+    - D_VERSION: 2.072.2
+      COMPILER: dmd-x86
+    - D_VERSION: 2.072.0
+      COMPILER: dmd
+    - D_VERSION: 2.072.0
+      COMPILER: dmd-x86
     
-    # - D_VERSION: 2.071.2
-    #   COMPILER: dmd
-    # - D_VERSION: 2.071.2
-    #   COMPILER: dmd-x86
-    # - D_VERSION: 2.071.0
-    #   COMPILER: dmd
-    # - D_VERSION: 2.071.0
-    #   COMPILER: dmd-x86
+    - D_VERSION: 2.071.2
+      COMPILER: dmd
+    - D_VERSION: 2.071.2
+      COMPILER: dmd-x86
+    - D_VERSION: 2.071.0
+      COMPILER: dmd
+    - D_VERSION: 2.071.0
+      COMPILER: dmd-x86
 
 
-    # - D_VERSION: 2.070.2
-    #   COMPILER: dmd
-    # - D_VERSION: 2.070.1
-    #   COMPILER: dmd
-    # - D_VERSION: 2.070.0
-    #   COMPILER: dmd
+    - D_VERSION: 2.070.2
+      COMPILER: dmd
+    - D_VERSION: 2.070.1
+      COMPILER: dmd
+    - D_VERSION: 2.070.0
+      COMPILER: dmd
 
