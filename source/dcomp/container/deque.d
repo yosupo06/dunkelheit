@@ -162,12 +162,36 @@ struct Deque(T, bool mayNull = true) {
     Range opSlice() {I; return Range(p, 0, length); }
 }
 
+///
+unittest {
+    import std.algorithm : equal;
+    import std.range.primitives : isRandomAccessRange;
+    import std.container.util : make;
+    auto q = Deque!int();
+
+    //insert,remove
+    assert(equal(q[], new int[](0)));
+    q.insertBack(1);
+    assert(equal(q[], [1]));
+    q.insertBack(2);
+    assert(equal(q[], [1, 2]));
+    q.insertFront(3);
+    assert(equal(q[], [3, 1, 2]));
+    q.removeFront;
+    assert(equal(q[], [1, 2]));
+    q.insertBack(4);
+    assert(equal(q[], [1, 2, 4]));
+    q.insertFront(5);
+    assert(equal(q[], [5, 1, 2, 4]));
+    q.removeBack();
+    assert(equal(q[], [5, 1, 2]));
+}
 
 unittest {
     import std.algorithm : equal;
     import std.range.primitives : isRandomAccessRange;
     import std.container.util : make;
-    auto q = make!(Deque!int);
+    auto q = Deque!int();
     assert(isRandomAccessRange!(typeof(q[])));
 
     //insert,remove

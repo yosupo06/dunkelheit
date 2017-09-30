@@ -53,7 +53,7 @@ unittest {
     import dcomp.numeric.primitive;
     import dcomp.modint;
     alias Mint = ModInt!(10^^9+7);
-    // unittest中では前方参照が出来ないためstructで囲っている
+
     struct A {
         static auto fact = factTable!Mint(100);
         static auto iFac = invFactTable!Mint(100);

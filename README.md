@@ -1,5 +1,7 @@
 [![Build Status](http://drone.yosupo.com/api/badges/yosupo06/dcomp/status.svg)](http://drone.yosupo.com/yosupo06/dcomp)
 
+[Document](https://yosupo06.github.io/dcomp/)
+
 dubには登録していないので、
 
 ```
