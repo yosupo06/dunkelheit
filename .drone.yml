@@ -7,11 +7,11 @@ pipeline:
   doc:
     image: asia.gcr.io/develop-156705/dmd:${D_VERSION}
     commands:
-      - dub run dcomp:document
       - git config --global user.email "yosupo06@gmail.com"
       - git config --global user.name "Kohei Morita"
-      - git add docs/*.html
-      - git commit -m 'make documents'
+      - git subtree pull --prefix docs/ origin gh-pages -m 'Merge branch'
+      - dub run dcomp:document
+      - git commit -a -m 'make documents'
       - git subtree push --prefix docs/ origin gh-pages
     when:
       matrix:
