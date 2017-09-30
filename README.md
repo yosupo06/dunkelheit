@@ -2,30 +2,44 @@
 
 [Document](https://yosupo06.github.io/dcomp/)
 
-dubには登録していないので、
+
+D言語の競技プログラミング用ライブラリです	
+
+
+dubの公式サイトには登録していないので、
 
 ```
+git checkout https://github.com/yosupo06/dcomp
 dub add-local .
 ```
 
-で手動で追加してください。(もっといい方法があるかも？)
+で手動でパッケージとして追加してください。(もっといい方法があるかも？)
 
-sample.dを適当な名前でコピーして
+# 実行
+sample.dを適当な名前(例えばA.d)としてコピーして
 
 ```
-dub run --single source.d
+dub run --single A.d
 ```
 
 とすると、`./A`という名前の実行ファイルが出来ます。
 
+# ソースコード結合
+
+提出用にソースコードを結合するスクリプトも付いていて、
 ```
 dub run dcomp:combine -- -i=source.d -o=source_submit.d -c -u
 ```
-
 とすると、`source_submit.d`という提出用ファイルが生成されます。
+```
+dub run dcomp:combine -- -h
+```
+でヘルプが出てきます
 
+# ドキュメント
+
+ドキュメントは
 ```
 dub run dcomp:document
 ```
-
-で `/docs` 以下にドキュメントが生成されます。
+で `/docs` 以下に作成されます。

@@ -19,16 +19,15 @@ int main(string[] args) {
     //read opt
     string inputName, outputName;
     auto opt = getopt(args,
-        config.required,
-        "input|i", &inputName,
-        config.required,
-        "output|o", &outputName,
-        "c", &removeComment,
-        "u", &removeUnittest,
+        config.required, "input|i", "input file name", &inputName,
+        config.required, "output|o", "output file name", &outputName,
+        "c", "remove comment", &removeComment,
+        "u", "remove unittest", &removeUnittest,
         );
     if (opt.helpWanted) {
         defaultGetoptPrinter("dlang source combiner.",
             opt.options);
+        return 0;
     }
 
     //search dcomp home
