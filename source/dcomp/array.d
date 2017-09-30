@@ -9,7 +9,6 @@ unittest {
     assert(is(typeof(a) == int[2][]));
 }
 
-//this isn't reference type!(please attention to copy)
 /**
 std.appenderをより高速化したもの.
 
@@ -26,7 +25,8 @@ struct FastAppender(A) {
     private T* _data;
     private size_t len, cap;
     /// length
-    @property size_t length() {return len;}
+    @property size_t length() const {return len;}
+    bool empty() const { return len == 0; }
     /// C++のreserveと似たようなもの
     void reserve(size_t nlen) {
         import core.memory : GC;
@@ -45,9 +45,11 @@ struct FastAppender(A) {
         }
         _data[len++] = item;
     }
+    /// 末尾に追加
     void insertBack(T item) {
         this ~= item;
     }
+    /// 末尾を削除
     void removeBack() {
         len--;
     }
@@ -55,7 +57,6 @@ struct FastAppender(A) {
     void clear() {
         len = 0;
     }
-    bool empty() const { return len == 0; }
     ref inout(T) back() inout { assert(len); return _data[len-1]; }
     /**
     これで返した配列も, 元のFastAppenderに操作すると壊れる.
@@ -66,6 +67,7 @@ struct FastAppender(A) {
     }
 }
 
+///
 unittest {
     import std.stdio, std.algorithm;
     auto u = FastAppender!(int[])();

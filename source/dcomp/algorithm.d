@@ -4,7 +4,7 @@ import std.range.primitives;
 import std.traits : isFloatingPoint, isIntegral;
 
 /**
-binary search
+二分探索ライブラリ
 
 $(D [pred(l) = false, false, ..., false, true, true, ..., pred(r) = true]) $(BR)
 このように, $(D pred(l) = false), $(D pred(r) = true), 単調性の3つを仮定する
