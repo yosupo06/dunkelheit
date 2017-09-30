@@ -11,7 +11,8 @@ pipeline:
       - git config --global user.name "Kohei Morita"
       - git subtree pull --prefix docs/ origin gh-pages -m 'Merge branch'
       - dub run dcomp:document
-      - git commit -a -m 'make documents'
+      - git add -A
+      - git commit -m 'make documents'
       - git subtree push --prefix docs/ origin gh-pages
     when:
       matrix:
