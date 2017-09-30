@@ -155,7 +155,26 @@
 速度が重要でないならばstd.appenderを使うこと.
   </p>
 </div>
+<div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code"><span class="color_blue">import</span> std.stdio, std.algorithm;
+<span class="color_blue">auto</span> u = <span class="color_yellow">FastAppender</span>!(<span class="color_blue">int</span>[])();
+u ~= 4; u ~= 5;
+<span class="color_blue">assert</span>(equal(u.data, [4, 5]));
+</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
 
+  </p>
+</div>
 </section>
 <ul class="ddoc_members">
   <li class="ddoc_member">
@@ -170,7 +189,7 @@
       <div class="dlang">
         <p class="para">
           <code class="code">
-            <span class="ddoc_anchor" id="FastAppender.length"></span>@property size_t <span class="color_yellow">length</span>();
+            <span class="ddoc_anchor" id="FastAppender.length"></span>const @property size_t <span class="color_yellow">length</span>();
 <span class="color_red"></span>
           </code>
         </p>
@@ -247,6 +266,70 @@
   <div class="ddoc_summary">
   <p class="para">
     追加演算子
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#FastAppender.insertBack" id="FastAppender.insertBack"><code class="code">insertBack</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="FastAppender.insertBack"></span>void <span class="color_yellow">insertBack</span>(T item);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    末尾に追加
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#FastAppender.removeBack" id="FastAppender.removeBack"><code class="code">removeBack</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="FastAppender.removeBack"></span>void <span class="color_yellow">removeBack</span>();
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    末尾を削除
   </p>
 </div>
 
