@@ -68,6 +68,137 @@
   <li class="ddoc_member">
   <div class="ddoc_member_header">
   <div class="ddoc_header_anchor">
+  <a href="#MinCostFlowInfo" id="MinCostFlowInfo"><code class="code">MinCostFlowInfo</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="MinCostFlowInfo"></span>struct <span class="color_yellow">MinCostFlowInfo</span>(C, D, T);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    最小費用流の乗法
+  </p>
+</div>
+
+</section>
+<ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#MinCostFlowInfo.capFlow" id="MinCostFlowInfo.capFlow"><code class="code">capFlow</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="MinCostFlowInfo.capFlow"></span>C <span class="color_yellow">capFlow</span>;
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    今の最短路の容量, 今流した量
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#MinCostFlowInfo.flow" id="MinCostFlowInfo.flow"><code class="code">flow</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="MinCostFlowInfo.flow"></span>D <span class="color_yellow">flow</span>;
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    今の最短路の長さ, 今流したコスト
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#MinCostFlowInfo.dual" id="MinCostFlowInfo.dual"><code class="code">dual</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="MinCostFlowInfo.dual"></span>D[] <span class="color_yellow">dual</span>;
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    双対問題の答え(=ポテンシャル)
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li>
+</ul>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
   <a href="#minCostFlow" id="minCostFlow"><code class="code">minCostFlow</code></a>
 </div>
 </div><div class="ddoc_decl">
@@ -113,14 +244,27 @@
 <span class="color_blue">auto</span> <span class="color_red">g</span> = <span class="color_blue">new</span> Edge[][](4);
 
 addEdge(<span class="color_red">g</span>, 0, 1, 10, 3);
-addEdge(<span class="color_red">g</span>, 0, 2, 15, 3);
+addEdge(<span class="color_red">g</span>, 0, 2, 12, 3);
 addEdge(<span class="color_red">g</span>, 1, 3, 3, 2);
 addEdge(<span class="color_red">g</span>, 2, 3, 20, 4);
 
 <span class="color_blue">auto</span> mcfInfo = <span class="color_yellow">minCostFlow</span>!(<span class="color_blue">int</span>, <span class="color_blue">int</span>)(<span class="color_red">g</span>, 0, 3, <span class="color_blue">false</span>);
-mcfInfo.manyFlow(10^^9);
-<span class="color_blue">assert</span>(mcfInfo.capFlow == 18);
-<span class="color_blue">assert</span>(mcfInfo.flow == 3*(3+2) + 15*(3+4));
+<span class="color_red">//最初は 0-&gt;1-&gt;3で容量3, 距離5を流せる
+</span><span class="color_blue">assert</span>(mcfInfo.nc == 3 &amp;&amp; mcfInfo.nd == 5);
+
+<span class="color_red">//最短経路が変わらない間(=容量3)流す
+</span>mcfInfo.singleFlow(10^^9);
+
+<span class="color_blue">assert</span>(mcfInfo.capFlow == 3 &amp;&amp; mcfInfo.flow == 15);
+
+<span class="color_red">//次は 0-&gt;2-&gt;3で容量12, 距離7を流せる
+</span><span class="color_blue">assert</span>(mcfInfo.nc == 12 &amp;&amp; mcfInfo.nd == 7);
+
+<span class="color_red">//最短経路が変わらない間(=容量12)流す
+</span>mcfInfo.singleFlow(10^^9);
+
+<span class="color_blue">assert</span>(mcfInfo.capFlow == 3 + 12);
+<span class="color_blue">assert</span>(mcfInfo.flow == 15 + 12*7);
 </code></li>
       </ol>
     </div>
@@ -129,6 +273,70 @@ mcfInfo.manyFlow(10^^9);
 
   </p>
 </div>
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#singleFlow" id="singleFlow"><code class="code">singleFlow</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="singleFlow"></span>C <span class="color_yellow">singleFlow</span><span class="color_red">(C, D, T)</span>(ref MinCostFlowInfo!(C, D, T) mcfInfo, C c);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    min(nc, c)流す
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#manyFlow" id="manyFlow"><code class="code">manyFlow</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="manyFlow"></span>void <span class="color_yellow">manyFlow</span><span class="color_red">(C, D, T)</span>(ref MinCostFlowInfo!(C, D, T) mcfInfo, C c);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    流量がcになるまで流せるだけ流し続ける
+  </p>
+</div>
+
 </section>
 
 </div>

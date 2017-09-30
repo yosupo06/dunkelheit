@@ -94,6 +94,105 @@
 </div>
 
 </section>
+<ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#SCCInfo.id" id="SCCInfo.id"><code class="code">id</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="SCCInfo.id"></span>int[] <span class="color_yellow">id</span>;
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    頂点id -&gt; 強連結成分id
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#SCCInfo.groups" id="SCCInfo.groups"><code class="code">groups</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="SCCInfo.groups"></span>int[][] <span class="color_yellow">groups</span>;
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    強連結成分id -&gt; その連結成分の頂点idたち
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#SCCInfo.group" id="SCCInfo.group"><code class="code">group</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="SCCInfo.group"></span>int[] <span class="color_yellow">group</span>(int i);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    iと同じgroupの頂点を返す
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li>
+</ul>
 
 </div>
 
@@ -124,7 +223,38 @@
     強連結成分分解
   </p>
 </div>
+<div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code"><span class="color_blue">import</span> std.algorithm, std.typecons;
+<span class="color_blue">alias</span> E = Tuple!(<span class="color_blue">int</span>, <span class="color_red">"to"</span>);
+E[][] <span class="color_red">g</span> = <span class="color_blue">new</span> E[][5];
+<span class="color_red">g</span>[0] ~= E(1);
+<span class="color_red">g</span>[1] ~= E(2);
+<span class="color_red">g</span>[2] ~= E(0); <span class="color_red">g</span>[2] ~= E(3);
+<span class="color_red">g</span>[3] ~= E(4);
+<span class="color_red">g</span>[4] ~= E(3);
 
+<span class="color_blue">auto</span> info = <span class="color_yellow">scc</span>(<span class="color_red">g</span>);
+
+<span class="color_blue">assert</span>(info.id[0] == info.id[1] &amp;&amp; info.id[1] == info.id[2]);
+<span class="color_blue">assert</span>(info.id[3] == info.id[4]);
+<span class="color_blue">assert</span>(info.id[0] &lt; info.id[3]); <span class="color_red">//idはトポロジカル順
+</span><span class="color_blue">assert</span>(equal(info.group(0).sort!<span class="color_red">"a&lt;b"</span>, [0, 1, 2]));
+<span class="color_blue">assert</span>(equal(info.group(3).sort!<span class="color_red">"a&lt;b"</span>, [3, 4]));
+</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div>
 </section>
 
 </div>
