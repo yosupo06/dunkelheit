@@ -20,10 +20,10 @@ MaxFlowInfo!(C) maxFlow(C, C EPS, T)(T g, int s, int t) {
 
     void bfs() {
         level[] = -1; level[s] = 0;
-        auto que = FastAppender!(int[])();
-        que ~= s;
+        auto que = Deque!int();
+        que.insertBack(s);
         while (!que.empty) {
-            int v = que.back; que.removeBack;
+            int v = que.front; que.removeFront;
             foreach (e; g[v]) {
                 if (e.cap <= EPS) continue;
                 if (level[e.to] < 0) {
