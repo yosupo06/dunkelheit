@@ -1,5 +1,7 @@
 module dcomp.scanner;
 
+import dcomp.array;
+
 /**
 Scanner 速くはないが遅くもない printf/scanfよりちょっと遅いくらい？
 */
@@ -16,6 +18,14 @@ class Scanner {
     }
     char[512] lineBuf;
     char[] line;
+    private bool succW() {
+        import std.range.primitives : empty, front, popFront;
+        import std.ascii : isWhite;
+        while (!line.empty && line.front.isWhite) {
+            line.popFront;
+        }
+        return !line.empty;
+    }
     private bool succ() {
         import std.range.primitives : empty, front, popFront;
         import std.ascii : isWhite;
@@ -24,9 +34,9 @@ class Scanner {
                 line.popFront;
             }
             if (!line.empty) break;
-            if (f.eof) return false;
             line = lineBuf[];
             f.readln(line);
+            if (!line.length) return false;
         }
         return true;
     }
@@ -44,14 +54,18 @@ class Scanner {
                 auto r = line.findSplitBefore(" ");
                 x = r[0].strip.dup;
                 line = r[1];
-            } else {
-                auto buf = line.split.map!(to!E).array;
-                static if (isStaticArray!T) {
-                    //static
-                    assert(buf.length == T.length);
+            } else static if (isStaticArray!T) {
+                foreach (i; 0..T.length) {
+                    bool f = succW();
+                    assert(f);
+                    x[i] = line.parse!E;
                 }
-                x = buf;
-                line.length = 0;
+            } else {
+                FastAppender!(E[]) buf;
+                while (succW()) {
+                    buf ~= line.parse!E;
+                }
+                x = buf.data;
             }
         } else {
             x = line.parse!T;
@@ -95,6 +109,7 @@ unittest {
     assert(equal(d, "cde")); // stringもchar型配列と同様
     assert(e == 1.0); // 小数も可
     assert(equal(f, [1.0, 2.0]));
+    assert(sc.read(a) == 0); // EOF
 }
 
 unittest {
