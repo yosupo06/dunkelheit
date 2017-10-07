@@ -10,11 +10,11 @@ unittest {
 }
 
 /**
-std.appenderをより高速化したもの.
+std.array.appenderをより高速化したもの.
 
 参照型のように動くが, コピーした後に操作するとそれ以外の参照が全部壊れる.
 ブロック外に出さない一時バッファのような使い方を想定している.
-速度が重要でないならばstd.appenderを使うこと.
+速度が重要でないならばstd.array.appenderを使うこと.
  */
 struct FastAppender(A) {
     import std.algorithm : max;
@@ -58,6 +58,7 @@ struct FastAppender(A) {
         len = 0;
     }
     ref inout(T) back() inout { assert(len); return _data[len-1]; }
+    ref inout(T) opIndex(size_t i) inout { return _data[i]; }
     /**
     これで返した配列も, 元のFastAppenderに操作すると壊れる.
     必要ならばdupしておくこと.
