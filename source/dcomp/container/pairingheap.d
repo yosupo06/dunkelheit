@@ -1,27 +1,25 @@
 module dcomp.container.pairingheap;
 
-import dcomp.array;
-
 struct PairingHeapPayload(T, alias opCmp) {
     import std.range : iota;
     import std.algorithm : swap;
     alias NP = Node*;
     static struct Node {        
         T d;
-        FastAppender!(NP[]) ch;
+        NP head, next;
         this(T d) {
             this.d = d;
         }
     }
-    size_t length;
     NP n;
-    bool empty() {
-        return length == 0;
-    }
+    size_t length;
+    bool empty() const { return length == 0; }
     static NP merge(NP x, NP y) {
-        assert(x && y);
+        if (!x) return y;
+        if (!y) return x;
         if (opCmp(x.d, y.d)) swap(x, y);
-        x.ch ~= y;
+        y.next = x.head;
+        x.head = y;
         return x;
     }
     void insert(T x) {
@@ -29,7 +27,7 @@ struct PairingHeapPayload(T, alias opCmp) {
         if (!n) n = new Node(x);
         else n = merge(n, new Node(x));
     }
-    T front() {
+    T front() const {
         assert(n);
         return n.d;
     }
@@ -37,17 +35,27 @@ struct PairingHeapPayload(T, alias opCmp) {
         assert(n);
         assert(length > 0);
         length--;
-        auto m = n.ch.length;                
         NP x;
-        if (m % 2) {
-            x = n.ch.back;
+        NP s = n.head;
+        while (s) {
+            NP a, b;
+            a = s; s = s.next; a.next = null;
+            if (s) {
+                b = s; s = s.next; b.next = null;
+            }
+            a = merge(a, b);
+            assert(a);
+            if (!x) x = a;
+            else {
+                a.next = x.next;
+                x.next = a;
+            }
         }
-        foreach_reverse (i; iota(0, m/2*2, 2)) {
-            auto y = merge(n.ch[i], n.ch[i+1]);
-            if (!x) x = y;
-            else x = merge(x, y);
+        n = null;
+        while (x) {
+            NP a = x; x = x.next;
+            n = merge(a, n);
         }
-        n = x;
     }
 }
 
@@ -58,14 +66,14 @@ struct PairingHeap(T, alias _opCmp) {
     alias Payload = PairingHeapPayload!(T, opCmp);
     Payload* p;
     void I() { if (!p) p = new Payload(); }
-    bool empty() { return !p || p.empty(); }
-    size_t length() { return (!p) ? 0 : p.length; }
+    bool empty() const { return !p || p.empty(); }
+    size_t length() const { return (!p) ? 0 : p.length; }
     void insert(T x) {
         I();
         assert(p);
         p.insert(x);
     }
-    T front() {
+    T front() const {
         assert(p);
         return p.front;
     }
