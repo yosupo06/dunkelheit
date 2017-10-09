@@ -191,7 +191,7 @@ DirectedMSTInfo!(E, typeof(E.dist)) directedMSTSlow(T, E = EdgeType!T)(T g, size
             foreach (e; g[i]) {
                 if (i2g[e.to] == i2g[i]) continue;
                 e.to = i2g[e.to];
-                e.dist -= res[i].dist;
+                e.dist = e.dist - res[i].dist;
                 ng[i2g[i]] ~= e;
             }
         }
@@ -200,7 +200,9 @@ DirectedMSTInfo!(E, typeof(E.dist)) directedMSTSlow(T, E = EdgeType!T)(T g, size
         for (int i = 0; i < n; i++) {
             if (i == r || ok[i2g[i]]) continue;
             foreach (e; g[i]) {
-                if (e.dist - res[i].dist == nme[i2g[i]].dist && i2g[e.to] == nme[i2g[i]].to) {
+                import std.math;
+                immutable typeof(E.dist) EPS = cast(typeof(E.dist))(1e-9);
+                if (abs(e.dist - res[i].dist - nme[i2g[i]].dist) <= EPS && i2g[e.to] == nme[i2g[i]].to) {
                     ok[i2g[i]] = true;
                     res[i] = e;
                     cost += nme[i2g[i]].dist;
