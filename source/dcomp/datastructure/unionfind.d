@@ -4,17 +4,18 @@ module dcomp.datastructure.unionfind;
 struct UnionFind {
     import std.algorithm : map, swap, each;
     import std.range : iota, array;
+    import std.conv : to;
     int[] id; // group id
     int[][] groups; // group list
     int count; // group count
     /// n:頂点数
-    this(int n) {
-        id = iota(n).array;
-        groups = iota(n).map!(a => [a]).array;
-        count = n;
+    this(size_t n) {
+        id = iota(n.to!int).array;
+        groups = iota(n.to!int).map!(a => [a]).array;
+        count = n.to!int;
     }
     /// a, bをmerge
-    void merge(int a, int b) {
+    void merge(size_t a, size_t b) {
         if (same(a, b)) return;
         count--;
         int x = id[a], y = id[b];
@@ -24,11 +25,11 @@ struct UnionFind {
         groups[y] = [];
     }
     /// iと同じgroupの頂点を返す
-    int[] group(int i) {
+    int[] group(size_t i) {
         return groups[id[i]];
     }
     /// a, bは同じgroupか？
-    bool same(int a, int b) {
+    bool same(size_t a, size_t b) {
         return id[a] == id[b];
     }
 }
