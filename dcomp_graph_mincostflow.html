@@ -79,7 +79,7 @@
       <div class="dlang">
         <p class="para">
           <code class="code">
-            <span class="ddoc_anchor" id="MinCostFlowInfo"></span>struct <span class="color_yellow">MinCostFlowInfo</span>(C, D, T);
+            <span class="ddoc_anchor" id="MinCostFlowInfo"></span>struct <span class="color_yellow">MinCostFlowInfo</span>(C, D, D EPS, T);
 <span class="color_red"></span>
           </code>
         </p>
@@ -210,7 +210,7 @@
       <div class="dlang">
         <p class="para">
           <code class="code">
-            <span class="ddoc_anchor" id="minCostFlow"></span>MinCostFlowInfo!<span class="color_red">(C, D, T)</span> <span class="color_yellow">minCostFlow</span>(C, D, T)(T g, int s, int t, bool neg);
+            <span class="ddoc_anchor" id="minCostFlow"></span>MinCostFlowInfo!(C, D, EPS, T) <span class="color_yellow">minCostFlow</span><span class="color_red">(C, D, D EPS, T)</span>(T g, int s, int t, bool neg);
 <span class="color_red"></span>
           </code>
         </p>
@@ -250,7 +250,7 @@ addEdge(<span class="color_red">g</span>, 0, 2, 12, 3);
 addEdge(<span class="color_red">g</span>, 1, 3, 3, 2);
 addEdge(<span class="color_red">g</span>, 2, 3, 20, 4);
 
-<span class="color_blue">auto</span> mcfInfo = <span class="color_yellow">minCostFlow</span>!(<span class="color_blue">int</span>, <span class="color_blue">int</span>)(<span class="color_red">g</span>, 0, 3, <span class="color_blue">false</span>);
+<span class="color_blue">auto</span> mcfInfo = <span class="color_yellow">minCostFlow</span>!(<span class="color_blue">int</span>, <span class="color_blue">int</span>, 0)(<span class="color_red">g</span>, 0, 3, <span class="color_blue">false</span>);
 <span class="color_red">//最初は 0-&gt;1-&gt;3で容量3, 距離5を流せる
 </span><span class="color_blue">assert</span>(mcfInfo.nc == 3 &amp;&amp; mcfInfo.nd == 5);
 
@@ -291,7 +291,7 @@ addEdge(<span class="color_red">g</span>, 2, 3, 20, 4);
       <div class="dlang">
         <p class="para">
           <code class="code">
-            <span class="ddoc_anchor" id="singleFlow"></span>C <span class="color_yellow">singleFlow</span><span class="color_red">(C, D, T)</span>(ref MinCostFlowInfo!(C, D, T) mcfInfo, C c);
+            <span class="ddoc_anchor" id="singleFlow"></span>C <span class="color_yellow">singleFlow</span><span class="color_red">(C, D, alias EPS, T)</span>(ref MinCostFlowInfo!(C, D, EPS, T) mcfInfo, C c);
 <span class="color_red"></span>
           </code>
         </p>
@@ -323,7 +323,7 @@ addEdge(<span class="color_red">g</span>, 2, 3, 20, 4);
       <div class="dlang">
         <p class="para">
           <code class="code">
-            <span class="ddoc_anchor" id="manyFlow"></span>void <span class="color_yellow">manyFlow</span><span class="color_red">(C, D, T)</span>(ref MinCostFlowInfo!(C, D, T) mcfInfo, C c);
+            <span class="ddoc_anchor" id="manyFlow"></span>void <span class="color_yellow">manyFlow</span><span class="color_red">(C, D, alias EPS, T)</span>(ref MinCostFlowInfo!(C, D, EPS, T) mcfInfo, C c);
 <span class="color_red"></span>
           </code>
         </p>
