@@ -201,7 +201,7 @@ DirectedMSTInfo!(E, typeof(E.dist)) directedMSTSlow(T, E = EdgeType!T)(T g, size
             if (i == r || ok[i2g[i]]) continue;
             foreach (e; g[i]) {
                 import std.math;
-                immutable typeof(E.dist) EPS = cast(typeof(E.dist))(1e-9);
+                immutable typeof(EdgeType!T.dist) EPS = cast(typeof(EdgeType!T.dist))(1e-9);
                 if (abs(e.dist - res[i].dist - nme[i2g[i]].dist) <= EPS && i2g[e.to] == nme[i2g[i]].to) {
                     ok[i2g[i]] = true;
                     res[i] = e;
