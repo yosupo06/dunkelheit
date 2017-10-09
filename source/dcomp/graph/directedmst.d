@@ -14,7 +14,10 @@ DirectedMSTInfo!(_E, D) directedMST(T, _E = EdgeType!T, D = typeof(_E.dist))(T _
             E e;
             D offset;
             NP head, next;
-            this(E e) { this.e = e; }
+            this(E e) {
+                this.e = e;
+                offset = D(0);
+            }
         }
         NP n;
         size_t length;
@@ -282,8 +285,69 @@ unittest {
         }
         assert(info1.cost == info2.cost);
     }
-    writeln("START DirectedMST");
-    foreach (i; 0..10000) {
-        test();
+    import std.datetime;
+    writeln("DirectedMST Random10000");
+    auto ti = benchmark!(test)(10000);
+    writeln(ti[0].msecs, "ms");
+}
+
+unittest {
+    import std.range, std.algorithm, std.typecons, std.random, std.conv, std.math;
+    alias E = Tuple!(int, "to", double, "dist");
+    auto gen = Random(114514);
+    void test() {
+        size_t n = uniform(1, 20, gen);
+        size_t m = uniform(1, 100, gen);
+        E[][] g = new E[][n];
+        foreach (i; 0..m) {
+            auto a = uniform(0, n, gen);
+            auto b = uniform(0, n, gen);
+            double c = uniform(0.0, 15.0, gen);
+            g[a] ~= E(b.to!int, c);
+            g[b] ~= E(a.to!int, c);
+        }
+        size_t r = uniform(0, n, gen);
+        foreach (i; 0..n) {
+            g[i] ~= E(r.to!int, 10^^6);
+        }
+
+        bool check(I)(I info) {
+            import dcomp.datastructure.unionfind;
+            auto uf = UnionFind(n.to!int);
+            double sm = 0;
+            foreach (i; 0..n) {
+                if (i == r) continue;
+                sm += info.res[i].dist;
+                if (!g[i].count(info.res[i])) return false;
+                if (uf.same(i, info.res[i].to)) return false;
+                uf.merge(i, info.res[i].to);
+            }
+            if (abs(sm - info.cost) > 1e-4) return false;
+            return true;
+        }
+        auto info1 = directedMSTSlow(g, r);
+
+        auto info2 = directedMST(g, r);
+
+        if (!check(info1)) {
+            writeln("EEEEE");
+            writeln(r);
+            writeln(g.map!(to!string).join("\n"));
+            writeln(info1);
+            writeln(info2);
+        }
+        assert(check(info1));
+        if (abs(info1.cost - info2.cost) > 1e-4 || !check(info2)) {
+            writeln("FIND ERROR!");
+            writeln(r);
+            writeln(g.map!(to!string).join("\n"));
+            writeln(info1);
+            writeln(info2);
+        }
+        assert(abs(info1.cost - info2.cost) <= 1e-4);
     }
+    import std.datetime;
+    writeln("DirectedMST double Random10000");
+    auto ti = benchmark!(test)(10000);
+    writeln(ti[0].msecs, "ms");
 }
