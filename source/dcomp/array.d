@@ -16,14 +16,15 @@ std.array.appenderをより高速化したもの.
 ブロック外に出さない一時バッファのような使い方を想定している.
 速度が重要でないならばstd.array.appenderを使うこと.
  */
-struct FastAppender(A) {
+struct FastAppender(A, size_t MIN = 4) {
     import std.algorithm : max;
+    import std.conv;
     import std.range.primitives : ElementEncodingType;
     import core.stdc.string : memcpy;
 
     private alias T = ElementEncodingType!A;
     private T* _data;
-    private size_t len, cap;
+    private uint len, cap;
     /// length
     @property size_t length() const {return len;}
     bool empty() const { return len == 0; }
@@ -34,14 +35,18 @@ struct FastAppender(A) {
         
         void* nx = GC.malloc(nlen * T.sizeof);
 
-        cap = nlen;
+        cap = nlen.to!uint;
         if (len) memcpy(nx, _data, len * T.sizeof);
         _data = cast(T*)(nx);
+    }
+    void free() {
+        import core.memory : GC;
+        GC.free(_data);
     }
     /// 追加演算子
     void opOpAssign(string op : "~")(T item) {
         if (len == cap) {
-            reserve(max(4, cap*2));
+            reserve(max(MIN, cap*2));
         }
         _data[len++] = item;
     }
