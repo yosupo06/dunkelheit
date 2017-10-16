@@ -212,30 +212,45 @@ struct uintN(int N) if (N >= 1) {
 
     uintN opBinary(string op : "*")(in uintN r) const {
         uintN res;
-        foreach (s; 0..N) {
-            foreach (i; 0..s+1) {
-                int j = s-i;
-                auto u = mul128(d[i], r[j]);
-                bool of;
-                res[s] = addu(res[s], u[0], of);
-                if (s+1 < N) {
-                    if (of) {
-                        res[s+1]++;
-                        of = (res[s+1] == 0);
-                    }
-                    res[s+1] = addu(res[s+1], u[1], of);
-                    if (s+2 < N && of) res[s+2]++;
+        static if (N == 2) {
+            auto u = mul128(d[0], r[0]);
+            res[0] = u[0];
+            res[1] = u[1] + d[0]*r[1] + d[1]*r[0];
+            return res;
+        } else {
+            foreach (i; 0..N) {
+                ulong carry = 0;
+                foreach (j; 0..N-1-i) {
+                    int s = i+j;
+                    bool of;
+                    auto u = mul128(d[i], r[j]);
+                    res[s] = addu(res[s], carry, of);
+                    carry = u[1];
+                    if (of) carry++;
+                    res[s] = addu(res[s], u[0], of);
+                    if (of) carry++;
                 }
+                res[N-1] += d[i] * r[N-1-i] + carry;
             }
+            return res;
         }
-        return res;
     }
     uintN opBinary(string op : "*")(in ulong r) const {
         uintN res;
         mulMultiWord(d, r, res.d);
         return res;
     }
-
+    uintN opBinary(string op : "/")(ulong rr) const {
+        uintN res;
+        ulong back = 0;
+        foreach_reverse (i; 0..N) {
+            assert(back < rr);
+            ulong pred = div128([d[i], back], rr);
+            res[i] = pred;
+            back = d[i]-(rr*pred);
+        }
+        return res;
+    }
     uintN opBinary(string op : "/")(in uintN rr) const {
         int up = -1, shift;
         foreach_reverse (i; 0..N) {
@@ -246,7 +261,9 @@ struct uintN(int N) if (N >= 1) {
             }
         }
         assert(up != -1);
-
+        if (up == 0) {
+            return this / ulong(rr[0]);
+        }
         ulong[N+1] l;
         l[0..N] = d[0..N];
         shiftLeftMultiWord(l, shift, l);
@@ -269,10 +286,15 @@ struct uintN(int N) if (N >= 1) {
     uintN opBinary(string op : "/")(in ulong r) const {
         return this / uintN(r);
     }
-    uintN opBinary(string op : "%", T)(in T r) const {
+    uintN opBinary(string op : "%")(in ulong r) const if (N == 2) {
+        return uintN(d[0] - div128([d[0], d[1] % r], r) * r);
+    }
+    uintN opBinary(string op : "%")(in uintN r) const {
+        static if (N == 2) {
+            if (r[1] == 0) return this % ulong(r[0]);
+        }
         return this - this/r*r;
     }
-
     auto opOpAssign(string op, T)(in T r) {
         return mixin("this=this" ~ op ~ "r");
     }

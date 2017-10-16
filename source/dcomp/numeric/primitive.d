@@ -4,7 +4,8 @@ import std.traits;
 import std.bigint;
 
 /// 高速累乗
-Unqual!T pow(T, U)(T x, U n) if (!isFloatingPoint!T && (isIntegral!U || is(U == BigInt))) {
+Unqual!T pow(T, U)(T x, U n)
+if (!isFloatingPoint!T && (isIntegral!U || is(U == BigInt))) {
     return pow(x, n, T(1));
 }
 
@@ -24,6 +25,18 @@ if ((isIntegral!U || is(U == BigInt)) && is(Unqual!T == Unqual!V)) {
 unittest {
     assert(pow(3, 5) == 243);
     assert(pow(3, 5, 2) == 486);
+}
+
+
+T powMod(T, U, V)(T x, U n, V md)
+if (isIntegral!U || is(U == BigInt)) {
+    T r = T(1);
+    while (n) {
+        if (n & 1) r = (r*x)%md;
+        x = (x*x)%md;
+        n >>= 1;
+    }
+    return r % md;
 }
 
 /// lcm
