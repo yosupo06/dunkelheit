@@ -39,6 +39,26 @@ if (isIntegral!U || is(U == BigInt)) {
     return r % md;
 }
 
+ulong ulongPowMod(U)(ulong x, U n, ulong md)
+if (isIntegral!U || is(U == BigInt)) {
+    import dcomp.int128;
+    ulong mul(ulong a, ulong b) {
+        auto u = mul128(a, b);
+        auto v = mul128(div128(u, md), md);
+        return u[0] - v[0];
+    }
+    x %= md;
+    ulong r = 1;
+    while (n) {
+        if (n & 1) {
+            r = mul(r, x);
+        }
+        x = mul(x, x);
+        n >>= 1;
+    }
+    return r % md;
+}
+
 /// lcm
 T lcm(T)(in T a, in T b) {
     import std.numeric : gcd;

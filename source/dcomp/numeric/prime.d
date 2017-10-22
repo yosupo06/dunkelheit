@@ -45,3 +45,35 @@ unittest {
     assert(equal(factorList(4), [2, 2]));
     assert(equal(factorList(24), [2, 2, 2, 3]));
 }
+
+import dcomp.numeric.primitive;
+
+bool isPrime(ulong n) {
+    if (n <= 1) return false;
+    if (n == 2) return true;
+    if (n % 2 == 0) return false;
+    ulong d = n-1;
+    while (d % 2 == 0) d /= 2;
+    ulong[] alist = [2,3,5,7,11,13,17,19,23,29,31,37];
+    foreach (a; alist) {
+        if (n <= a) break;
+        ulong t = d;
+        ulong y = ulongPowMod(a, t, n);
+        while (t != n-1 && y != 1 && y != n-1) {
+            y = ulongPowMod(y, 2, n);
+            t <<= 1;
+        }
+        if (y != n-1 && t % 2 == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+///
+unittest {
+    assert(!isPrime(0));
+    assert(!isPrime(1));
+    assert(isPrime(2));
+    assert(isPrime(10^^9 + 7));
+}
