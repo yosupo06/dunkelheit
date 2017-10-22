@@ -23,25 +23,3 @@ static if (__VERSION__ <= 2070) {
         assert(l.fold!"a+b"(10) == 25);
     }
 }
-version (X86) static if (__VERSION__ < 2071) {
-    import core.bitop : bsf, bsr, popcnt;
-    int bsf(ulong v) {
-        foreach (i; 0..64) {
-            if (v & (1UL << i)) return i;
-        }
-        return -1;
-    }
-    int bsr(ulong v) {
-        foreach_reverse (i; 0..64) {
-            if (v & (1UL << i)) return i;
-        }
-        return -1;   
-    }
-    int popcnt(ulong v) {
-        int c = 0;
-        foreach (i; 0..64) {
-            if (v & (1UL << i)) c++;
-        }
-        return c;
-    }
-}
