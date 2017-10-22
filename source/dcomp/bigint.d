@@ -98,7 +98,6 @@ int cmpMultiWord(in ulong[] l, in ulong[] r) {
 多倍長整数.
 静的に長さを指定しする, $(D N*64bit)となる.
 例えば$(D uintN!2)とすれば、$(D uint128)として使える.
-テストをほとんど書いていないためバグが(ほぼ確実に)含まれている
  */
 struct uintN(int N) if (N >= 1) {
     import core.checkedint;
@@ -179,18 +178,18 @@ struct uintN(int N) if (N >= 1) {
 
     //arit
     uintN opUnary(string op)() if (op == "++") {
-        uintN res;
-        bool of = true;
         foreach (i; 0..N) {
-            if (of) {
-                d[i]++;
-                if (d[i]) of = false;
-            }
+            d[i]++;
+            if (d[i]) break;
         }
-        return res;
+        return this;
     }
     uintN opUnary(string op)() if (op == "--") {
-        return this -= uintN(1); //todo optimize
+        foreach (i; 0..N) {
+            d[i]--;
+            if (d[i] != ulong.max) break;
+        }
+        return this;
     }
     uintN opUnary(string op)() const if (op=="+" || op=="-") {
         if (op == "+") return this;
@@ -241,7 +240,7 @@ struct uintN(int N) if (N >= 1) {
         mulMultiWord(d, r, res.d);
         return res;
     }
-    uintN opBinary(string op : "/")(ulong rr) const {
+    uintN opBinary(string op : "/")(in ulong rr) const {
         uintN res;
         ulong back = 0;
         foreach_reverse (i; 0..N) {
@@ -284,11 +283,12 @@ struct uintN(int N) if (N >= 1) {
         }
         return res;
     }
-    uintN opBinary(string op : "/")(in ulong r) const {
-        return this / uintN(r);
-    }
-    uintN opBinary(string op : "%")(in ulong r) const if (N == 2) {
-        return uintN(d[0] - div128([d[0], d[1] % r], r) * r);
+    uintN opBinary(string op : "%")(in ulong r) const {
+        static if (N == 2) {
+            return uintN(d[0] - div128([d[0], d[1] % r], r) * r);            
+        } else {
+            return this % uintN(r);
+        }
     }
     uintN opBinary(string op : "%")(in uintN r) const {
         static if (N == 2) {
@@ -318,6 +318,7 @@ unittest {
     auto y = Uint("340282366920938463500268095579187314687");
     assert((x%y).to!string == "340282366920938463186673446326124937222");
 }
+
 unittest {
     import std.stdio;
     void check(int N)() {
@@ -343,7 +344,7 @@ unittest {
         dfs(0);
         import std.bigint;
         BigInt mask = BigInt(1) << (64*N);
-        void f(string op)(Uint x, Uint y) {
+        void f(string op, R)(Uint x, R y) {
             import std.conv;
             auto x2 = BigInt(x.to!string);
             auto y2 = BigInt(y.to!string);
@@ -352,12 +353,34 @@ unittest {
             z2 = (z2 % mask + mask) % mask;
             if (z.to!string != z2.to!string) {
                 writeln("ERR ", N, " : ", x, " ", y, " ", op, " : ", z, " ", z2);
-                writeln("Z ", x / y);
-                writeln("W ", (x / y) * y);
             }
             assert(z.to!string == z2.to!string);
         }
+        void g(string op)(Uint x) {
+            import std.conv;
+            auto x2 = BigInt(x.to!string);
+            auto z = mixin(op ~ "x");
+            auto z2 = mixin(op ~ "x2");
+            x2 = (x2 % mask + mask) % mask;
+            z2 = (z2 % mask + mask) % mask;
+            assert(x.to!string == x2.to!string);
+            if (z.to!string != z2.to!string) {
+                writeln("ERR ", N, " : ", x, " ", op, " : ", z, " ", z2);
+            }
+            assert(z.to!string == z2.to!string);            
+        }
         foreach (d; v) {
+            g!"++"(d);
+            g!"--"(d);
+            g!"~"(d);       
+            f!"/"(d, ulong(1));
+            f!"/"(d, ulong(2));
+            f!"/"(d, ulong(ulong.max));
+            f!"/"(d, ulong(ulong.max-1));
+            f!"%"(d, ulong(1));
+            f!"%"(d, ulong(2));
+            f!"%"(d, ulong(ulong.max));
+            f!"%"(d, ulong(ulong.max-1));
             foreach (e; v) {
                 f!"+"(d, e);
                 f!"-"(d, e);
