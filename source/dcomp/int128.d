@@ -109,8 +109,27 @@ ulong div128(ulong[2] a, ulong b) {
         }
         return res;
     } else {
-        import std.bigint, std.conv;
-        return (((BigInt(a[1]) << 64) + BigInt(a[0])) / BigInt(b)).to!string.to!ulong;
+        if (b == 1) return a[0];
+        while (!(b & (1UL << 63))) {
+            a[1] <<= 1;
+            if (a[0] & (1UL << 63)) a[1] |= 1;
+            a[0] <<= 1;
+            b <<= 1;
+        }
+        ulong ans = 0;
+        foreach (i; 0..64) {
+            bool up = (a[1] & (1UL << 63)) != 0;
+            a[1] <<= 1;
+            if (a[0] & (1UL << 63)) a[1] |= 1;
+            a[0] <<= 1;
+
+            ans <<= 1;
+            if (up || b <= a[1]) {
+                a[1] -= b;
+                ans++;
+            }
+        }
+        return ans;
     }
 }
 
@@ -152,6 +171,9 @@ unittest {
         foreach (r; ri) {
             if (r == 0) continue;
             if (overflow_check(l, r)) continue;
+            if (div128(l, r) != naive_div(l, r)) {
+                writeln("ERR ", l, " ", r, " ", div128(l, r), " ", naive_div(l, r));
+            }
             assert(div128(l, r) == naive_div(l, r));
         }
     }
