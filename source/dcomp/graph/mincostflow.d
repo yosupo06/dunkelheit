@@ -298,7 +298,7 @@ unittest {
             elist[x] ~= E(y, c, d, -1);
         }
 
-        auto res = minCostFlow!(int, double, 1e-6)(g, s, t, neg);
+        auto res = minCostFlow!(int, double, 1e-9)(g, s, t, neg);
         res.manyFlow(10^^9);
         double sm = (res.dual[t]-res.dual[s]) * res.capFlow;
         foreach (i, v; elist) {
@@ -307,7 +307,7 @@ unittest {
             }
         }
         import std.math;
-        assert(abs(res.flow - sm) <= 1e-5);
+        assert(abs(res.flow - sm) <= 1e-3);
     }
     writeln("MinCostFlow double Random5000, Neg5000");
     auto ti = benchmark!(f!false, f!true)(5000);
