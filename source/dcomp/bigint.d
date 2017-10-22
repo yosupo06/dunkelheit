@@ -227,6 +227,7 @@ struct uintN(int N) if (N >= 1) {
                     res[s] = addu(res[s], carry, of);
                     carry = u[1];
                     if (of) carry++;
+                    of = false;
                     res[s] = addu(res[s], u[0], of);
                     if (of) carry++;
                 }
@@ -308,4 +309,74 @@ unittest {
     auto y = Uint("1145141919810893");
     assert((x*y).to!string == "35975694425956177975650270094479894166566");
     assert((x/y).to!string == "27434090039");
+}
+
+unittest {
+    import std.conv;
+    alias Uint = uintN!4;
+    auto x = Uint("115792089237316195417293883273301227089434195242432897623355228563449095127040");
+    auto y = Uint("340282366920938463500268095579187314687");
+    assert((x%y).to!string == "340282366920938463186673446326124937222");
+}
+unittest {
+    import std.stdio;
+    void check(int N)() {
+        alias Uint = uintN!N;
+        Uint[] v;
+        Uint buf;
+        void dfs(int p) {
+            if (p == N) {
+                v ~= buf;
+                return;
+            }
+            buf.d[p] = 0;
+            dfs(p+1);
+            buf.d[p] = 1;
+            dfs(p+1);
+            buf.d[p] = ulong.max;
+            dfs(p+1);
+            if (N <= 3) {
+                buf.d[p] = ulong.max - 1;
+                dfs(p+1);
+            }
+        }
+        dfs(0);
+        import std.bigint;
+        BigInt mask = BigInt(1) << (64*N);
+        void f(string op)(Uint x, Uint y) {
+            import std.conv;
+            auto x2 = BigInt(x.to!string);
+            auto y2 = BigInt(y.to!string);
+            auto z = mixin("x" ~ op ~ "y");
+            auto z2 = mixin("x2" ~ op ~ "y2");
+            z2 = (z2 % mask + mask) % mask;
+            if (z.to!string != z2.to!string) {
+                writeln("ERR ", N, " : ", x, " ", y, " ", op, " : ", z, " ", z2);
+                writeln("Z ", x / y);
+                writeln("W ", (x / y) * y);
+            }
+            assert(z.to!string == z2.to!string);
+        }
+        foreach (d; v) {
+            foreach (e; v) {
+                f!"+"(d, e);
+                f!"-"(d, e);
+                f!"*"(d, e);
+                if (e != Uint(0)) {
+                    f!"/"(d, e);
+                    f!"%"(d, e);
+                }
+                f!"&"(d, e);
+                f!"|"(d, e);
+                f!"^"(d, e);
+            }
+        }
+        writeln("End: ", N);
+    }
+
+    writeln("Start BigInt");
+    check!1();
+    check!2();
+    check!3();
+    check!4();
 }
