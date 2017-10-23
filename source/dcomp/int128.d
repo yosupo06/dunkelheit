@@ -147,8 +147,7 @@ ulong mod128(ulong[2] a, ulong b) {
         }
         return res;
     } else {
-        auto u = mul128(a, b);
-        return u[0] - div128(u, b) * b;
+        return a[0] - div128(a, b) * b;
     }
 }
 
