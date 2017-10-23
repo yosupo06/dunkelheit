@@ -49,6 +49,7 @@ unittest {
 import dcomp.numeric.primitive;
 
 bool isPrime(ulong n) {
+    import dcomp.int128;
     if (n <= 1) return false;
     if (n == 2) return true;
     if (n % 2 == 0) return false;
@@ -57,10 +58,9 @@ bool isPrime(ulong n) {
     ulong[] alist = [2,3,5,7,11,13,17,19,23,29,31,37];
     foreach (a; alist) {
         if (n <= a) break;
-        ulong t = d;
-        ulong y = ulongPowMod(a, t, n);
+        ulong y = ulongPowMod(a, d, n);
         while (t != n-1 && y != 1 && y != n-1) {
-            y = ulongPowMod(y, 2, n);
+            y = mul128(y, y).mod128(n);
             t <<= 1;
         }
         if (y != n-1 && t % 2 == 0) {
