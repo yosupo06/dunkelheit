@@ -1,6 +1,6 @@
 /+ dub.sdl:
     name "A"
-    dependency "dcomp" version=">=0.7.3"
+    dependency "dcomp" version=">=0.7.4"
 +/
 
 import std.stdio, std.algorithm, std.range, std.conv;
