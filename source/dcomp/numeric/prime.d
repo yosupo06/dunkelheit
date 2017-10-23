@@ -59,6 +59,7 @@ bool isPrime(ulong n) {
     foreach (a; alist) {
         if (n <= a) break;
         ulong y = ulongPowMod(a, d, n);
+        ulong t = d;
         while (t != n-1 && y != 1 && y != n-1) {
             y = mul128(y, y).mod128(n);
             t <<= 1;
