@@ -23,3 +23,11 @@ static if (__VERSION__ <= 2070) {
         assert(l.fold!"a+b"(10) == 25);
     }
 }
+
+import core.bitop : popcnt;
+static if (!__traits(compiles, popcnt(ulong.max))) {
+    public import core.bitop : popcnt;
+    int popcnt(ulong v) {
+        return popcnt(cast(uint)(v)) + popcnt(cast(uint)(v>>32));
+    }
+}
