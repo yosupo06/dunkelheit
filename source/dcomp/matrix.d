@@ -9,6 +9,7 @@ struct SMatrix(T, size_t H, size_t W) {
             data[i/W][i%W] = v;
         }
     }
+    SMatrix dup() const { return this; }
 
     @property static size_t height() {return H;}
     @property static size_t width() {return W;}
@@ -45,11 +46,12 @@ struct DMatrix(T) {
         this.h = h; this.w = w;
         data = new T[h*w];
     }
-    this(size_t h, size_t w, T[] d) {
+    this(size_t h, size_t w, in T[] d) {
         this(h, w);
         assert(d.length == h*w);
         data[] = d[];
     }
+    DMatrix dup() const { return DMatrix(h, w, data); }
 
     @property size_t height() const {return h;}
     @property size_t width() const {return w;}
@@ -96,7 +98,8 @@ auto matrix(size_t H, size_t W, alias pred)() {
     return res;
 }
 
-auto determinent(Mat)(Mat m) {
+auto determinent(Mat)(in Mat _m) {
+    auto m = _m.dup;
     assert(m.height == m.width);
     import std.conv, std.algorithm;
     alias M = typeof(m[0, 0]);
@@ -105,13 +108,13 @@ auto determinent(Mat)(Mat m) {
     foreach (i; 0..N) {
         if (m[i, i] == M(0)) {
             foreach (j; i+1..N) {
-                if (m[j, i] == M(0)) {
+                if (m[j, i] != M(0)) {
                     foreach (k; 0..N) swap(m[i, k], m[j, k]);
-                    if ((j-i) % 2) base = M(0)-base;
+                    base *= M(-1);
                     break;
                 }
-                if (m[i, i] == M(0)) return M(0);
             }
+            if (m[i, i] == M(0)) return M(0);
         }
         base *= m[i, i];
         M im = M(1)/m[i, i];
@@ -125,41 +128,44 @@ auto determinent(Mat)(Mat m) {
             }
         }
     }
-    foreach (i; 0..N) {
-        base *= m[i, i];
-    }
     return base;
 }
 
 unittest {
     import std.random, std.stdio, std.algorithm;
     import dcomp.modint;
-    alias Mint = ModInt!(10^^9 + 7);
-    alias Mat = SMatrix!(Mint, 3, 3);
-    alias Vec = SMatrix!(Mint, 3, 1);
-    static Mint rndM() {
-        return Mint(uniform(0, 10^^9 + 7));
+    void f(uint Mod)() {
+        alias Mint = ModInt!Mod;
+        alias Mat = SMatrix!(Mint, 3, 3);
+        alias Vec = SMatrix!(Mint, 3, 1);
+        static Mint rndM() {
+            return Mint(uniform(0, Mod));
+        }
+        Mat m = matrix!(3, 3, (i, j) => rndM())();
+        Mint sm = 0;
+        auto idx = [0, 1, 2];
+        do {
+            Mint buf = 1;
+            foreach (i; 0..3) {
+                buf *= m[i, idx[i]];
+            }
+            sm += buf;
+        } while (idx.nextEvenPermutation);
+        idx = [0, 2, 1];
+        do {
+            Mint buf = 1;
+            foreach (i; 0..3) {
+                buf *= m[i, idx[i]];
+            }
+            sm -= buf;
+        } while (idx.nextEvenPermutation);
+        auto _m = m.dup;
+        auto u = m.determinent;
+        assert(sm == m.determinent);
+        assert(_m == m);
     }
-    Mat m = matrix!(3, 3, (i, j) => rndM())();
-    Mint sm = 0;
-    auto idx = [0, 1, 2];
-    do {
-        Mint buf = 1;
-        foreach (i; 0..3) {
-            buf *= m[i, idx[i]];
-        }
-        sm += buf;
-    } while (idx.nextEvenPermutation);
-    idx = [0, 2, 1];
-    do {
-        Mint buf = 1;
-        foreach (i; 0..3) {
-            buf *= m[i, idx[i]];
-        }
-        sm -= buf;
-    } while (idx.nextEvenPermutation);
-
-    assert(sm == m.determinent);
+    import std.datetime;
+    writeln("Det: ", benchmark!(f!2, f!3, f!11)(10000)[].map!"a.msecs");
 }
 
 
