@@ -2,6 +2,7 @@ module dcomp.matrix;
 
 /// 行列ライブラリ
 struct SMatrix(T, size_t H, size_t W) {
+    alias DataType = T;
     T[W][H] data;
     this(Args...)(Args args) {
         static assert(args.length == H*W);
@@ -35,7 +36,80 @@ struct SMatrix(T, size_t H, size_t W) {
         }
         return res;
     }
-    auto opOpAssign(string op, T)(T r) {return mixin ("this=this"~op~"r");}    
+    auto opOpAssign(string op, T)(T r) {return mixin ("this=this"~op~"r");}
+
+    void swapLine(size_t x, size_t y) {
+        import std.algorithm : swap;
+        foreach (i; 0..W) swap(data[x][i], data[y][i]);
+    }
+}
+
+import dcomp.foundation, dcomp.modint;
+/// 行列ライブラリ(Mod2)
+struct SMatrixMod2(size_t H, size_t W) {
+    alias DataType = ModInt!2;
+    static immutable B = 64;
+    static immutable L = (W + B-1) / B;
+    ulong[L][H] data;
+    this(Args...)(Args args) {
+        static assert(args.length == H*W);
+        foreach (i, v; args) {
+            this[i/W, i%W] = v;
+        }
+    }
+    SMatrixMod2 dup() const { return this; }
+
+    @property static size_t height() {return H;}
+    @property static size_t width() {return W;}
+
+    const(DataType) opIndex(size_t i1, size_t i2) const {
+        return DataType(((data[i1][i2/B] >> (i2%B)) & 1UL) ? 1 : 0);
+    }
+    void opIndexAssign(DataType d, size_t i1, size_t i2) {
+        size_t r = i2 % 64;
+        if (d.v) data[i1][i2/B] |= (1UL<<r);
+        else data[i1][i2/B] &= ~(1UL<<r);
+    }
+    void opIndexAssign(bool d, size_t i1, size_t i2) {
+        size_t r = i2 % 64;
+        if (d) data[i1][i2/B] |= (1UL<<r);
+        else data[i1][i2/B] &= ~(1UL<<r);
+    }
+    auto opIndexOpAssign(string op)(DataType d, size_t i1, size_t i2) {
+        return mixin("this[i1,i2]=this[i1,i2]"~op~"d");
+    }
+    auto opBinary(string op:"+", R)(in R r) const
+    if(height == R.height && width == R.width) {
+        auto res = this.dup;
+        foreach (y; 0..height) foreach (x; 0..L) {
+            res.data[y][x] ^= r.data[y][x];
+        }
+        return res;
+    }
+    auto opBinary(string op:"*", R)(in R r) const
+    if(width == R.height) {
+        auto r2 = SMatrixMod2!(R.width, R.height)();
+        foreach (y; 0..R.height) foreach (x; 0..R.width) {
+            r2[x, y] = r[y, x];
+        }
+        auto res = SMatrixMod2!(height, R.width)();
+        foreach (y; 0..height) {
+            foreach (x; 0..R.width) {
+                ulong sm = 0;
+                foreach (k; 0..L) {
+                    sm ^= data[y][k]&r2.data[x][k];
+                }
+                res[y, x] = poppar(sm);
+            }
+        }
+        return res;
+    }
+    auto opOpAssign(string op, T)(T r) {return mixin ("this=this"~op~"r");}
+
+    void swapLine(size_t x, size_t y) {
+        import std.algorithm : swap;
+        foreach (i; 0..L) swap(data[x][i], data[y][i]);
+    }
 }
 
 /// ditto
@@ -97,19 +171,29 @@ auto matrix(size_t H, size_t W, alias pred)() {
     }
     return res;
 }
+auto matrixMod2(size_t H, size_t W, alias pred)() {
+    import std.traits : ReturnType;
+    SMatrixMod2!(H, W) res;
+    foreach (y; 0..H) {
+        foreach (x; 0..W) {
+            res[y, x] = pred(y, x);
+        }
+    }
+    return res;
+}
 
 auto determinent(Mat)(in Mat _m) {
     auto m = _m.dup;
     assert(m.height == m.width);
     import std.conv, std.algorithm;
-    alias M = typeof(m[0, 0]);
+    alias M = Mat.DataType;
     size_t N = m.height;
     M base = 1;
     foreach (i; 0..N) {
         if (m[i, i] == M(0)) {
             foreach (j; i+1..N) {
                 if (m[j, i] != M(0)) {
-                    foreach (k; 0..N) swap(m[i, k], m[j, k]);
+                    foreach (k; 0..N) m.swapLine(i, j);
                     base *= M(-1);
                     break;
                 }
@@ -164,8 +248,48 @@ unittest {
         assert(sm == m.determinent);
         assert(_m == m);
     }
+    void fMod2() {
+        alias Mint = ModInt!2;
+        alias Mat = SMatrixMod2!(3, 3);
+        alias Vec = SMatrixMod2!(3, 1);
+        static Mint rndM() {
+            return Mint(uniform(0, 2));
+        }
+        Mat m = matrixMod2!(3, 3, (i, j) => rndM())();
+        Mint sm = 0;
+        auto idx = [0, 1, 2];
+        do {
+            Mint buf = 1;
+            foreach (i; 0..3) {
+                buf *= m[i, idx[i]];
+            }
+            sm += buf;
+        } while (idx.nextEvenPermutation);
+        idx = [0, 2, 1];
+        do {
+            Mint buf = 1;
+            foreach (i; 0..3) {
+                buf *= m[i, idx[i]];
+            }
+            sm -= buf;
+        } while (idx.nextEvenPermutation);
+        auto _m = m.dup;
+        auto u = m.determinent;
+        if (sm != m.determinent) {
+            writeln(sm, " ", m.determinent);
+            foreach (i; 0..3) {
+                foreach (j; 0..3) {
+                    write(m[i, j], " ");
+                }
+                writeln;
+            }
+            writeln(m);
+        }
+        assert(sm == m.determinent);
+        assert(_m == m);
+    }    
     import std.datetime;
-    writeln("Det: ", benchmark!(f!2, f!3, f!11)(10000)[].map!"a.msecs");
+    writeln("Det: ", benchmark!(f!2, f!3, f!11, fMod2)(10000)[].map!"a.msecs");
 }
 
 
@@ -183,10 +307,8 @@ Vec solveLinear(Mat, Vec)(Mat m, Vec r) {
             }
         }
         if (my == -1) continue;
-        foreach (i; 0..M) {
-            swap(m[c, i], m[my, i]);
-        }
-        swap(r[c, 0], r[my, 0]);
+        m.swapLine(c, my);
+        r.swapLine(c, my);
         foreach (y; 0..N) {
             if (c == y) continue;
             if (m[y, x].v == 0) continue;
@@ -202,7 +324,7 @@ Vec solveLinear(Mat, Vec)(Mat m, Vec r) {
     Vec v;
     foreach_reverse (y; 0..c) {
         ptrdiff_t f = -1;
-        typeof(Vec[0, 0]) sm;
+        Mat.DataType sm;
         foreach (x; 0..M) {
             if (m[y, x].v && f == -1) {
                 f = x;
@@ -228,4 +350,41 @@ unittest {
     Vec r = m * x;
     Vec x2 = solveLinear(m, r);
     assert(m * x2 == r);
+}
+
+unittest {
+    import std.random, std.stdio, std.algorithm;
+    import dcomp.modint;
+    void f(uint Mod)() {
+        alias Mint = ModInt!Mod;
+        alias Mat = SMatrix!(Mint, 3, 3);
+        alias Vec = SMatrix!(Mint, 3, 1);
+        static Mint rndM() {
+            return Mint(uniform(0, Mod));
+        }
+        Mat m = matrix!(3, 3, (i, j) => rndM())();
+        Vec x = matrix!(3, 1, (i, j) => rndM())();
+        Vec r = m * x;
+        Mat _m = m.dup;
+        Vec x2 = solveLinear(m, r);
+        assert(m == _m);
+        assert(m * x2 == r);
+    }
+    void fMod2() {
+        alias Mint = ModInt!2;
+        alias Mat = SMatrixMod2!(3, 3);
+        alias Vec = SMatrixMod2!(3, 1);
+        static Mint rndM() {
+            return Mint(uniform(0, 2));
+        }
+        Mat m = matrixMod2!(3, 3, (i, j) => rndM())();
+        Vec x = matrixMod2!(3, 1, (i, j) => rndM())();
+        Vec r = m * x;
+        Mat _m = m.dup;
+        Vec x2 = solveLinear(m, r);
+        assert(m == _m);
+        assert(m * x2 == r);
+    }
+    import std.datetime;
+    writeln("SolveLinear: ", benchmark!(f!2, f!3, f!11, fMod2)(10000)[].map!"a.msecs");
 }
