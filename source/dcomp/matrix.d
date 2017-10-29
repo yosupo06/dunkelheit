@@ -60,16 +60,16 @@ struct DMatrix(T) {
         return data[i1*width+i2];
     }
     auto opBinary(string op:"+", R)(R r) {
-        assert(height == R.height && width == R.width);
+        assert(height == r.height && width == r.width);
         auto res = this;
         foreach (y; 0..height) foreach (x; 0..width) res[y, x] += r[y, x];
         return res;
     }
     auto opBinary(string op:"*", R)(R r) {
-        assert(width == R.height);
-        auto res = DMatrix!(T)(height, R.width);
+        assert(width == r.height);
+        auto res = DMatrix!(T)(height, r.width);
         foreach (y; 0..height) {
-            foreach (x; 0..R.width) {
+            foreach (x; 0..r.width) {
                 foreach (k; 0..width) {
                     res[y, x] += this[y, k]*r[k, x];
                 }
