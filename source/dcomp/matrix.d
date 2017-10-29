@@ -96,10 +96,11 @@ auto matrix(size_t H, size_t W, alias pred)() {
     return res;
 }
 
-M determinent(Mat, M)(Mat!M m) {
+auto determinent(Mat)(Mat m) {
     assert(m.height == m.width);
     import std.conv, std.algorithm;
-    int N = m.height.to!int;
+    alias M = typeof(m[0, 0]);
+    size_t N = m.height;
     M base = 1;
     foreach (i; 0..N) {
         if (m[i, i] == M(0)) {
@@ -130,14 +131,45 @@ M determinent(Mat, M)(Mat!M m) {
     return base;
 }
 
+unittest {
+    import std.random, std.stdio, std.algorithm;
+    import dcomp.modint;
+    alias Mint = ModInt!(10^^9 + 7);
+    alias Mat = SMatrix!(Mint, 3, 3);
+    alias Vec = SMatrix!(Mint, 3, 1);
+    static Mint rndM() {
+        return Mint(uniform(0, 10^^9 + 7));
+    }
+    Mat m = matrix!(3, 3, (i, j) => rndM())();
+    Mint sm = 0;
+    auto idx = [0, 1, 2];
+    do {
+        Mint buf = 1;
+        foreach (i; 0..3) {
+            buf *= m[i, idx[i]];
+        }
+        sm += buf;
+    } while (idx.nextEvenPermutation);
+    idx = [0, 2, 1];
+    do {
+        Mint buf = 1;
+        foreach (i; 0..3) {
+            buf *= m[i, idx[i]];
+        }
+        sm -= buf;
+    } while (idx.nextEvenPermutation);
+
+    assert(sm == m.determinent);
+}
+
+
 // m * v = r
 Vec solveLinear(Mat, Vec)(Mat m, Vec r) {
     import std.conv, std.algorithm;
-    alias Mod2 = typeof(Vec[0, 0]);
-    int N = m.height.to!int, M = m.width.to!int;
+    size_t N = m.height, M = m.width;
     int c = 0;
     foreach (x; 0..M) {
-        int my = -1;
+        ptrdiff_t my = -1;
         foreach (y; c..N) {
             if (m[y, x].v) {
                 my = y;
@@ -163,8 +195,8 @@ Vec solveLinear(Mat, Vec)(Mat m, Vec r) {
     }
     Vec v;
     foreach_reverse (y; 0..c) {
-        int f = -1;
-        Mod2 sm;
+        ptrdiff_t f = -1;
+        typeof(Vec[0, 0]) sm;
         foreach (x; 0..M) {
             if (m[y, x].v && f == -1) {
                 f = x;
@@ -174,4 +206,20 @@ Vec solveLinear(Mat, Vec)(Mat m, Vec r) {
         v[f, 0] += (r[y, 0] - sm) / m[y, f];
     }
     return v;
+}
+
+unittest {
+    import std.random, std.stdio;
+    import dcomp.modint;
+    alias Mint = ModInt!(10^^9 + 7);
+    alias Mat = SMatrix!(Mint, 3, 3);
+    alias Vec = SMatrix!(Mint, 3, 1);
+    static Mint rndM() {
+        return Mint(uniform(0, 10^^9 + 7));
+    }
+    Mat m = matrix!(3, 3, (i, j) => rndM())();
+    Vec x = matrix!(3, 1, (i, j) => rndM())();
+    Vec r = m * x;
+    Vec x2 = solveLinear(m, r);
+    assert(m * x2 == r);
 }
