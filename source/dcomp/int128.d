@@ -109,8 +109,45 @@ ulong div128(ulong[2] a, ulong b) {
         }
         return res;
     } else {
-        import std.bigint, std.conv;
-        return (((BigInt(a[1]) << 64) + BigInt(a[0])) / BigInt(b)).to!string.to!ulong;
+        if (b == 1) return a[0];
+        while (!(b & (1UL << 63))) {
+            a[1] <<= 1;
+            if (a[0] & (1UL << 63)) a[1] |= 1;
+            a[0] <<= 1;
+            b <<= 1;
+        }
+        ulong ans = 0;
+        foreach (i; 0..64) {
+            bool up = (a[1] & (1UL << 63)) != 0;
+            a[1] <<= 1;
+            if (a[0] & (1UL << 63)) a[1] |= 1;
+            a[0] <<= 1;
+
+            ans <<= 1;
+            if (up || b <= a[1]) {
+                a[1] -= b;
+                ans++;
+            }
+        }
+        return ans;
+    }
+}
+
+
+/// [a[1], a[0]] % b = return, 答えが64bitに収まらないとヤバイ
+ulong mod128(ulong[2] a, ulong b) {
+    version(D_InlineAsm_X86_64) {
+        ulong upper = a[1], lower = a[0];
+        ulong res;
+        asm {
+            mov RDX, upper;
+            mov RAX, lower;
+            div b;
+            mov res, RDX;
+        }
+        return res;
+    } else {
+        return a[0] - div128(a, b) * b;
     }
 }
 
@@ -127,6 +164,10 @@ unittest {
         auto a2 = (BigInt(a[1]) << 64) + BigInt(a[0]);
         return (a2 / b).to!string.to!ulong;
     }
+    ulong naive_mod(ulong[2] a, ulong b) {
+        auto a2 = (BigInt(a[1]) << 64) + BigInt(a[0]);
+        return (a2 % b).to!string.to!ulong;
+    }    
     ulong[2][] li;
     ulong[] ri;
     foreach (i; 0..100) {
@@ -152,7 +193,11 @@ unittest {
         foreach (r; ri) {
             if (r == 0) continue;
             if (overflow_check(l, r)) continue;
+            if (div128(l, r) != naive_div(l, r)) {
+                writeln("ERR ", l, " ", r, " ", div128(l, r), " ", naive_div(l, r));
+            }
             assert(div128(l, r) == naive_div(l, r));
+            assert(mod128(l, r) == naive_mod(l, r));
         }
     }
     writefln("%dms", sw.peek.msecs);

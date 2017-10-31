@@ -105,12 +105,15 @@ struct LazySegBlockEngine(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) 
 
     T single(uint k) {
         pushPath(k/B);
-        return blks[k/B].d[k%B];
+        return opTL(blks[k/B].d[k%B], s[k/B+sz].lz);
     }
     void singleSet(uint k, T x) {
         pushPath(k/B);
+        if (s[k/B+sz].lz != eL) blks[k/B].add(0, B, s[k/B+sz].lz);
+        s[k/B+sz].lz = eL;
         blks[k/B].d[k%B] = x;
-    }    
+        upPath(k/B);
+    }
     T sumBody(uint a, uint b) {
         assert(0 <= a && a <= b && b <= n);
         T sml = eT, smr = eT;

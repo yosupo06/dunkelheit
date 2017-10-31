@@ -15,6 +15,7 @@ pipeline:
       - git commit --allow-empty -m 'make documents'
       - git subtree push --prefix docs/ origin gh-pages
     when:
+      branch: master
       matrix:
         D_VERSION: 2.076.0
         COMPILER: dmd
@@ -46,31 +47,18 @@ matrix:
 
     - D_VERSION: 2.073.2
       COMPILER: dmd
-    - D_VERSION: 2.073.2
-      COMPILER: dmd-x86
     - D_VERSION: 2.073.0
       COMPILER: dmd
-    - D_VERSION: 2.073.0
-      COMPILER: dmd-x86
 
     - D_VERSION: 2.072.2
       COMPILER: dmd
-    - D_VERSION: 2.072.2
-      COMPILER: dmd-x86
     - D_VERSION: 2.072.0
       COMPILER: dmd
-    - D_VERSION: 2.072.0
-      COMPILER: dmd-x86
     
     - D_VERSION: 2.071.2
       COMPILER: dmd
-    - D_VERSION: 2.071.2
-      COMPILER: dmd-x86
     - D_VERSION: 2.071.0
       COMPILER: dmd
-    - D_VERSION: 2.071.0
-      COMPILER: dmd-x86
-
 
     - D_VERSION: 2.070.2
       COMPILER: dmd

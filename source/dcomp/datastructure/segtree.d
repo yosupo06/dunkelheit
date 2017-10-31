@@ -435,10 +435,15 @@ unittest {
         alias Q = Tuple!(int, int, int, Mat);
         Q[] que = new Q[M];
         foreach (ref q; que) {
-            q[0] = uniform(0, 2, gen);
-            q[1] = uniform(0, N+1, gen);
-            q[2] = uniform(0, N+1, gen);
-            if (q[1] > q[2]) swap(q[1], q[2]);
+            q[0] = uniform(0, 4, gen);
+            if (N == 0) q[0] %= 2;
+            if (q[0] < 2) {
+                q[1] = uniform(0, N+1, gen);
+                q[2] = uniform(0, N+1, gen);
+                if (q[1] > q[2]) swap(q[1], q[2]);
+            } else {
+                q[1] = uniform(0, N, gen);
+            }
             q[3] = rndM();
         }
         static auto opTT(T a, T b) {
@@ -458,9 +463,16 @@ unittest {
             if (q[0] == 0) {
                 //sum
                 res += s[q[1]..q[2]].sum()[0];
-            } else {
+            } else if (q[0] == 1) {
                 //set
                 s[q[1]..q[2]] += q[3];
+            } else if (q[0] == 2) {
+                //single sum
+                T w = s[q[1]];
+                res += w[0];
+            } else if (q[0] == 3) {
+                //single set
+                s[q[1]] = T(q[3], 1);
             }
         }
         return res;
