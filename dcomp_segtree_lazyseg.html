@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dcomp.datastructure.segtree</title>
+    <title>dcomp.segtree.lazyseg</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/default.css">    
     <link rel="stylesheet" href="css/my.css">
@@ -25,8 +25,6 @@
 		<li><a href="dcomp_container_radixheap.html">radixheap</a></li>
 	</ul></li>
 	<li><a href="dcomp_datastructure_index.html">datastructure</a> <ul>		<li><a href="dcomp_datastructure_convexhull.html">convexhull</a></li>
-		<li><a href="dcomp_datastructure_segex.html">segex</a></li>
-		<li><a href="dcomp_datastructure_segtree.html">segtree</a></li>
 		<li><a href="dcomp_datastructure_unionfind.html">unionfind</a></li>
 	</ul></li>
 	<li><a href="dcomp_dungeon.html">dungeon</a></li>
@@ -56,13 +54,18 @@
 		<li><a href="dcomp_numeric_primitive.html">primitive</a></li>
 	</ul></li>
 	<li><a href="dcomp_scanner.html">scanner</a></li>
+	<li><a href="dcomp_segtree_index.html">segtree</a> <ul>		<li><a href="dcomp_segtree_lazyseg.html">lazyseg</a></li>
+		<li><a href="dcomp_segtree_primitive.html">primitive</a></li>
+		<li><a href="dcomp_segtree_segex.html">segex</a></li>
+		<li><a href="dcomp_segtree_simpleseg.html">simpleseg</a></li>
+	</ul></li>
 	<li><a href="dcomp_string.html">string</a></li>
 	<li><a href="dcomp_twosat.html">twosat</a></li>
 </ul>
       </div>
       <div class="col-md-10 content_wrapper main-dlang">
         <article class="module">
-          <h1 class="module_name">dcomp.datastructure.segtree</h1>
+          <h1 class="module_name">dcomp.segtree.lazyseg</h1>
           <section id="module_content">
 <section class="section ddoc_module_members_section">
   <div class="ddoc_module_members">
@@ -205,76 +208,6 @@
 <span class="color_red">//[12, 11, 5]
 </span>seg[0..2] += 10;
 <span class="color_blue">assert</span>(seg[0..3].sum == 12);
-</code></li>
-      </ol>
-    </div>
-  </div>
-</section>
-
-  </p>
-</div>
-</section>
-
-</div>
-
-</li><li class="ddoc_member">
-  <div class="ddoc_member_header">
-  <div class="ddoc_header_anchor">
-  <a href="#SimpleSeg" id="SimpleSeg"><code class="code">SimpleSeg</code></a>
-</div>
-</div><div class="ddoc_decl">
-  <section class="section">
-    <div class="declaration">
-      <h4>Declaration</h4>
-      <div class="dlang">
-        <p class="para">
-          <code class="code">
-            <span class="ddoc_anchor" id="SimpleSeg"></span>template <span class="color_yellow">SimpleSeg</span>(T, alias opTT, T eT, alias Engine = SimpleSegEngine)<span class="color_red"></span>
-          </code>
-        </p>
-      </div>
-    </div>
-  </section>
-</div>
-<div class="ddoc_decl">
-  <section class="section ddoc_sections">
-  <div class="ddoc_summary">
-  <p class="para">
-    SegTree
-
-  </p>
-</div>
-<div class="ddoc_description">
-  <h4>Discussion</h4>
-  <p class="para">
-    T型の配列aについて、opTT(a[l..r])が高速に計算できる。
-opTTは結合率を満たす2引数関数, eTは単位元。
-  </p>
-</div>
-<div class="ddoc_examples">
-  <h4>Examples</h4>
-  <p class="para">
-    
-<section class="code_listing">
-  <div class="code_sample">
-    <div class="dlang">
-      <ol class="code_lines">
-        <li><code class="code"><span class="color_blue">import</span> std.algorithm : max;
-<span class="color_red">///int型でmax(...)が計算できる、つまりRMQ
-</span><span class="color_blue">auto</span> seg = <span class="color_yellow">SimpleSeg</span>!(<span class="color_blue">int</span>, (a, b) =&gt; max(a, b), 0)(3);
-
-<span class="color_red">//[2, 1, 4]
-</span>seg[0] = 2; seg[1] = 1; seg[2] = 4;
-<span class="color_blue">assert</span>(seg[0..3].sum == 4); <span class="color_red">//max(2, 1, 4) == 4
-</span>
-<span class="color_red">//[2, 1, 5]
-</span>seg[2] = 5;
-<span class="color_blue">assert</span>(seg[0..2].sum == 2); <span class="color_red">//max(2, 1) == 2
-</span><span class="color_blue">assert</span>(seg[0..3].sum == 5); <span class="color_red">//max(2, 1, 5) == 5
-</span>
-<span class="color_red">//[2, 11, 5]
-</span>seg[1] = seg[1] + 10;
-<span class="color_blue">assert</span>(seg[0..3].sum == 11);
 </code></li>
       </ol>
     </div>
