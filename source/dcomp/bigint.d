@@ -110,16 +110,28 @@ struct uintN(int N) if (N >= 1) {
         }
     }
     string toString() {
+//        import std.range : back, popBack;
+        import std.conv : to;
         import std.algorithm : reverse;
-        char[] s;
-        if (!this) return "0";
-        while (this) {
-            s ~= cast(char)('0' + (this % uintN(10))[0]);
-            this /= uintN(10);
+        import dcomp.array;
+        FastAppender!(char[]) s;
+        auto x = this;
+        if (!x) return "0";
+        while (x) {
+            static immutable B = 10UL^^18;
+            ulong z = (x % B);
+            x /= B;
+            bool last = (!x);
+            foreach (i; 0..18) {
+                if (last && !z) break;
+                s ~= cast(char)('0' + z % 10);
+                z /= 10;
+            }
         }
-        reverse(s);
-        return s.idup;
+        reverse(s.data);
+        return s.data.idup;
     }
+
     ref inout(ulong) opIndex(int idx) inout { return d[idx]; }
     T opCast(T: bool)() {
         import std.algorithm, std.range;
@@ -283,16 +295,16 @@ struct uintN(int N) if (N >= 1) {
         }
         return res;
     }
-    uintN opBinary(string op : "%")(in ulong r) const {
+    ulong opBinary(string op : "%")(in ulong r) const {
         static if (N == 2) {
-            return uintN(d[0] - div128([d[0], d[1] % r], r) * r);            
+            return mod128([d[0], d[1] % r], r);
         } else {
-            return this % uintN(r);
+            return (this % uintN(r)).d[0];
         }
     }
     uintN opBinary(string op : "%")(in uintN r) const {
         static if (N == 2) {
-            if (r[1] == 0) return this % ulong(r[0]);
+            if (r[1] == 0) return uintN(this % ulong(r[0]));
         }
         return this - this/r*r;
     }

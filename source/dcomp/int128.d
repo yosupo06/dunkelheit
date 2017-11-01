@@ -155,7 +155,6 @@ unittest {
     import std.bigint, std.conv, std.datetime, std.stdio;
     import std.random, std.algorithm;
     StopWatch sw; sw.start;
-    writeln("Start div128");
     bool overflow_check(ulong[2] a, ulong b) {
         auto a2 = (BigInt(a[1]) << 64) + BigInt(a[0]);
         return (a2 / b) > BigInt(ulong.max);
@@ -170,21 +169,21 @@ unittest {
     }    
     ulong[2][] li;
     ulong[] ri;
-    foreach (i; 0..100) {
+    foreach (i; 0..50) {
         li ~= [i, 0UL];
         li ~= [ulong.max - i, 0UL];
     }
-    foreach (i; 0..100) {
+    foreach (i; 0..50) {
         ri ~= i;
         ri ~= ulong.max - i;
     }
-    foreach (i; 0..100) {
+    foreach (i; 0..50) {
         li ~= [uniform(0UL, ulong.max), 0UL];
     }
-    foreach (i; 0..100) {
+    foreach (i; 0..50) {
         li ~= [uniform(0UL, ulong.max), uniform(0UL, ulong.max)];
     }    
-    foreach (i; 0..100) {
+    foreach (i; 0..50) {
         ri ~= uniform(0UL, ulong.max);
     }
     li ~= [0, ulong.max];
@@ -193,12 +192,9 @@ unittest {
         foreach (r; ri) {
             if (r == 0) continue;
             if (overflow_check(l, r)) continue;
-            if (div128(l, r) != naive_div(l, r)) {
-                writeln("ERR ", l, " ", r, " ", div128(l, r), " ", naive_div(l, r));
-            }
             assert(div128(l, r) == naive_div(l, r));
             assert(mod128(l, r) == naive_mod(l, r));
         }
     }
-    writefln("%dms", sw.peek.msecs);
+    writeln("Div128: ", sw.peek.msecs);
 }
