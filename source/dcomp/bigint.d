@@ -351,10 +351,12 @@ unittest {
             auto z = mixin("x" ~ op ~ "y");
             auto z2 = mixin("x2" ~ op ~ "y2");
             z2 = (z2 % mask + mask) % mask;
-            if (z.to!string != z2.to!string) {
+            string s1 = z.to!string;
+            string s2 = z2.to!string;
+            if (s1 != s2) {
                 writeln("ERR ", N, " : ", x, " ", y, " ", op, " : ", z, " ", z2);
             }
-            assert(z.to!string == z2.to!string);
+            assert(s1 == s2);
         }
         void g(string op)(Uint x) {
             import std.conv;
@@ -364,10 +366,12 @@ unittest {
             x2 = (x2 % mask + mask) % mask;
             z2 = (z2 % mask + mask) % mask;
             assert(x.to!string == x2.to!string);
-            if (z.to!string != z2.to!string) {
+            string s1 = z.to!string;
+            string s2 = z2.to!string;
+            if (s1 != s2) {
                 writeln("ERR ", N, " : ", x, " ", op, " : ", z, " ", z2);
             }
-            assert(z.to!string == z2.to!string);            
+            assert(s1 == s2);
         }
         foreach (d; v) {
             g!"++"(d);
@@ -397,9 +401,11 @@ unittest {
         writeln("End: ", N);
     }
 
-    writeln("Start BigInt");
-    check!1();
-    check!2();
-    check!3();
-    check!4();
+    import std.algorithm, std.datetime;
+    auto ti = benchmark!(check!1, check!2, check!3, check!4)(1);
+//    check!1();
+    writeln("BigInt: ", ti[].map!"a.msecs");
+//    check!2();
+//    check!3();
+//    check!4();
 }

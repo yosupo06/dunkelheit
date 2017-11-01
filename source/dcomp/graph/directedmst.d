@@ -263,11 +263,6 @@ unittest {
             return true;
         }
         auto info1 = directedMSTSlow(g, r);
-
-//            writeln("START!");
-//            writeln(r);
-//            writeln(g.map!(to!string).join("\n"));
-
         auto info2 = directedMST(g, r);
 
         if (!check(info1)) {
@@ -288,9 +283,8 @@ unittest {
         assert(info1.cost == info2.cost);
     }
     import std.datetime;
-    writeln("DirectedMST Random10000");
-    auto ti = benchmark!(test)(10000);
-    writeln(ti[0].msecs, "ms");
+    auto ti = benchmark!(test)(1000);
+    writeln("DirectedMST int Random1000: ", ti[0].msecs);
 }
 
 unittest {
@@ -349,7 +343,6 @@ unittest {
         assert(abs(info1.cost - info2.cost) <= 1e-4);
     }
     import std.datetime;
-    writeln("DirectedMST double Random10000");
-    auto ti = benchmark!(test)(10000);
-    writeln(ti[0].msecs, "ms");
+    auto ti = benchmark!(test)(1000);
+    writeln("DirectedMST double Random1000: ", ti[0].msecs);
 }

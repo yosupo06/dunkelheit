@@ -64,7 +64,6 @@ unittest {
 
     struct E {int to;}
 
-    writeln("TwoSat Random10000");
     void f() {
         int n = uniform(1, 50);
         int m = uniform(1, 100);
@@ -95,6 +94,6 @@ unittest {
             assert(res[x] == f || res[y] == g);
         }
     }
-    auto ti = benchmark!(f)(10000);
-    writeln(ti[0].msecs, "ms");
+    auto ti = benchmark!(f)(1000);
+    writeln("TwoSat Random1000: ", ti[0].msecs);
 }
