@@ -320,6 +320,14 @@ unittest {
 }
 
 unittest {
+    import std.conv;
+    uintN!10 x = uintN!10("114514");
+    assert(x.toString == "114514");
+    assert(x.toString == "114514");
+    assert(x.toString == "114514");
+}
+
+unittest {
     import std.stdio;
     void check(int N)() {
         alias Uint = uintN!N;
