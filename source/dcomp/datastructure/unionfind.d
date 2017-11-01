@@ -57,28 +57,25 @@ unittest {
 unittest {
     import std.datetime, std.stdio, std.range;
     // speed check
-    writeln("UnionFind Speed Test");
-    StopWatch sw;
-    sw.start;
+    StopWatch sw; sw.start;
     UnionFind uf;
     // line
-    uf = UnionFind(1_000_000);
-    foreach (i; 1..1_000_000) {
+    uf = UnionFind(100_000);
+    foreach (i; 1..100_000) {
         uf.merge(i-1, i);
     }
     // line(reverse)
-    uf = UnionFind(1_000_000);
-    foreach_reverse (i; 1..1_000_000) {
+    uf = UnionFind(100_000);
+    foreach_reverse (i; 1..100_000) {
         uf.merge(i-1, i);
     }
     // binary tree
-    uf = UnionFind(1_000_000);
-    foreach (lg; 1..20) {
+    uf = UnionFind(100_000);
+    foreach (lg; 1..17) {
         int len = 1<<lg;
-        foreach (i; iota(0, 1_000_000-len/2, len)) {
+        foreach (i; iota(0, 100_000-len/2, len)) {
             uf.merge(i, i+len/2);
         }
     }
-    sw.stop;
-    writeln(sw.peek.msecs, "ms");
+    writeln("UnionFind Speed Test: ", sw.peek.msecs);
 }
