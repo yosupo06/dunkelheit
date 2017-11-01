@@ -62,7 +62,6 @@ ulong[2] mul128(ulong a, ulong b) {
 unittest {
     import std.random, std.algorithm, std.datetime, std.stdio, std.conv;
     StopWatch sw; sw.start;
-    writeln("Start mul128");
     ulong[2] naive_mul(ulong a, ulong b) {
         import std.bigint, std.conv;
         auto a2 = BigInt(a), b2 = BigInt(b);
@@ -83,7 +82,7 @@ unittest {
             assert(equal(mul128(l, r)[], naive_mul(l, r)[]));
         }
     }
-    writefln("%dms", sw.peek.msecs);
+    writeln("Mul128: ", sw.peek.msecs);
 }
 
 /// [a[1], a[0]] / b = return, 答えが64bitに収まらないとヤバイ
