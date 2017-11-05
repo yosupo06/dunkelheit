@@ -15,7 +15,7 @@ struct SMatrix(T, size_t H, size_t W) {
     @property static size_t height() {return H;}
     @property static size_t width() {return W;}
 
-    auto ref opIndex(size_t i1, size_t i2) {
+    ref inout(T) opIndex(size_t i1, size_t i2) inout {
         return data[i1][i2];
     }
     auto opBinary(string op:"+", R)(R r)
