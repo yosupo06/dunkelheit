@@ -19,7 +19,7 @@ struct SegTree(alias E, Args...) {
     struct Range {
         Engine* eng;
         size_t start, end;
-        @property T sum() {
+        @property const(T) sum() {
             return eng.sum(start.to!uint, end.to!uint);
         }
     }

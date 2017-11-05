@@ -89,3 +89,50 @@ struct SimpleSegEngine(T, alias opTT, T eT) {
         return opTT(sml, smr);
     }
 }
+
+int binSearchSimple(bool rev, alias pred, TR)(TR t, int a, int b) {
+    import std.traits : TemplateArgsOf;
+    alias args = TemplateArgsOf!TR;
+    alias opTT = args[1];
+    auto x = args[2];
+    with (t) {
+        static if (!rev) {
+            //left
+            if (pred(x)) return a-1;
+            int pos = a;
+            void f(int a, int b, int l, int r, int k) {
+                if (b <= l || r <= a) return;
+                if (a <= l && r <= b && !pred(opTT(x, d[k]))) {
+                    x = opTT(x, d[k]);
+                    pos = r;
+                    return;
+                }
+                if (l+1 == r) return;
+                int md = (l+r)/2;
+                f(a, b, l, md, 2*k);
+                if (pos >= md) f(a, b, md, r, 2*k+1);
+            }
+            f(a, b, 0, sz, 1);
+            return pos;            
+        } else {
+            //right
+            if (pred(x)) return b;
+            int pos = b-1;
+            void f(int a, int b, int l, int r, int k) {
+                if (b <= l || r <= a) return;
+                if (a <= l && r <= b && !pred(opTT(x, d[k]))) {
+                    x = opTT(d[k], x);
+                    pos = l-1;
+                    return;
+                }
+                if (l+1 == r) return;
+                int md = (l+r)/2;
+                f(a, b, md, r, 2*k+1);
+                if (pos < md) f(a, b, l, md, 2*k);
+            }
+            f(a, b, 0, sz, 1);
+            return pos;            
+        }
+    }
+}
+

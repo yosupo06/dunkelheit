@@ -45,7 +45,7 @@ struct LazySegEngine(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) {
     import std.typecons : Tuple;
     alias DataType = T;
     alias LazyType = L;
-    alias BinSearch = binSearch;
+    alias BinSearch = binSearchLazy;
     alias S = Tuple!(T, "d", L, "lz");
     uint n, sz, lg;
     S[] s;
@@ -207,62 +207,50 @@ unittest {
 }
 
 
-int binSearch(bool rev, alias pred, TR)(TR t, int a, int b) {
-    static if (!rev) {
-        return binSearchLeft!pred(t, a, b);
-    } else {
-        return binSearchRight!pred(t, a, b);
-    }
-}
-
-int binSearchLeft(alias pred, TR)(TR t, int a, int b) {
+int binSearchLazy(bool rev, alias pred, TR)(TR t, int a, int b) {
     import std.traits : TemplateArgsOf;
     alias args = TemplateArgsOf!TR;
     alias opTT = args[2];
+    auto x = args[5];
     with (t) {
-        auto x = args[5];
-        if (pred(x)) return a-1;
-        int pos = a;
-        void f(int a, int b, int l, int r, int k) {
-            if (b <= l || r <= a) return;
-            if (a <= l && r <= b && !pred(opTT(x, d[k]))) {
-                x = opTT(x, d[k]);
-                pos = r;
-                return;
+        static if (!rev) {
+            //left
+            if (pred(x)) return a;
+            int pos = a;
+            void f(int a, int b, int l, int r, int k) {
+                if (b <= l || r <= a) return;
+                if (a <= l && r <= b && !pred(opTT(x, s[k].d))) {
+                    x = opTT(x, s[k].d);
+                    pos = r;
+                    return;
+                }
+                if (l+1 == r) return;
+                push(k);
+                int md = (l+r)/2;
+                f(a, b, l, md, 2*k);
+                if (pos >= md) f(a, b, md, r, 2*k+1);
             }
-            if (l+1 == r) return;
-            push(k);
-            int md = (l+r)/2;
-            f(a, b, l, md, 2*k);
-            if (pos >= md) f(a, b, md, r, 2*k+1);
-        }
-        f(a, b, 0, sz, 1);
-        return pos;
-    }
-}
-
-int binSearchRight(alias pred, TR)(TR t, int a, int b) {
-    import std.traits : TemplateArgsOf;
-    alias args = TemplateArgsOf!TR;
-    alias opTT = args[2];
-    with (t) {
-        auto x = args[5];
-        if (pred(x)) return b;
-        int pos = b-1;
-        void f(int a, int b, int l, int r, int k) {
-            if (b <= l || r <= a) return;
-            if (a <= l && r <= b && !pred(opTT(x, d[k]))) {
-                x = opTT(d[k], x);
-                pos = l-1;
-                return;
+            f(a, b, 0, sz, 1);
+            return pos+1;
+        } else {
+            //right
+            if (pred(x)) return b;
+            int pos = b-1;
+            void f(int a, int b, int l, int r, int k) {
+                if (b <= l || r <= a) return;
+                if (a <= l && r <= b && !pred(opTT(x, s[k].d))) {
+                    x = opTT(s[k].d, x);
+                    pos = l-1;
+                    return;
+                }
+                if (l+1 == r) return;
+                push(k);
+                int md = (l+r)/2;
+                f(a, b, md, r, 2*k+1);
+                if (pos < md) f(a, b, l, md, 2*k);
             }
-            if (l+1 == r) return;
-            push(k);
-            int md = (l+r)/2;
-            f(a, b, md, r, 2*k+1);
-            if (pos < md) f(a, b, l, md, 2*k);
+            f(a, b, 0, sz, 1);
+            return pos;            
         }
-        f(a, b, 0, sz, 1);
-        return pos;
     }
 }

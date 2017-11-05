@@ -1,8 +1,71 @@
 module dcomp.segtree.segex;
 
 import dcomp.segtree.primitive;
-import dcomp.segtree.lazyseg;
 import dcomp.segtree.simpleseg;
+import dcomp.segtree.lazyseg;
+
+struct SimpleSegNaiveEngine(T, alias opTT, T eT) {
+    alias DataType = T;
+    alias LazyType = void;
+    uint n, sz, lg;
+    T[] d;
+    @property uint length() const {return n;}
+    this(uint n) {
+        import std.algorithm : each;
+        uint lg = 0;
+        while ((2^^lg) < n) lg++;
+        this.n = n;
+        this.lg = lg;
+        sz = 2^^lg;
+        d = new T[](2*sz);
+        d.each!((ref x) => x = eT);
+    }
+    this(T[] first) {
+        import std.conv : to;
+        import std.algorithm : each;
+        n = first.length.to!uint;
+        if (n == 0) return;
+        uint lg = 0;
+        while ((2^^lg) < n) lg++;
+        this.lg = lg;
+        sz = 2^^lg;
+        d = new T[](2*sz);
+        d.each!((ref x) => x = eT);
+        foreach (i; 0..n) {
+            d[sz+i] = first[i];
+        }
+        foreach_reverse (i; 1..sz) {
+            update(i);
+        }
+    }
+    private void push(uint k) {}
+    void update(uint k) {
+        d[k] = opTT(d[2*k], d[2*k+1]);
+    }
+    T single(uint k) {
+        return d[k+sz];
+    }
+    void singleSet(uint k, T x) {
+        k += sz;
+        d[k] = x;
+        foreach (uint i; 1..lg+1) {
+            update(k>>i);
+        }
+    }
+    //d[a]+d[a+1]+...+d[b-1]
+    T sum(uint a, uint b, uint l, uint r, uint k) {
+        if (b <= l || r <= a) return eT;
+        if (a <= l && r <= b) return d[k];
+        push(k);
+        uint md = (l+r)/2;
+        return opTT(sum(a, b, l, md, 2*k),
+            sum(a, b, md, r, 2*k+1));
+    }    
+    T sum(uint a, uint b) {
+        assert(0 <= a && a <= b && b <= n);
+        return sum(a, b, 0, sz, 1);
+    }
+}
 
 struct LazySegBlockEngine(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) {
     static immutable uint B = 16;
@@ -191,11 +254,10 @@ struct LazySegBlockEngine(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) 
     }
 }
 
-
 struct LazySegNaiveEngine(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) {
     alias DataType = T;
     alias LazyType = L;
-    alias BinSearch = binSearch;
+    alias BinSearch = binSearchLazyNaive;
     import std.functional : binaryFun;
     uint n, sz, lg;
     T[] d; L[] lz;
@@ -293,143 +355,99 @@ struct LazySegNaiveEngine(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) 
     }
 }
 
+int binSearchLazyNaive(bool rev, alias pred, TR)(TR t, int a, int b) {
+    import std.traits : TemplateArgsOf;
+    alias args = TemplateArgsOf!TR;
+    alias opTT = args[2];
+    auto x = args[5];
+    with (t) {
+        static if (!rev) {
+            //left
+            if (pred(x)) return a;
+            int pos = a;
+            void f(int a, int b, int l, int r, int k) {
+                if (b <= l || r <= a) return;
+                if (a <= l && r <= b && !pred(opTT(x, d[k]))) {
+                    x = opTT(x, d[k]);
+                    pos = r;
+                    return;
+                }
+                if (l+1 == r) return;
+                push(k);
+                int md = (l+r)/2;
+                f(a, b, l, md, 2*k);
+                if (pos >= md) f(a, b, md, r, 2*k+1);
+            }
+            f(a, b, 0, sz, 1);
+            return pos+1;
+        } else {
+            //right
+            if (pred(x)) return b;
+            int pos = b-1;
+            void f(int a, int b, int l, int r, int k) {
+                if (b <= l || r <= a) return;
+                if (a <= l && r <= b && !pred(opTT(x, d[k]))) {
+                    x = opTT(d[k], x);
+                    pos = l-1;
+                    return;
+                }
+                if (l+1 == r) return;
+                push(k);
+                int md = (l+r)/2;
+                f(a, b, md, r, 2*k+1);
+                if (pos < md) f(a, b, l, md, 2*k);
+            }
+            f(a, b, 0, sz, 1);
+            return pos;            
+        }
+    }
+}
 
 import std.traits;
 
-
-
 unittest {
+    import dcomp.segtree.naive;
+    import std.traits : AliasSeq;
+    alias SimpleEngines = AliasSeq!(SimpleSegEngine, SimpleSegNaiveEngine);
+    alias LazyEngines = AliasSeq!(LazySegEngine, LazySegNaiveEngine);
+
     import std.random;
-    import dcomp.segtree.primitive : binSearchLeft;
-    auto seg = LazySeg!(uint, uint,
-        (a, b) => (a | b),
-        (a, b) => (a | b),
-        (a, b) => (a | b),
-        0U, 0U, LazySegNaiveEngine)(100);
-    uint[] d = new uint[100];
-    foreach (i; 0..100) {
-        auto u = uniform!"[]"(0, 31);
-        seg[i] = u;
-        d[i] = u;
-    }
-    int naive(int a, int b, int x) {
-        int sm = 0;
-        foreach (i; a..b) {
-            sm = sm|d[i];
-            if (sm&x) return i;
+    
+    void f(alias T)() {
+        auto nav = LazySeg!(uint, uint,
+            (a, b) => (a | b),
+            (a, b) => (a | b),
+            (a, b) => (a | b),
+            0U, 0U, Naive)(100);
+        auto seg = LazySeg!(uint, uint,
+            (a, b) => (a | b),
+            (a, b) => (a | b),
+            (a, b) => (a | b),
+            0U, 0U, T)(100);
+        foreach (i; 0..100) {
+            auto u = uniform!"[]"(0, 31);
+            seg[i] = u;
+            nav[i] = u;
         }
-        return b;
-    }
-    foreach (i; 0..100) {
-        foreach (j; i..101) {
-            foreach (x; 0..32) {
-                assert(naive(i, j, x) ==
-                    seg.binSearchLeft!((a) => a & x)(i, j));
-                assert(seg.binSearchLeft!((a) => true)(i, j) == i-1);
+        foreach (i; 0..100) {
+            foreach (j; i..101) {
+                foreach (x; 0..32) {
+                    assert(
+                        nav.binSearchLeft!((a) => a & x)(i, j) ==
+                        seg.binSearchLeft!((a) => a & x)(i, j));
+                    assert(seg.binSearchLeft!((a) => true)(i, j) == i);
+                    assert(
+                        nav.binSearchRight!((a) => a & x)(i, j) ==
+                        seg.binSearchRight!((a) => a & x)(i, j));
+                    assert(seg.binSearchRight!((a) => true)(i, j) == j);
+                }
             }
-        }
+        }        
+    }
+    foreach (E; LazyEngines) {
+        f!E();
     }
 }
-
-
-unittest {
-    import std.random;
-    import dcomp.segtree.primitive : binSearchRight;
-
-    auto seg = LazySeg!(uint, uint,
-        (a, b) => (a | b),
-        (a, b) => (a | b),
-        (a, b) => (a | b),
-        0U, 0U, LazySegNaiveEngine)(100);
-    uint[] d = new uint[100];
-    foreach (i; 0..100) {
-        auto u = uniform!"[]"(0, 31);
-        seg[i] = u;
-        d[i] = u;
-    }
-    int naive(int a, int b, int x) {
-        int sm = 0;
-        foreach_reverse (i; a..b) {
-            sm = sm|d[i];
-            if (sm&x) return i;
-        }
-        return a-1;
-    }
-    foreach (i; 0..100) {
-        foreach (j; i..101) {
-            foreach (x; 0..32) {
-                assert(naive(i, j, x) ==
-                    seg.binSearchRight!((a) => a & x)(i, j));
-                assert(seg.binSearchRight!((a) => true)(i, j) == j);
-            }
-        }
-    }
-}
-
-
-struct SimpleSegNaiveEngine(T, alias opTT, T eT) {
-    alias DataType = T;
-    alias LazyType = void;
-    uint n, sz, lg;
-    T[] d;
-    @property uint length() const {return n;}
-    this(uint n) {
-        import std.algorithm : each;
-        uint lg = 0;
-        while ((2^^lg) < n) lg++;
-        this.n = n;
-        this.lg = lg;
-        sz = 2^^lg;
-        d = new T[](2*sz);
-        d.each!((ref x) => x = eT);
-    }
-    this(T[] first) {
-        import std.conv : to;
-        import std.algorithm : each;
-        n = first.length.to!uint;
-        if (n == 0) return;
-        uint lg = 0;
-        while ((2^^lg) < n) lg++;
-        this.lg = lg;
-        sz = 2^^lg;
-        d = new T[](2*sz);
-        d.each!((ref x) => x = eT);
-        foreach (i; 0..n) {
-            d[sz+i] = first[i];
-        }
-        foreach_reverse (i; 1..sz) {
-            update(i);
-        }
-    }
-    private void push(uint k) {}
-    void update(uint k) {
-        d[k] = opTT(d[2*k], d[2*k+1]);
-    }
-    T single(uint k) {
-        return d[k+sz];
-    }
-    void singleSet(uint k, T x) {
-        k += sz;
-        d[k] = x;
-        foreach (uint i; 1..lg+1) {
-            update(k>>i);
-        }
-    }
-    //d[a]+d[a+1]+...+d[b-1]
-    T sum(uint a, uint b, uint l, uint r, uint k) {
-        if (b <= l || r <= a) return eT;
-        if (a <= l && r <= b) return d[k];
-        push(k);
-        uint md = (l+r)/2;
-        return opTT(sum(a, b, l, md, 2*k),
-            sum(a, b, md, r, 2*k+1));
-    }    
-    T sum(uint a, uint b) {
-        assert(0 <= a && a <= b && b <= n);
-        return sum(a, b, 0, sz, 1);
-    }
-}
-
 
 unittest {
     //some func test
@@ -480,9 +498,9 @@ unittest {
     }
 }
 
-
 unittest {
     //stress test
+    import dcomp.segtree.naive;
     import std.traits : AliasSeq;
     alias SimpleEngines = AliasSeq!(SimpleSegEngine, SimpleSegNaiveEngine);
     alias LazyEngines = AliasSeq!(LazySegEngine, LazySegBlockEngine, LazySegNaiveEngine);
@@ -500,11 +518,7 @@ unittest {
     Mat rndM() {
         Mat m;
         while (true) {
-            foreach (i; 0..2) {
-                foreach (j; 0..2) {
-                    m[i, j] = Mint(uniform(0, MD, gen));
-                }
-            }
+            m = matrix!(2, 2, (i, j) => Mint(uniform(0, MD, gen)))();
             if (m[0, 0] * m[1, 1] == m[0, 1] * m[1, 0]) continue;
             break;
         }
@@ -596,56 +610,6 @@ unittest {
             }
         }
         return res;
-    }
-
-    static struct NaiveSimple(T, alias opTT, T eT) {
-        import std.conv : to;
-        alias DataType = T;
-        alias LazyType = void;
-        T[] d;
-        @property size_t length() const { return d.length; }
-        this(uint n) {
-            d = new T[n];
-        }
-        this(T[] first) {
-            d = first.dup;
-        }
-        T sum(uint l, uint r) {
-            T sm = eT;
-            foreach (i; l..r) {
-                sm = opTT(sm, d[i]);
-            }
-            return sm;
-        }
-        T single(int k) { return d[k]; }
-        void singleSet(int k, T x) { d[k] = x; }
-    }
-    static struct Naive(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) {
-        import std.conv : to;
-        alias DataType = T;
-        alias LazyType = L;
-        T[] d;
-        @property size_t length() const { return d.length; }
-        this(uint n) {
-            d = new T[n];
-        }
-        this(T[] first) {
-            d = first.dup;
-        }
-        T sum(uint l, uint r) {
-            T sm = eT;
-            foreach (i; l..r) {
-                sm = opTT(sm, d[i]);
-            }
-            return sm;
-        }
-        void add(uint l, uint r, L m) {
-            foreach (i; l..r) {
-                d[i] = opTL(d[i], m);
-            }
-        }
-        T single(int k) { return d[k]; }
-        void singleSet(int k, T x) { d[k] = x; }
     }
 
     import std.datetime;
