@@ -159,18 +159,19 @@ if (isModInt!Mint) {
     N = 1<<lg;
 
     P[][M] x, y;
+    P[] w = new P[N];
     foreach (ph; 0..M) {
         x[ph] = new P[N];
         y[ph] = new P[N];
-        P[] z = new P[N]; z[] = P(0, 0);
-        foreach (i; 0..A) z[i].re = (a[i].v >> (ph*W)) % (1<<W);
-        foreach (i; 0..B) z[i].im = (b[i].v >> (ph*W)) % (1<<W);
-        fft!false(z);
-        foreach (i; 0..N) z[i] *= 0.5;
+        w[] = P(0, 0);
+        foreach (i; 0..A) w[i].re = (a[i].v >> (ph*W)) % (1<<W);
+        foreach (i; 0..B) w[i].im = (b[i].v >> (ph*W)) % (1<<W);
+        fft!false(w);
+        foreach (i; 0..N) w[i] *= 0.5;
         foreach (i; 0..N) {
             auto j = i ? N-i : 0;
-            x[ph][i] = P(z[i].re+z[j].re,  z[i].im-z[j].im);
-            y[ph][i] = P(z[i].im+z[j].im, -z[i].re+z[j].re);
+            x[ph][i] = P(w[i].re+w[j].re,  w[i].im-w[j].im);
+            y[ph][i] = P(w[i].im+w[j].im, -w[i].re+w[j].re);
         }
     }
     P[][M] z;
