@@ -112,8 +112,8 @@ unittest {
             foreach (ph; 0..10) {
                 double[] a = new double[L];
                 double[] b = new double[R];
-                a.each!((ref x) => x = 100*uniform01());
-                b.each!((ref x) => x = 100*uniform01());
+                foreach (ref x; a) x = 100 * uniform01;
+                foreach (ref x; b) x = 100 * uniform01;
                 double[] c1 = multiply(a, b);
                 double[] c2 = new double[L+R-1]; c2[] = 0.0;
                 foreach (i; 0..L) {
