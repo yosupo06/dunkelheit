@@ -7,7 +7,7 @@ struct AVLNode(T, alias op, T e) {
     import std.algorithm : max;
     import std.math : abs;
     Node*[2] ch;
-    uint length, lv;
+    uint length; int lv;
     T v;
     this(in T v) {
         length = 1;
@@ -151,8 +151,8 @@ if (isInstanceOf!(AVLNode, N)) {
 
 unittest {
     import dcomp.segtree.naive;
-    import dcomp.tree.primitive;// : binSearchLeft, binSearchRight;
-    import dcomp.segtree.primitive;// : binSearchLeft, binSearchRight;
+    import dcomp.tree.primitive;
+    import dcomp.segtree.primitive;
     import dcomp.segtree.simpleseg;
     import std.traits : AliasSeq;
     alias TreeEngines = AliasSeq!(AVLNode);

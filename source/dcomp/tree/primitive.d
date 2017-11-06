@@ -23,13 +23,13 @@ struct Tree(alias E, T, alias opTT, T _e) {
         }
         tr = tr.insert(k.to!int, v);
     }
-    const(T) opIndex(size_t k) {
-        assert(0 <= k && k < length);
-        return tr.at(k.to!int);
-    }
     void removeAt(size_t k) {
         assert(0 <= k && k < length);
         tr = tr.removeAt(k.to!int);
+    }
+    const(T) opIndex(size_t k) {
+        assert(0 <= k && k < length);
+        return tr.at(k.to!int);
     }
     struct Range {
         Tree* eng;
@@ -45,6 +45,18 @@ struct Tree(alias E, T, alias opTT, T _e) {
     Range opIndex(size_t[2] rng) {
         return Range(&this, rng[0].to!uint, rng[1].to!uint);
     }
+    string toString() {
+        //todo: more optimize
+        import std.range : iota;
+        import std.algorithm : map;
+        import std.conv : to;
+        import std.string : join;
+        string s;
+        s ~= "Tree(";
+        s ~= iota(length).map!(i => this[i]).to!string;
+        s ~= ")";
+        return s;
+    }
 }
 
 import std.traits : isInstanceOf;
@@ -57,7 +69,6 @@ if(isInstanceOf!(Tree, T)) {
         return 0;
     }
     import dcomp.tree.avl;
-    pragma(msg, typeof(t.tr), isInstanceOf!(AVLNode, typeof(t.tr)));
     return t.tr.binSearch!(false, pred)(a.to!int, b.to!int);
 }
 

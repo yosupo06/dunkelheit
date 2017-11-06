@@ -25,3 +25,34 @@ unittest {
         check!E();
     }
 }
+
+unittest {
+    import std.random;
+    import std.algorithm;
+    import std.conv;
+    import std.container.rbtree;
+    import std.datetime;
+    import std.stdio;
+    StopWatch sw; sw.start;
+    auto nv = redBlackTree!(true, int)([]);
+    auto tr = Tree!(AVLNode, int, max, int.min)();
+    foreach (ph; 0..10000) {
+        int ty = uniform(0, 2);
+        if (ty == 0) {
+            int x = uniform(0, 100);
+            nv.insert(x);
+            tr.insert(tr.binSearchLeft!(y => x <= y)(0, tr.length), x);
+        } else {
+            if (!nv.length) continue;
+            int i = uniform(0, nv.length.to!int);
+            auto u = nv[];
+            foreach (_; 0..i) u.popFront();
+            assert(u.front == tr[i]);
+            int x = tr[i];
+            nv.removeKey(x);
+            tr.removeAt(i);
+        }
+        assert(nv.length == tr.length);
+    }
+    writeln("Set TEST: ", sw.peek.msecs);
+}
