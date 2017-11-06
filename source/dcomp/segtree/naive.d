@@ -4,6 +4,7 @@ static struct NaiveSimple(T, alias opTT, T eT) {
     import std.conv : to;
     alias DataType = T;
     alias LazyType = void;
+    alias BinSearch = binSearchNaive;
     T[] d;
     @property size_t length() const { return d.length; }
     this(uint n) {
@@ -53,6 +54,31 @@ static struct Naive(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL) {
 }
 
 
+int binSearchNaive(bool rev, alias pred, TR)(TR t, int a, int b) {
+    import std.traits : TemplateArgsOf;
+    alias args = TemplateArgsOf!TR;
+    alias opTT = args[1];
+    auto x = args[2];
+    with (t) {
+        static if (!rev) {
+            //left
+            if (pred(x)) return a-1;
+            foreach (i; a..b) {
+                x = opTT(x, d[i]);
+                if (pred(x)) return i;
+            }
+            return b;
+        } else {
+            if (pred(x)) return b;
+            foreach_reverse (i; a..b) {
+                x = opTT(d[i], x);
+                if (pred(x)) return i;
+            }
+            return a-1;
+        }
+    }
+}
+
 int binSearchNaiveLazy(bool rev, alias pred, TR)(TR t, int a, int b) {
     import std.traits : TemplateArgsOf;
     alias args = TemplateArgsOf!TR;
@@ -61,12 +87,12 @@ int binSearchNaiveLazy(bool rev, alias pred, TR)(TR t, int a, int b) {
     with (t) {
         static if (!rev) {
             //left
+            if (pred(x)) return a-1;
             foreach (i; a..b) {
-                if (pred(x)) return i;
                 x = opTT(x, d[i]);
+                if (pred(x)) return i;
             }
-            if (pred(x)) return b;
-            return b+1;
+            return b;
         } else {
             if (pred(x)) return b;
             foreach_reverse (i; a..b) {

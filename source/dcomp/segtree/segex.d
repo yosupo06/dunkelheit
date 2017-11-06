@@ -363,7 +363,7 @@ int binSearchLazyNaive(bool rev, alias pred, TR)(TR t, int a, int b) {
     with (t) {
         static if (!rev) {
             //left
-            if (pred(x)) return a;
+            if (pred(x)) return a-1;
             int pos = a;
             void f(int a, int b, int l, int r, int k) {
                 if (b <= l || r <= a) return;
@@ -379,7 +379,7 @@ int binSearchLazyNaive(bool rev, alias pred, TR)(TR t, int a, int b) {
                 if (pos >= md) f(a, b, md, r, 2*k+1);
             }
             f(a, b, 0, sz, 1);
-            return pos+1;
+            return pos;
         } else {
             //right
             if (pred(x)) return b;
@@ -398,17 +398,15 @@ int binSearchLazyNaive(bool rev, alias pred, TR)(TR t, int a, int b) {
                 if (pos < md) f(a, b, l, md, 2*k);
             }
             f(a, b, 0, sz, 1);
-            return pos;            
+            return pos;
         }
     }
 }
 
-import std.traits;
-
 unittest {
     import dcomp.segtree.naive;
     import std.traits : AliasSeq;
-    alias SimpleEngines = AliasSeq!(SimpleSegEngine, SimpleSegNaiveEngine);
+    alias SimpleEngines = AliasSeq!(SimpleSegEngine);
     alias LazyEngines = AliasSeq!(LazySegEngine, LazySegNaiveEngine);
 
     import std.random;
@@ -435,17 +433,47 @@ unittest {
                     assert(
                         nav.binSearchLeft!((a) => a & x)(i, j) ==
                         seg.binSearchLeft!((a) => a & x)(i, j));
-                    assert(seg.binSearchLeft!((a) => true)(i, j) == i);
+                    assert(seg.binSearchLeft!((a) => true)(i, j) == i-1);
                     assert(
                         nav.binSearchRight!((a) => a & x)(i, j) ==
                         seg.binSearchRight!((a) => a & x)(i, j));
                     assert(seg.binSearchRight!((a) => true)(i, j) == j);
                 }
             }
-        }        
+        }
+    }
+    void g(alias T)() {
+        auto nav = SimpleSeg!(uint,
+            (a, b) => (a | b),
+            0U, NaiveSimple)(100);
+        auto seg = SimpleSeg!(uint,
+            (a, b) => (a | b),
+            0U, T)(100);
+        foreach (i; 0..100) {
+            auto u = uniform!"[]"(0, 31);
+            seg[i] = u;
+            nav[i] = u;
+        }
+        foreach (i; 0..100) {
+            foreach (j; i..101) {
+                foreach (x; 0..32) {
+                    assert(
+                        nav.binSearchLeft!((a) => a & x)(i, j) ==
+                        seg.binSearchLeft!((a) => a & x)(i, j));
+                    assert(seg.binSearchLeft!((a) => true)(i, j) == i-1);
+                    assert(
+                        nav.binSearchRight!((a) => a & x)(i, j) ==
+                        seg.binSearchRight!((a) => a & x)(i, j));
+                    assert(seg.binSearchRight!((a) => true)(i, j) == j);
+                }
+            }
+        }
     }
     foreach (E; LazyEngines) {
         f!E();
+    }
+    foreach (E; SimpleEngines) {
+        g!E();
     }
 }
 

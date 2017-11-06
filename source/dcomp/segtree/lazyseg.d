@@ -215,7 +215,7 @@ int binSearchLazy(bool rev, alias pred, TR)(TR t, int a, int b) {
     with (t) {
         static if (!rev) {
             //left
-            if (pred(x)) return a;
+            if (pred(x)) return a-1;
             int pos = a;
             void f(int a, int b, int l, int r, int k) {
                 if (b <= l || r <= a) return;
@@ -231,7 +231,7 @@ int binSearchLazy(bool rev, alias pred, TR)(TR t, int a, int b) {
                 if (pos >= md) f(a, b, md, r, 2*k+1);
             }
             f(a, b, 0, sz, 1);
-            return pos+1;
+            return pos;
         } else {
             //right
             if (pred(x)) return b;

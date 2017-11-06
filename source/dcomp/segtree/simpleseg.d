@@ -36,6 +36,7 @@ unittest {
 struct SimpleSegEngine(T, alias opTT, T eT) {
     alias DataType = T;
     alias LazyType = void;
+    alias BinSearch = binSearchSimple;
     uint n, sz, lg;
     T[] d;
     @property uint length() const {return n;}
