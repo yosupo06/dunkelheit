@@ -224,38 +224,32 @@ if (isModInt!Mint) {
             y[ph][i] = P(w[i].im+w[j].im, -w[i].re+w[j].re);
         }
     }
-    P[][M] z;
-    foreach (i; 0..M) {
-        z[i] = new P[N]; z[i][] = P(0, 0);
-    }
-    foreach (af; 0..M) {
-        foreach (bf; 0..M) {
-            auto cf = af+bf;
-            if (cf >= M) cf -= M;
-            foreach (i; 0..N) {
-                if (af + bf < M) {
-                    z[cf][i] += x[af][i]*y[bf][i];
-                } else {
-                    z[cf][i] += x[af][i]*y[bf][i]*P(0, 1);
-                }
-            }
-        }
-    }
-    foreach (i; 0..M) fft!true(z[i]);
 
     Mint[] c = new Mint[A+B-1];
-    Mint base = 1;
-    foreach (ph; 0..2*M-1) {
-        foreach (i; 0..A+B-1) {
-            if (ph < M) {
-                z[ph][i].re *= 1.0/N;
-                c[i] += Mint(cast(long)(round(z[ph][i].re)))*base;
-            } else {       
-                z[ph-M][i].im *= 1.0/N;
-                c[i] += Mint(cast(long)(round(z[ph-M][i].im)))*base;
+    Mint basel = 1, baser = pow(Mint(1<<W), M);
+    P[] z = new P[N];
+    foreach (ph; 0..M) {
+        z[] = P(0, 0);
+        foreach (af; 0..ph+1) {
+            auto bf = ph - af;
+            foreach (i; 0..N) {
+                z[i] += x[af][i] * y[bf][i];
             }
         }
-        base *= Mint(1<<W);
+        foreach (af; ph+1..M) {
+            auto bf = ph + M - af;
+            foreach (i; 0..N) {
+                z[i] += x[af][i] * y[bf][i] * P(0, 1);
+            }
+        }
+        fft!true(z);
+        foreach (i; 0..A+B-1) {
+            z[i] *= 1.0/N;
+            c[i] += Mint(cast(long)(round(z[i].re)))*basel;
+            c[i] += Mint(cast(long)(round(z[i].im)))*baser;
+        }
+        basel *= Mint(1<<W);
+        baser *= Mint(1<<W);
     }
     return c;
 }
