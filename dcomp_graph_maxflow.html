@@ -186,7 +186,39 @@
       <div class="dlang">
         <p class="para">
           <code class="code">
-            <span class="ddoc_anchor" id="maxFlow"></span>MaxFlowInfo!C <span class="color_yellow">maxFlow</span><span class="color_red">(C, C EPS, T)</span>(T g, int s, int t);
+            <span class="ddoc_anchor" id="maxFlow"></span>MaxFlowInfo!C <span class="color_yellow">maxFlow</span><span class="color_red">(C, C EPS, T)</span>(T g, int s, int t, C gap = C.max);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    最大流ライブラリ, Dinic
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#maxFlowSlow" id="maxFlowSlow"><code class="code">maxFlowSlow</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="maxFlowSlow"></span>MaxFlowInfo!C <span class="color_yellow">maxFlowSlow</span><span class="color_red">(C, T)</span>(T g, int s, int t, C gap = C.max);
 <span class="color_red"></span>
           </code>
         </p>
@@ -225,7 +257,7 @@ addEdge(<span class="color_red">g</span>, 0, 1, 3);
 addEdge(<span class="color_red">g</span>, 0, 2, 3);
 addEdge(<span class="color_red">g</span>, 1, 3, 2);
 addEdge(<span class="color_red">g</span>, 2, 3, 4);
-<span class="color_blue">auto</span> res = <span class="color_yellow">maxFlow</span>!(<span class="color_blue">int</span>, 0)(<span class="color_red">g</span>, 0, 3);
+<span class="color_blue">auto</span> res = maxFlow!(<span class="color_blue">int</span>, 0)(<span class="color_red">g</span>, 0, 3);
 <span class="color_blue">assert</span>(res.flow == 5);
 <span class="color_red">//MinCut : S={0, 1}, T={2, 3}
 </span><span class="color_blue">assert</span>(equal(res.dual, [<span class="color_blue">false</span>, <span class="color_blue">false</span>, <span class="color_blue">true</span>, <span class="color_blue">true</span>]));
