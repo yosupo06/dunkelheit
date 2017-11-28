@@ -27,7 +27,7 @@ struct PairingHeapPayload(T, alias opCmp) {
         if (!n) n = new Node(x);
         else n = merge(n, new Node(x));
     }
-    T front() const {
+    inout(T) front() inout {
         assert(n);
         return n.d;
     }
@@ -73,7 +73,7 @@ struct PairingHeap(T, alias _opCmp) {
         assert(p);
         p.insert(x);
     }
-    T front() const {
+    inout(T) front() inout {
         assert(p);
         return p.front;
     }

@@ -92,9 +92,13 @@ string[] findImport(string line) {
     string[] res;
     foreach (ph; l) {
         if (ph.count(":")) break;
-        if (ph.split(".")[0] != "dcomp") continue;
-        ph = ph.replace(".", "/");
-        res ~= basePath ~ "source/" ~ ph ~ ".d";
+        string f = ph.split(".")[0];
+        if (f == "dcomp") {
+            ph = ph.replace(".", "/");
+            res ~= basePath ~ "source/" ~ ph ~ ".d";
+        } else if (f != "std" && f != "core") {
+            res ~= ph ~ ".d";            
+        }
     }
     return res;    
 }
