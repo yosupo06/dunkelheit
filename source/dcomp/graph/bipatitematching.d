@@ -38,6 +38,7 @@ struct BipatiteMatching {
         exec();
     }
     void del(int l, int r) {
+        import std.algorithm : remove;
         g[l] = g[l].remove!(a => a == r);
         if (rmt[r] == l) {
             count--;
