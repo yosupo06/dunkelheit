@@ -248,10 +248,8 @@ unittest {
         }
         assert(res.flow == sm);
     }
-    writeln("MinCostFlow Random5000, Neg5000");
-    auto ti = benchmark!(f!false, f!true)(5000);
-    writeln(ti[0].msecs, "ms");
-    writeln(ti[1].msecs, "ms");
+    auto ti = benchmark!(f!false, f!true)(500);
+    writeln("MinCostFlow int Random500, Neg500: ", ti[].map!"a.msecs");
 }
 
 unittest {
@@ -309,8 +307,6 @@ unittest {
         import std.math;
         assert(abs(res.flow - sm) <= 1e-3);
     }
-    writeln("MinCostFlow double Random5000, Neg5000");
-    auto ti = benchmark!(f!false, f!true)(5000);
-    writeln(ti[0].msecs, "ms");
-    writeln(ti[1].msecs, "ms");
+    auto ti = benchmark!(f!false, f!true)(500);
+    writeln("MinCostFlow double Random500, Neg500: ", ti[].map!"a.msecs");
 }

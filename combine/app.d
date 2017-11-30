@@ -79,16 +79,25 @@ ubyte[] someTrim(ubyte[] fileBytes) {
     
 string[] findImport(string line) {
     import std.regex : regex, replaceAll;
+    auto l = line.replaceAll(regex("[;,]"), " ").split;
+    bool find = false;
+    if (l.length >= 1 && l[0] == "import") {
+        l = l[1..$];
+        find = true;
+    } else if (l.length >= 2 && l[0] == "public" && l[1] == "import") {
+        l = l[2..$];
+        find = true;
+    }
+    if (!find) return [];
     string[] res;
-    auto l = line.split;
-    if (l.length >= 2 && l[0] == "import") {
-        if (l[1].split(".")[0] == "dcomp") {
-            //dcomp import
-            foreach (ph; l[1..$]) {
-                ph = ph.replace(".", "/");
-                ph = ph.replaceAll(regex("[;,]"), "");
-                res ~= basePath ~ "source/" ~ ph ~ ".d";
-            }
+    foreach (ph; l) {
+        if (ph.count(":")) break;
+        string f = ph.split(".")[0];
+        if (f == "dcomp") {
+            ph = ph.replace(".", "/");
+            res ~= basePath ~ "source/" ~ ph ~ ".d";
+        } else if (f != "std" && f != "core") {
+            res ~= ph ~ ".d";            
         }
     }
     return res;    

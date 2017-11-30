@@ -9,7 +9,7 @@ struct MaxFlowInfo(C) {
 }
 
 ///最大流ライブラリ, Dinic
-MaxFlowInfo!(C) maxFlow(C, C EPS, T)(T g, int s, int t) {
+MaxFlowInfo!(C) maxFlow(C, C EPS, T)(T g, int s, int t, C gap = C.max) {
     assert(s != t);
     import std.algorithm : map;
     import std.range : array;
@@ -54,12 +54,12 @@ MaxFlowInfo!(C) maxFlow(C, C EPS, T)(T g, int s, int t) {
     }
 
     C flow = 0;
-    while (true) {
+    while (gap - flow > EPS) {
         bfs();
         if (level[t] < 0) break;
         iter[] = 0;
         while (true) {
-            C f = dfs(s, C.max);
+            C f = dfs(s, gap - flow);
             if (!f) break;
             flow += f;
         }
@@ -68,6 +68,45 @@ MaxFlowInfo!(C) maxFlow(C, C EPS, T)(T g, int s, int t) {
     auto mfInfo = MaxFlowInfo!C();
     mfInfo.flow = flow;
     mfInfo.dual = level.map!"a == -1".array;
+    return mfInfo;
+}
+
+
+
+///最大流ライブラリ, Dinic
+MaxFlowInfo!(C) maxFlowSlow(C, T)(T g, int s, int t, C gap = C.max) {
+    assert(s != t);
+    import std.algorithm : map;
+    import std.range : array;
+    import std.conv : to;
+    int n = g.length.to!int;
+
+    bool[] used = new bool[n];
+    bool dfs(int v) {
+        if (v == t) return true;
+        import std.stdio;
+        used[v] = true;
+        foreach (ref e; g[v]) {
+            if (used[e.to]) continue;
+            if (!e.cap) continue;
+            if (dfs(e.to)) {
+                e.cap -= 1;
+                g[e.to][e.rev].cap += 1;
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    C flow = 0;
+    while (flow < gap) {
+        used[] = false;
+        if (!dfs(s)) break;
+        flow++;
+    }
+    auto mfInfo = MaxFlowInfo!C();
+    mfInfo.flow = flow;
+    mfInfo.dual = used.map!"!a".array;
     return mfInfo;
 }
 
@@ -114,7 +153,7 @@ unittest {
 
     writeln("MaxFlow Random5000");
 
-    void f() {
+    void f(alias MF)() {
         int n = uniform(2, 20);
         int m = uniform(0, 200);
         int s, t;
@@ -139,7 +178,7 @@ unittest {
             elist[x] ~= E(y, c, -1);
         }
 
-        auto res = maxFlow!(int, 0)(g, s, t);
+        auto res = MF(g, s, t);
         assert(res.dual[s] == false);
         assert(res.dual[t] == true);
         int sm = 0;
@@ -152,7 +191,10 @@ unittest {
         }
         assert(res.flow == sm);
     }
-    auto ti = benchmark!(f)(5000);
+    auto ti = benchmark!(
+        f!(maxFlow!(int, 0, E[][])),
+        f!(maxFlowSlow!(int, E[][])),
+        )(5000);
     writeln(ti[0].msecs, "ms");
 }
 

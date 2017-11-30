@@ -23,25 +23,19 @@ static if (__VERSION__ <= 2070) {
         assert(l.fold!"a+b"(10) == 25);
     }
 }
-version (X86) static if (__VERSION__ < 2071) {
-    import core.bitop : bsf, bsr, popcnt;
-    int bsf(ulong v) {
-        foreach (i; 0..64) {
-            if (v & (1UL << i)) return i;
-        }
-        return -1;
-    }
-    int bsr(ulong v) {
-        foreach_reverse (i; 0..64) {
-            if (v & (1UL << i)) return i;
-        }
-        return -1;   
-    }
+
+import core.bitop : popcnt;
+static if (!__traits(compiles, popcnt(ulong.max))) {
+    public import core.bitop : popcnt;
     int popcnt(ulong v) {
-        int c = 0;
-        foreach (i; 0..64) {
-            if (v & (1UL << i)) c++;
-        }
-        return c;
+        return popcnt(cast(uint)(v)) + popcnt(cast(uint)(v>>32));
     }
+}
+
+bool poppar(ulong v) {
+    v^=v>>1;
+    v^=v>>2;
+    v&=0x1111111111111111UL;
+    v*=0x1111111111111111UL;
+    return ((v>>60) & 1) != 0;
 }

@@ -62,7 +62,6 @@ ulong[2] mul128(ulong a, ulong b) {
 unittest {
     import std.random, std.algorithm, std.datetime, std.stdio, std.conv;
     StopWatch sw; sw.start;
-    writeln("Start mul128");
     ulong[2] naive_mul(ulong a, ulong b) {
         import std.bigint, std.conv;
         auto a2 = BigInt(a), b2 = BigInt(b);
@@ -83,7 +82,7 @@ unittest {
             assert(equal(mul128(l, r)[], naive_mul(l, r)[]));
         }
     }
-    writefln("%dms", sw.peek.msecs);
+    writeln("Mul128: ", sw.peek.msecs);
 }
 
 /// [a[1], a[0]] / b = return, 答えが64bitに収まらないとヤバイ
@@ -109,8 +108,45 @@ ulong div128(ulong[2] a, ulong b) {
         }
         return res;
     } else {
-        import std.bigint, std.conv;
-        return (((BigInt(a[1]) << 64) + BigInt(a[0])) / BigInt(b)).to!string.to!ulong;
+        if (b == 1) return a[0];
+        while (!(b & (1UL << 63))) {
+            a[1] <<= 1;
+            if (a[0] & (1UL << 63)) a[1] |= 1;
+            a[0] <<= 1;
+            b <<= 1;
+        }
+        ulong ans = 0;
+        foreach (i; 0..64) {
+            bool up = (a[1] & (1UL << 63)) != 0;
+            a[1] <<= 1;
+            if (a[0] & (1UL << 63)) a[1] |= 1;
+            a[0] <<= 1;
+
+            ans <<= 1;
+            if (up || b <= a[1]) {
+                a[1] -= b;
+                ans++;
+            }
+        }
+        return ans;
+    }
+}
+
+
+/// [a[1], a[0]] % b = return, 答えが64bitに収まらないとヤバイ
+ulong mod128(ulong[2] a, ulong b) {
+    version(D_InlineAsm_X86_64) {
+        ulong upper = a[1], lower = a[0];
+        ulong res;
+        asm {
+            mov RDX, upper;
+            mov RAX, lower;
+            div b;
+            mov res, RDX;
+        }
+        return res;
+    } else {
+        return a[0] - div128(a, b) * b;
     }
 }
 
@@ -118,7 +154,6 @@ unittest {
     import std.bigint, std.conv, std.datetime, std.stdio;
     import std.random, std.algorithm;
     StopWatch sw; sw.start;
-    writeln("Start div128");
     bool overflow_check(ulong[2] a, ulong b) {
         auto a2 = (BigInt(a[1]) << 64) + BigInt(a[0]);
         return (a2 / b) > BigInt(ulong.max);
@@ -127,23 +162,27 @@ unittest {
         auto a2 = (BigInt(a[1]) << 64) + BigInt(a[0]);
         return (a2 / b).to!string.to!ulong;
     }
+    ulong naive_mod(ulong[2] a, ulong b) {
+        auto a2 = (BigInt(a[1]) << 64) + BigInt(a[0]);
+        return (a2 % b).to!string.to!ulong;
+    }    
     ulong[2][] li;
     ulong[] ri;
-    foreach (i; 0..100) {
+    foreach (i; 0..50) {
         li ~= [i, 0UL];
         li ~= [ulong.max - i, 0UL];
     }
-    foreach (i; 0..100) {
+    foreach (i; 0..50) {
         ri ~= i;
         ri ~= ulong.max - i;
     }
-    foreach (i; 0..100) {
+    foreach (i; 0..50) {
         li ~= [uniform(0UL, ulong.max), 0UL];
     }
-    foreach (i; 0..100) {
+    foreach (i; 0..50) {
         li ~= [uniform(0UL, ulong.max), uniform(0UL, ulong.max)];
     }    
-    foreach (i; 0..100) {
+    foreach (i; 0..50) {
         ri ~= uniform(0UL, ulong.max);
     }
     li ~= [0, ulong.max];
@@ -153,7 +192,8 @@ unittest {
             if (r == 0) continue;
             if (overflow_check(l, r)) continue;
             assert(div128(l, r) == naive_div(l, r));
+            assert(mod128(l, r) == naive_mod(l, r));
         }
     }
-    writefln("%dms", sw.peek.msecs);
+    writeln("Div128: ", sw.peek.msecs);
 }

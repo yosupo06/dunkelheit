@@ -98,7 +98,6 @@ int cmpMultiWord(in ulong[] l, in ulong[] r) {
 多倍長整数.
 静的に長さを指定しする, $(D N*64bit)となる.
 例えば$(D uintN!2)とすれば、$(D uint128)として使える.
-テストをほとんど書いていないためバグが(ほぼ確実に)含まれている
  */
 struct uintN(int N) if (N >= 1) {
     import core.checkedint;
@@ -111,16 +110,28 @@ struct uintN(int N) if (N >= 1) {
         }
     }
     string toString() {
+//        import std.range : back, popBack;
+        import std.conv : to;
         import std.algorithm : reverse;
-        char[] s;
-        if (!this) return "0";
-        while (this) {
-            s ~= cast(char)('0' + (this % uintN(10))[0]);
-            this /= uintN(10);
+        import dcomp.array;
+        FastAppender!(char[]) s;
+        auto x = this;
+        if (!x) return "0";
+        while (x) {
+            static immutable B = 10UL^^18;
+            ulong z = (x % B);
+            x /= B;
+            bool last = (!x);
+            foreach (i; 0..18) {
+                if (last && !z) break;
+                s ~= cast(char)('0' + z % 10);
+                z /= 10;
+            }
         }
-        reverse(s);
-        return s.idup;
+        reverse(s.data);
+        return s.data.idup;
     }
+
     ref inout(ulong) opIndex(int idx) inout { return d[idx]; }
     T opCast(T: bool)() {
         import std.algorithm, std.range;
@@ -179,18 +190,18 @@ struct uintN(int N) if (N >= 1) {
 
     //arit
     uintN opUnary(string op)() if (op == "++") {
-        uintN res;
-        bool of = true;
         foreach (i; 0..N) {
-            if (of) {
-                d[i]++;
-                if (d[i]) of = false;
-            }
+            d[i]++;
+            if (d[i]) break;
         }
-        return res;
+        return this;
     }
     uintN opUnary(string op)() if (op == "--") {
-        return this -= uintN(1); //todo optimize
+        foreach (i; 0..N) {
+            d[i]--;
+            if (d[i] != ulong.max) break;
+        }
+        return this;
     }
     uintN opUnary(string op)() const if (op=="+" || op=="-") {
         if (op == "+") return this;
@@ -212,30 +223,46 @@ struct uintN(int N) if (N >= 1) {
 
     uintN opBinary(string op : "*")(in uintN r) const {
         uintN res;
-        foreach (s; 0..N) {
-            foreach (i; 0..s+1) {
-                int j = s-i;
-                auto u = mul128(d[i], r[j]);
-                bool of;
-                res[s] = addu(res[s], u[0], of);
-                if (s+1 < N) {
-                    if (of) {
-                        res[s+1]++;
-                        of = (res[s+1] == 0);
-                    }
-                    res[s+1] = addu(res[s+1], u[1], of);
-                    if (s+2 < N && of) res[s+2]++;
+        static if (N == 2) {
+            auto u = mul128(d[0], r[0]);
+            res[0] = u[0];
+            res[1] = u[1] + d[0]*r[1] + d[1]*r[0];
+            return res;
+        } else {
+            foreach (i; 0..N) {
+                ulong carry = 0;
+                foreach (j; 0..N-1-i) {
+                    int s = i+j;
+                    bool of;
+                    auto u = mul128(d[i], r[j]);
+                    res[s] = addu(res[s], carry, of);
+                    carry = u[1];
+                    if (of) carry++;
+                    of = false;
+                    res[s] = addu(res[s], u[0], of);
+                    if (of) carry++;
                 }
+                res[N-1] += d[i] * r[N-1-i] + carry;
             }
+            return res;
         }
-        return res;
     }
     uintN opBinary(string op : "*")(in ulong r) const {
         uintN res;
         mulMultiWord(d, r, res.d);
         return res;
     }
-
+    uintN opBinary(string op : "/")(in ulong rr) const {
+        uintN res;
+        ulong back = 0;
+        foreach_reverse (i; 0..N) {
+            assert(back < rr);
+            ulong pred = div128([d[i], back], rr);
+            res[i] = pred;
+            back = d[i]-(rr*pred);
+        }
+        return res;
+    }
     uintN opBinary(string op : "/")(in uintN rr) const {
         int up = -1, shift;
         foreach_reverse (i; 0..N) {
@@ -246,7 +273,9 @@ struct uintN(int N) if (N >= 1) {
             }
         }
         assert(up != -1);
-
+        if (up == 0) {
+            return this / ulong(rr[0]);
+        }
         ulong[N+1] l;
         l[0..N] = d[0..N];
         shiftLeftMultiWord(l, shift, l);
@@ -266,13 +295,19 @@ struct uintN(int N) if (N >= 1) {
         }
         return res;
     }
-    uintN opBinary(string op : "/")(in ulong r) const {
-        return this / uintN(r);
+    ulong opBinary(string op : "%")(in ulong r) const {
+        static if (N == 2) {
+            return mod128([d[0], d[1] % r], r);
+        } else {
+            return (this % uintN(r)).d[0];
+        }
     }
-    uintN opBinary(string op : "%", T)(in T r) const {
+    uintN opBinary(string op : "%")(in uintN r) const {
+        static if (N == 2) {
+            if (r[1] == 0) return uintN(this % ulong(r[0]));
+        }
         return this - this/r*r;
     }
-
     auto opOpAssign(string op, T)(in T r) {
         return mixin("this=this" ~ op ~ "r");
     }
@@ -286,4 +321,111 @@ unittest {
     auto y = Uint("1145141919810893");
     assert((x*y).to!string == "35975694425956177975650270094479894166566");
     assert((x/y).to!string == "27434090039");
+}
+
+unittest {
+    import std.conv;
+    alias Uint = uintN!4;
+    auto x = Uint("115792089237316195417293883273301227089434195242432897623355228563449095127040");
+    auto y = Uint("340282366920938463500268095579187314687");
+    assert((x%y).to!string == "340282366920938463186673446326124937222");
+}
+
+unittest {
+    import std.conv;
+    uintN!10 x = uintN!10("114514");
+    assert(x.toString == "114514");
+    assert(x.toString == "114514");
+    assert(x.toString == "114514");
+}
+
+unittest {
+    import std.stdio;
+    void check(int N)() {
+        alias Uint = uintN!N;
+        Uint[] v;
+        Uint buf;
+        void dfs(int p) {
+            if (p == N) {
+                v ~= buf;
+                return;
+            }
+            buf.d[p] = 0;
+            dfs(p+1);
+            buf.d[p] = 1;
+            dfs(p+1);
+            buf.d[p] = ulong.max;
+            dfs(p+1);
+            if (N <= 3) {
+                buf.d[p] = ulong.max - 1;
+                dfs(p+1);
+            }
+        }
+        dfs(0);
+        import std.bigint;
+        BigInt mask = BigInt(1) << (64*N);
+        void f(string op, R)(Uint x, R y) {
+            import std.conv;
+            auto x2 = BigInt(x.to!string);
+            auto y2 = BigInt(y.to!string);
+            auto z = mixin("x" ~ op ~ "y");
+            auto z2 = mixin("x2" ~ op ~ "y2");
+            z2 = (z2 % mask + mask) % mask;
+            string s1 = z.to!string;
+            string s2 = z2.to!string;
+            if (s1 != s2) {
+                writeln("ERR ", N, " : ", x, " ", y, " ", op, " : ", z, " ", z2);
+            }
+            assert(s1 == s2);
+        }
+        void g(string op)(Uint x) {
+            import std.conv;
+            auto x2 = BigInt(x.to!string);
+            auto z = mixin(op ~ "x");
+            auto z2 = mixin(op ~ "x2");
+            x2 = (x2 % mask + mask) % mask;
+            z2 = (z2 % mask + mask) % mask;
+            assert(x.to!string == x2.to!string);
+            string s1 = z.to!string;
+            string s2 = z2.to!string;
+            if (s1 != s2) {
+                writeln("ERR ", N, " : ", x, " ", op, " : ", z, " ", z2);
+            }
+            assert(s1 == s2);
+        }
+        foreach (d; v) {
+            g!"++"(d);
+            g!"--"(d);
+            g!"~"(d);       
+            f!"/"(d, ulong(1));
+            f!"/"(d, ulong(2));
+            f!"/"(d, ulong(ulong.max));
+            f!"/"(d, ulong(ulong.max-1));
+            f!"%"(d, ulong(1));
+            f!"%"(d, ulong(2));
+            f!"%"(d, ulong(ulong.max));
+            f!"%"(d, ulong(ulong.max-1));
+            foreach (e; v) {
+                f!"+"(d, e);
+                f!"-"(d, e);
+                f!"*"(d, e);
+                if (e != Uint(0)) {
+                    f!"/"(d, e);
+                    f!"%"(d, e);
+                }
+                f!"&"(d, e);
+                f!"|"(d, e);
+                f!"^"(d, e);
+            }
+        }
+        writeln("End: ", N);
+    }
+
+    import std.algorithm, std.datetime;
+    auto ti = benchmark!(check!1, check!2, check!3, check!4)(1);
+//    check!1();
+    writeln("BigInt: ", ti[].map!"a.msecs");
+//    check!2();
+//    check!3();
+//    check!4();
 }

@@ -157,7 +157,6 @@ unittest {
         return res;
     }
 
-    writeln("SAIS Random100000");
     void f() {
         int n = uniform(1, 100);
         ASCIIString s;
@@ -171,6 +170,6 @@ unittest {
         assert(equal(l.rsa, r.rsa));
         assert(equal(l.lcp, r.lcp));
     }
-    auto ti = benchmark!f(10000);
-    writeln(ti[0].msecs, "ms");
+    auto ti = benchmark!f(1000);
+    writeln("SAIS Random1000: ", ti[0].msecs);
 }
