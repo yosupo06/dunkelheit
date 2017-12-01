@@ -1,6 +1,6 @@
 module dcomp.scanner;
 
-import dcomp.array;
+import dcomp.container.stack;
 
 /**
 Scanner 速くはないが遅くもない printf/scanfよりちょっと遅いくらい？
@@ -61,7 +61,7 @@ class Scanner {
                     x[i] = line.parse!E;
                 }
             } else {
-                FastAppender!(E[]) buf;
+                StackPayload!E buf;
                 while (succW()) {
                     buf ~= line.parse!E;
                 }

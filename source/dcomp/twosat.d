@@ -4,7 +4,7 @@
 module dcomp.twosat;
 
 import dcomp.graph.scc;
-import dcomp.array;
+import dcomp.container.stack;
 
 /// 2-SAT を解く構造体
 struct TwoSat {
@@ -12,7 +12,7 @@ struct TwoSat {
     bool[] res;
 
     struct Edge {int to;}
-    FastAppender!(Edge[])[] g;
+    StackPayload!Edge[] g;
 
     /// $(D (a == aExp) || (b == bExp)) という条件を追加
     void addCond(int a, bool aExp, int b, bool bExp) {
@@ -36,7 +36,7 @@ struct TwoSat {
     /// n:変数の数
     this(int n) {
         res = new bool[n];
-        g = new FastAppender!(Edge[])[](2*n);
+        g = new StackPayload!Edge[](2*n);
     }
 }
 

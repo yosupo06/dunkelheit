@@ -99,7 +99,7 @@ void manyFlow(C, D, alias EPS, T)(ref MinCostFlowInfo!(C, D, EPS, T) mcfInfo, C 
     }
 }
 
-import dcomp.array;
+import dcomp.container.stack;
 import dcomp.container.radixheap;
 
 void dualRef(bool neg, C, D, alias EPS, T)(ref MinCostFlowInfo!(C, D, EPS, T) mcfInfo) {
@@ -114,7 +114,7 @@ void dualRef(bool neg, C, D, alias EPS, T)(ref MinCostFlowInfo!(C, D, EPS, T) mc
         int n = g.length.to!int;
         D[] dist = new D[n]; dist[] = D.max;
         pv[] = -1; pe[] = -1;
-        FastAppender!(int[]) refV;
+        StackPayload!int refV;
         auto que = (){
             static if (!neg) {
                 static if (isIntegral!D) {

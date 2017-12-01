@@ -113,8 +113,8 @@ struct uintN(int N) if (N >= 1) {
 //        import std.range : back, popBack;
         import std.conv : to;
         import std.algorithm : reverse;
-        import dcomp.array;
-        FastAppender!(char[]) s;
+        import dcomp.container.stack;
+        StackPayload!char s;
         auto x = this;
         if (!x) return "0";
         while (x) {

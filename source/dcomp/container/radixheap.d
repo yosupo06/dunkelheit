@@ -1,7 +1,7 @@
 module dcomp.container.radixheap;
 
 import dcomp.foundation;
-import dcomp.array;
+import dcomp.container.stack;
 
 
 import std.functional : unaryFun;
@@ -31,7 +31,7 @@ if (isUnsigned!(typeof(unaryFun!_pred(T())))) {
         return (x == 0) ? 0 : bsr(x)+1;
     }
     static struct Payload {
-        FastAppender!(T[])[U.sizeof*8+1] v;
+        StackPayload!T[U.sizeof*8+1] v;
         size_t length;
         U last;
         void insert(T p) {
