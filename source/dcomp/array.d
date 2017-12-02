@@ -27,6 +27,7 @@ struct FastAppender(A, size_t MIN = 4) {
     private uint len, cap;
     /// length
     @property size_t length() const {return len;}
+    alias opDollar = length;
     bool empty() const { return len == 0; }
     /// C++のreserveと似たようなもの
     void reserve(size_t nlen) {
