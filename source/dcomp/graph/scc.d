@@ -1,8 +1,7 @@
 module dcomp.graph.scc;
 
-import dcomp.array;
 import dcomp.graph.primitive;
-import dcomp.container.deque;
+import dcomp.container.stack, dcomp.container.deque;
 
 /// 強連結成分の情報
 struct SCCInfo {
@@ -30,8 +29,8 @@ SCCInfo scc(T)(T g) {
         int time = 0;
         Deque!int st;
         int bufC = 0;
-        FastAppender!(int[]) buf; buf.reserve(n);
-        FastAppender!(int[][]) gBuf;
+        StackPayload!int buf; buf.reserve(n);
+        StackPayload!(int[]) gBuf;
         void dfs(int v) {
             low[v] = ord[v] = time++;
             st.insertBack(v);
