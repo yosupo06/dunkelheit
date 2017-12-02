@@ -90,7 +90,7 @@ void fft(bool type)(Complex!double[] c) {
     c[] = a[];
 }
 
-double[] multiply(double[] a, double[] b) {
+double[] multiply(in double[] a, in double[] b) {
     alias P = Complex!double;
     size_t A = a.length, B = b.length;
     if (!A || !B) return [];
@@ -174,7 +174,7 @@ void nft(uint G, bool type, Mint)(Mint[] c) {
     c[] = a[];    
 }
 
-Mint[] multiply(uint G, Mint)(Mint[] a, Mint[] b) {
+Mint[] multiply(uint G, Mint)(in Mint[] a, in Mint[] b) {
     size_t A = a.length, B = b.length;
     if (!A || !B) return [];
     size_t lg = 1;
@@ -196,7 +196,7 @@ Mint[] multiply(uint G, Mint)(Mint[] a, Mint[] b) {
     return c;
 }
 
-Mint[] multiply(Mint, size_t M = 3, size_t W = 10)(Mint[] a, Mint[] b)
+Mint[] multiply(Mint, size_t M = 3, size_t W = 10)(in Mint[] a, in Mint[] b)
 if (isModInt!Mint) {
     import std.math : round;
     alias P = Complex!double;
