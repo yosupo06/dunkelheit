@@ -1,4 +1,5 @@
 module dcomp.foundation;
+
 //fold(for old compiler)
 static if (__VERSION__ <= 2070) {
     /*
@@ -33,9 +34,19 @@ static if (!__traits(compiles, popcnt(ulong.max))) {
 }
 
 bool poppar(ulong v) {
-    v^=v>>1;
-    v^=v>>2;
+    v^=v>>1; v^=v>>2;
     v&=0x1111111111111111UL;
     v*=0x1111111111111111UL;
     return ((v>>60) & 1) != 0;
 }
+
+
+/// 静的配列のリテラルであると明示的に指定する
+T[N] fixed(T, size_t N)(T[N] a) {return a;}
+
+///
+unittest {
+    auto a = [[1, 2].fixed];
+    assert(is(typeof(a) == int[2][]));
+}
+

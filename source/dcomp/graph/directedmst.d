@@ -1,7 +1,5 @@
 module dcomp.graph.directedmst;
 
-import dcomp.array;
-
 import std.stdio;
 
 DirectedMSTInfo!(_E, D) directedMST(T, _E = EdgeType!T, D = typeof(_E.dist))(T _g, size_t r) {

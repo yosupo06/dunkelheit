@@ -1,6 +1,6 @@
 module dcomp.graph.maxflow;
 
-import dcomp.container.deque, dcomp.array;
+import dcomp.container.deque;
 
 ///maxflowの情報
 struct MaxFlowInfo(C) {

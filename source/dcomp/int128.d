@@ -6,8 +6,6 @@ TODO : 32bit環境での除算を真面目に実装する
 
 module dcomp.int128;
 
-import dcomp.array;
-
 version(LDC) {
     import dcomp.ldc.inline;
 }
