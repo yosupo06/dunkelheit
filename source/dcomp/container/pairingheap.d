@@ -1,5 +1,15 @@
 module dcomp.container.pairingheap;
 
+NP meldPairingHeapNode(T, alias opCmp, NP)(NP x, NP y) {
+    import std.algorithm : swap;
+    if (!x) return y;
+    if (!y) return x;
+    if (opCmp(x.d, y.d)) swap(x, y);
+    y.next = x.head;
+    x.head = y;
+    return x;
+}
+
 struct PairingHeapPayload(T, alias opCmp) {
     import std.range : iota;
     import std.algorithm : swap;
@@ -14,18 +24,11 @@ struct PairingHeapPayload(T, alias opCmp) {
     NP n;
     size_t length;
     bool empty() const { return length == 0; }
-    static NP merge(NP x, NP y) {
-        if (!x) return y;
-        if (!y) return x;
-        if (opCmp(x.d, y.d)) swap(x, y);
-        y.next = x.head;
-        x.head = y;
-        return x;
-    }
+
     void insert(T x) {
         length++;
         if (!n) n = new Node(x);
-        else n = merge(n, new Node(x));
+        else n = meldPairingHeapNode!(T, opCmp)(n, new Node(x));
     }
     inout(T) front() inout {
         assert(n);
@@ -43,7 +46,7 @@ struct PairingHeapPayload(T, alias opCmp) {
             if (s) {
                 b = s; s = s.next; b.next = null;
             }
-            a = merge(a, b);
+            a = meldPairingHeapNode!(T, opCmp)(a, b);
             assert(a);
             if (!x) x = a;
             else {
@@ -54,7 +57,7 @@ struct PairingHeapPayload(T, alias opCmp) {
         n = null;
         while (x) {
             NP a = x; x = x.next;
-            n = merge(a, n);
+            n = meldPairingHeapNode!(T, opCmp)(a, n);
         }
     }
 }
@@ -83,7 +86,7 @@ struct PairingHeap(T, alias _opCmp) {
     }
     void meld(PairingHeap r) {
         p.length += r.p.length;
-        p.n = Payload.merge(p.n, r.p.n);
+        p.n = meldPairingHeapNode!(T, opCmp)(p.n, r.p.n);
         r.p.n = null;
     }
 }
@@ -119,3 +122,8 @@ unittest {
             );
     }
 }
+
+unittest {
+    auto que = PairingHeap!(int, (a, b) => a < b)();
+}
+
