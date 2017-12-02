@@ -113,7 +113,7 @@ struct uintN(int N) if (N >= 1) {
 //        import std.range : back, popBack;
         import std.conv : to;
         import std.algorithm : reverse;
-        import dcomp.container.stack;
+        import dcomp.container.stackpayload;
         StackPayload!char s;
         auto x = this;
         if (!x) return "0";
@@ -340,7 +340,6 @@ unittest {
 }
 
 unittest {
-    import std.stdio;
     void check(int N)() {
         alias Uint = uintN!N;
         Uint[] v;
@@ -373,9 +372,6 @@ unittest {
             z2 = (z2 % mask + mask) % mask;
             string s1 = z.to!string;
             string s2 = z2.to!string;
-            if (s1 != s2) {
-                writeln("ERR ", N, " : ", x, " ", y, " ", op, " : ", z, " ", z2);
-            }
             assert(s1 == s2);
         }
         void g(string op)(Uint x) {
@@ -388,9 +384,6 @@ unittest {
             assert(x.to!string == x2.to!string);
             string s1 = z.to!string;
             string s2 = z2.to!string;
-            if (s1 != s2) {
-                writeln("ERR ", N, " : ", x, " ", op, " : ", z, " ", z2);
-            }
             assert(s1 == s2);
         }
         foreach (d; v) {
@@ -418,14 +411,10 @@ unittest {
                 f!"^"(d, e);
             }
         }
-        writeln("End: ", N);
     }
 
-    import std.algorithm, std.datetime;
+    import std.stdio, std.algorithm;
+    import dcomp.stopwatch;
     auto ti = benchmark!(check!1, check!2, check!3, check!4)(1);
-//    check!1();
-    writeln("BigInt: ", ti[].map!"a.msecs");
-//    check!2();
-//    check!3();
-//    check!4();
+    writeln("BigInt: ", ti[].map!(a => a.toMsecs()));
 }

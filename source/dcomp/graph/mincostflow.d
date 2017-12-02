@@ -99,7 +99,7 @@ void manyFlow(C, D, alias EPS, T)(ref MinCostFlowInfo!(C, D, EPS, T) mcfInfo, C 
     }
 }
 
-import dcomp.container.stack;
+import dcomp.container.stackpayload;
 import dcomp.container.radixheap;
 
 void dualRef(bool neg, C, D, alias EPS, T)(ref MinCostFlowInfo!(C, D, EPS, T) mcfInfo) {

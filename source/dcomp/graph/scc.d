@@ -1,7 +1,7 @@
 module dcomp.graph.scc;
 
 import dcomp.graph.primitive;
-import dcomp.container.stack, dcomp.container.deque;
+import dcomp.container.stackpayload, dcomp.container.deque;
 
 /// 強連結成分の情報
 struct SCCInfo {
