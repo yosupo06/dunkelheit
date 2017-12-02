@@ -23,7 +23,7 @@ struct ModInt(uint MD) if (MD < int.max) {
     auto opOpAssign(string op)(ModInt r) {return mixin ("this=this"~op~"r");}
     /// xの逆元を求める
     static ModInt inv(ModInt x) {return ModInt(extGcd!int(x.v, MD)[0]);}
-    string toString() {return v.to!string;}
+    string toString() const {return v.to!string;}
 }
 
 ///
