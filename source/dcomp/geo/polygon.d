@@ -43,3 +43,32 @@ unittest {
     P[] pol = [P(0, 0), P(2, 0), P(2, 2), P(0, 2)];
     assert(area2(pol) == 8);
 }
+
+import dcomp.container.stack;
+
+Point2D!R[] convex(R)(Point2D!R[] _pol) {
+    import std.algorithm : sort;
+    import std.range : retro, array;
+    auto pol = _pol.dup;
+    pol.sort!((a, b) => robustCmp(a, b) == -1);
+    if (pol.length <= 2) return pol;
+    StackPayload!(Point2D!R) up;
+    foreach (d; pol) {
+        while (up.length >= 2 && ccw(up[$-2], up[$-1], d) == 1) up.removeBack();
+        up ~= d;
+    }
+    StackPayload!(Point2D!R) down;
+    foreach (d; pol) {
+        while (down.length >= 2 && ccw(down[$-2], down[$-1], d) == -1) down.removeBack();
+        down ~= d;
+    }
+    return up.data.retro.array[1..$-1] ~ down.data();
+}
+
+unittest {
+    EPS!double = 1e-9;
+    alias P = Point2D!double;
+    P[] pol = [P(0, 0), P(2, 2), P(1, 1), P(0, 2), P(2, 0)];
+    import std.stdio;
+    assert(pol.convex.length == 4);
+}

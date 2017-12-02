@@ -15,9 +15,6 @@ int sgn(R)(R a) {
     if (a > EPS!R) return 1;
     return 0;
 }
-int sgn(R)(R a, R b) {
-    return sgn(b-a);
-}
 
 struct Point2D(T) {
     T[2] d;
@@ -46,6 +43,12 @@ struct Point2D(T) {
             return Point2D(x*cosAr - y*sinAr, x*sinAr + y*cosAr);
         }
     }
+}
+
+int robustCmp(T)(Point2D!T a, Point2D!T b) {
+    if (sgn(a.x-b.x)) return sgn(a.x-b.x);
+    if (sgn(a.y-b.y)) return sgn(a.y-b.y);
+    return 0;
 }
 
 bool near(T)(Point2D!T a, Point2D!T b) if (isIntegral!T) {

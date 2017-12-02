@@ -8,3 +8,4 @@ unittest {
     auto a = [[1, 2].fixed];
     assert(is(typeof(a) == int[2][]));
 }
+
