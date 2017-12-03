@@ -1,8 +1,6 @@
 module dcomp.algorithm;
 
-import std.range.primitives;
 import std.traits : isFloatingPoint, isIntegral;
-
 /**
 二分探索ライブラリ
 
@@ -41,6 +39,7 @@ unittest {
     assert(binSearch!(x => false)(0, 20) == 20);
 }
 
+import std.range.primitives;
 /// 最小値探索関数
 E minimum(alias pred = "a < b", Range, E = ElementType!Range)(Range range, E seed)
 if (isInputRange!Range && !isInfinite!Range) {
