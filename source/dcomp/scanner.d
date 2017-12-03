@@ -1,6 +1,6 @@
 module dcomp.scanner;
 
-import dcomp.container.stack;
+import dcomp.container.stackpayload;
 
 /**
 Scanner 速くはないが遅くもない printf/scanfよりちょっと遅いくらい？

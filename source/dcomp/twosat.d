@@ -4,7 +4,7 @@
 module dcomp.twosat;
 
 import dcomp.graph.scc;
-import dcomp.container.stack;
+import dcomp.container.stackpayload;
 
 /// 2-SAT を解く構造体
 struct TwoSat {

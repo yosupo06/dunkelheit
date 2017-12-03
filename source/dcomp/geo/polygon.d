@@ -44,7 +44,7 @@ unittest {
     assert(area2(pol) == 8);
 }
 
-import dcomp.container.stack;
+import dcomp.container.stackpayload;
 
 Point2D!R[] convex(R)(Point2D!R[] _pol) {
     import std.algorithm : sort;

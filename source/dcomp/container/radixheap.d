@@ -1,7 +1,7 @@
 module dcomp.container.radixheap;
 
 import dcomp.foundation;
-import dcomp.container.stack;
+import dcomp.container.stackpayload;
 
 
 import std.functional : unaryFun;
