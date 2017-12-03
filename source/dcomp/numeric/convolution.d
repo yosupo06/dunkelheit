@@ -118,7 +118,8 @@ double[] multiply(in double[] a, in double[] b) {
 }
 
 unittest {
-    import std.algorithm, std.datetime, std.stdio, std.random, std.math;
+    import std.algorithm, std.stdio, std.random, std.math;
+    import dcomp.stopwatch;
     StopWatch sw; sw.start;
     foreach (L; 1..20) {
         foreach (R; 1..20) {
@@ -141,7 +142,7 @@ unittest {
             }
         }
     }
-    writeln("FFT Stress: ", sw.peek.msecs);
+    writeln("FFT Stress: ", sw.peek.toMsecs);
 }
 
 import dcomp.modint, dcomp.numeric.primitive;
@@ -256,7 +257,8 @@ if (isModInt!Mint) {
 
 unittest {
     alias Mint = ModInt!924844033;
-    import std.algorithm, std.datetime, std.stdio, std.random, std.math;
+    import std.algorithm, std.stdio, std.random, std.math;
+    import dcomp.stopwatch;
     StopWatch sw; sw.start;
     Mint rndM() { return Mint(uniform(0, 924844033)); }
     foreach (L; 1..20) {
@@ -286,13 +288,14 @@ unittest {
             }
         }
     }
-    writeln("NFT Stress: ", sw.peek.msecs);    
+    writeln("NFT Stress: ", sw.peek.toMsecs);    
 }
 
 
 unittest {
     alias Mint = ModInt!(10^^9 + 7);
-    import std.algorithm, std.datetime, std.stdio, std.random, std.math;
+    import std.algorithm, std.stdio, std.random, std.math;
+    import dcomp.stopwatch;
     StopWatch sw; sw.start;
     Mint rndM() { return Mint(uniform(0, 10^^9 + 7)); }
     foreach (L; 1..20) {
@@ -322,6 +325,6 @@ unittest {
             }
         }
     }
-    writeln("FFT(ModInt) Stress: ", sw.peek.msecs);    
+    writeln("FFT(ModInt) Stress: ", sw.peek.toMsecs);    
 }
 

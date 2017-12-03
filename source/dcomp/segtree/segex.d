@@ -640,7 +640,7 @@ unittest {
         return res;
     }
 
-    import std.datetime;
+    import dcomp.stopwatch;
     StopWatch sw; sw.start;
 
     int n = 40;
@@ -665,5 +665,5 @@ unittest {
     }
 
     import std.stdio;
-    writeln("SegTree Stress: ", sw.peek.msecs, "ms");
+    writeln("SegTree Stress: ", sw.peek.toMsecs);
 }

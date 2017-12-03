@@ -39,16 +39,14 @@ unittest {
     import std.algorithm, std.conv, std.stdio;
     import std.random;
     import std.typecons;
-    import std.datetime;
     import dcomp.datastructure.unionfind;
 
     alias E = Tuple!(int, "to");
 
-    writeln("Bridge Random1000");
     void f() {
         //make graph
-        int n = uniform(1, 30);
-        int m = uniform(1, 200);
+        int n = uniform(1, 20);
+        int m = uniform(1, 100);
         E[][] g = new E[][](n);
         int[2][] edges;
         auto qf = UnionFind(n);
@@ -90,6 +88,7 @@ unittest {
             }
         }
     }
-    auto ti = benchmark!f(1000);
-    writeln(ti[0].msecs, "ms");
+    import dcomp.stopwatch;
+    auto ti = benchmark!f(500);
+    writeln("Bridge Random500: ", ti[0].toMsecs());
 }

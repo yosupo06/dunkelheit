@@ -140,7 +140,6 @@ unittest {
     import std.algorithm, std.conv, std.stdio, std.range;
     import std.random;
     import std.typecons;
-    import std.datetime;
 
     struct E {
         int to, cap, rev;
@@ -149,9 +148,6 @@ unittest {
         g[from] ~= E(to, cap, g[to].length.to!int);
         g[to] ~= E(from, 0, g[from].length.to!int-1);
     }
-
-
-    writeln("MaxFlow Random5000");
 
     void f(alias MF)() {
         int n = uniform(2, 20);
@@ -191,18 +187,19 @@ unittest {
         }
         assert(res.flow == sm);
     }
+
+    import dcomp.stopwatch;
     auto ti = benchmark!(
         f!(maxFlow!(int, 0, E[][])),
         f!(maxFlowSlow!(int, E[][])),
-        )(5000);
-    writeln(ti[0].msecs, "ms");
+        )(1000);
+    writeln("MaxFlow Random1000: ", ti[].map!(a => a.toMsecs()));
 }
 
 unittest {
     import std.algorithm, std.conv, std.stdio, std.range, std.math;
     import std.random;
     import std.typecons;
-    import std.datetime;
 
     struct E {
         int to;
@@ -214,8 +211,6 @@ unittest {
         g[to] ~= E(from, 0.0, g[from].length.to!int-1);
     }
     immutable double EPS = 1e-9;
-
-    writeln("MaxFlow Double Random5000");
 
     void f() {
         int n = uniform(2, 20);
@@ -250,6 +245,7 @@ unittest {
         }
         assert(abs(res.flow - sm) < EPS);
     }
+    import dcomp.stopwatch;
     auto ti = benchmark!(f)(5000);
-    writeln(ti[0].msecs, "ms");
+    writeln("MaxFlow Double Random5000: ", ti[0].toMsecs());
 }

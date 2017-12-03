@@ -89,11 +89,9 @@ unittest {
     import std.algorithm, std.conv, std.stdio, std.range;
     import std.random;
     import std.typecons;
-    import std.datetime;
 
     struct E {int to;}
 
-    writeln("SCC Random1000");
     void f() {
         int n = uniform(1, 50);
         int p = uniform(1, 50);
@@ -137,6 +135,7 @@ unittest {
             }
         }
     }
+    import dcomp.stopwatch;
     auto ti = benchmark!(f)(1000);
-    writeln(ti[0].msecs, "ms");
+    writeln("SCC Random1000: ", ti[0].toMsecs);
 }

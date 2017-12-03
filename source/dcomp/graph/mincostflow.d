@@ -200,7 +200,6 @@ unittest {
     import std.algorithm, std.conv, std.stdio, std.range;
     import std.random;
     import std.typecons;
-    import std.datetime;
 
     struct E {
         int to, cap, dist, rev;
@@ -209,8 +208,6 @@ unittest {
         g[from] ~= E(to, cap, dist, g[to].length.to!int);
         g[to] ~= E(from, 0, -dist, g[from].length.to!int-1);
     }
-
-
 
     void f(bool neg)() {
         int n = uniform(2, 20);
@@ -248,15 +245,15 @@ unittest {
         }
         assert(res.flow == sm);
     }
+    import dcomp.stopwatch;
     auto ti = benchmark!(f!false, f!true)(500);
-    writeln("MinCostFlow int Random500, Neg500: ", ti[].map!"a.msecs");
+    writeln("MinCostFlow int Random500, Neg500: ", ti[].map!(a => a.toMsecs));
 }
 
 unittest {
     import std.algorithm, std.conv, std.stdio, std.range;
     import std.random;
     import std.typecons;
-    import std.datetime;
 
     struct E {
         int to, cap;
@@ -267,8 +264,6 @@ unittest {
         g[from] ~= E(to, cap, dist, g[to].length.to!int);
         g[to] ~= E(from, 0, -dist, g[from].length.to!int-1);
     }
-
-
 
     void f(bool neg)() {
         int n = uniform(2, 20);
@@ -307,6 +302,7 @@ unittest {
         import std.math;
         assert(abs(res.flow - sm) <= 1e-3);
     }
+    import dcomp.stopwatch;
     auto ti = benchmark!(f!false, f!true)(500);
-    writeln("MinCostFlow double Random500, Neg500: ", ti[].map!"a.msecs");
+    writeln("MinCostFlow double Random500, Neg500: ", ti[].map!(a => a.toMsecs));
 }

@@ -280,9 +280,9 @@ unittest {
         }
         assert(info1.cost == info2.cost);
     }
-    import std.datetime;
+    import dcomp.stopwatch;
     auto ti = benchmark!(test)(1000);
-    writeln("DirectedMST int Random1000: ", ti[0].msecs);
+    writeln("DirectedMST int Random1000: ", ti[0].toMsecs);
 }
 
 unittest {
@@ -340,7 +340,7 @@ unittest {
         }
         assert(abs(info1.cost - info2.cost) <= 1e-4);
     }
-    import std.datetime;
+    import dcomp.stopwatch;
     auto ti = benchmark!(test)(1000);
-    writeln("DirectedMST double Random1000: ", ti[0].msecs);
+    writeln("DirectedMST double Random1000: ", ti[0].toMsecs);
 }

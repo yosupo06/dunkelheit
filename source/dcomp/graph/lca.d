@@ -64,11 +64,8 @@ unittest {
     import std.algorithm, std.conv, std.stdio, std.range;
     import std.random;
     import std.typecons;
-    import std.datetime;
 
     alias E = Tuple!(int, "to");
-
-    writeln("LCA Random500");
 
     void f(alias pred)() {
         int n = uniform(1, 50);
@@ -120,6 +117,7 @@ unittest {
             }
         }
     }
+    import dcomp.stopwatch;
     auto ti = benchmark!(f!lca)(500);
-    writeln(ti[0].msecs, "ms");
+    writeln("LCA Random500: ", ti[0].toMsecs());
 }

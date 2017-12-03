@@ -133,7 +133,6 @@ unittest {
     import std.algorithm, std.conv, std.stdio;
     import std.random;
     import std.typecons;
-    import std.datetime;
 
     SA!T naive(T)(in T[] s) {
         int n = s.length.to!int;
@@ -170,6 +169,7 @@ unittest {
         assert(equal(l.rsa, r.rsa));
         assert(equal(l.lcp, r.lcp));
     }
+    import dcomp.stopwatch;
     auto ti = benchmark!f(1000);
-    writeln("SAIS Random1000: ", ti[0].msecs);
+    writeln("SAIS Random1000: ", ti[0].toMsecs);
 }

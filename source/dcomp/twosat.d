@@ -60,7 +60,6 @@ unittest {
     import std.algorithm, std.conv, std.stdio, std.range;
     import std.random;
     import std.typecons;
-    import std.datetime;
 
     struct E {int to;}
 
@@ -94,6 +93,8 @@ unittest {
             assert(res[x] == f || res[y] == g);
         }
     }
+
+    import dcomp.stopwatch;
     auto ti = benchmark!(f)(1000);
-    writeln("TwoSat Random1000: ", ti[0].msecs);
+    writeln("TwoSat Random1000: ", ti[0].toMsecs);
 }

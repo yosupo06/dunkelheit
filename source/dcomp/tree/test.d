@@ -31,8 +31,9 @@ unittest {
     import std.algorithm;
     import std.conv;
     import std.container.rbtree;
-    import std.datetime;
     import std.stdio;
+
+    import dcomp.stopwatch;
     StopWatch sw; sw.start;
     auto nv = redBlackTree!(true, int)([]);
     auto tr = Tree!(AVLNode, int, max, int.min)();
@@ -54,5 +55,5 @@ unittest {
         }
         assert(nv.length == tr.length);
     }
-    writeln("Set TEST: ", sw.peek.msecs);
+    writeln("Set TEST: ", sw.peek.toMsecs);
 }

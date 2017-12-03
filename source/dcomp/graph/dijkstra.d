@@ -85,11 +85,9 @@ unittest {
     import std.algorithm, std.conv, std.stdio, std.range;
     import std.random;
     import std.typecons;
-    import std.datetime;
 
     alias E = Tuple!(int, "to", int, "dist");
 
-    writeln("Dijkstra Random100");
     void f(alias pred)() {
         int n = uniform(1, 50);
         int m = uniform(1, 500);
@@ -127,20 +125,18 @@ unittest {
             }
         }
     }
+    import dcomp.stopwatch;
     auto ti = benchmark!(f!dijkstra, f!dijkstraDense)(100);
-    writeln(ti[0].msecs, "ms");
-    writeln(ti[1].msecs, "ms");
+    writeln("Dijkstra Random100: ", ti[].map!(a => a.toMsecs()));
 }
 
 unittest {
     import std.algorithm, std.conv, std.stdio, std.range;
     import std.random;
     import std.typecons;
-    import std.datetime;
 
     alias E = Tuple!(int, "to", int, "dist");
 
-    writeln("Dijkstra_INF Random100");
     void f(alias pred)() {
         int n = uniform(1, 50);
         int m = uniform(1, 500);
@@ -180,7 +176,7 @@ unittest {
             }
         }
     }
+    import dcomp.stopwatch;
     auto ti = benchmark!(f!dijkstra, f!dijkstraDense)(100);
-    writeln(ti[0].msecs, "ms");
-    writeln(ti[1].msecs, "ms");
+    writeln("Dijkstra INF Random100: ", ti[].map!(a => a.toMsecs()));
 }

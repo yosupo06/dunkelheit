@@ -2,11 +2,21 @@ module dcomp.datastructure.convexhull;
 
 import dcomp.container.deque;
 
+
+/// Convex Hull's query type
 enum CHMode { incr, decr }
+
+/**
+Convex Hull Trick
+
+Params:
+    T = value type
+    queryType = if queries are increase order, use CHMode.incr.
+                if queries are decrease order, use CHMode.decr.
+ */
 struct ConvexHull(T, CHMode queryType) {
     import std.algorithm : max;
-    //query x, this x is decrease
-    alias L = T[2]; //[a, b] y = ax + b
+    alias L = T[2]; /// Line
     static T value(L l, T x) { return l[0]*x + l[1]; }
     
     Deque!L data;
@@ -14,6 +24,7 @@ struct ConvexHull(T, CHMode queryType) {
         assert(l[0] <= x[0] && x[0] <= r[0], "x must be mid");
         return (r[0]-x[0])*(l[1]-x[1]) < (x[0]-l[0])*(x[1]-r[1]);
     }
+    /// insert line
     void insertFront(L x) {
         if (data.empty) {
             data.insertFront(x);
@@ -32,6 +43,7 @@ struct ConvexHull(T, CHMode queryType) {
             assert(isNeed(data[1], data[0], data[2]));
         }
     }
+    /// ditto
     void insertBack(L x) {
         if (data.empty) {
             data.insertBack(x);
@@ -47,6 +59,7 @@ struct ConvexHull(T, CHMode queryType) {
         }
         data.insertBack(x);
     }
+    /// get maximum y
     long yMax(T x) {
         assert(data.length);
         static if (queryType == CHMode.incr) {
@@ -76,9 +89,7 @@ unittest {
 }
 
 unittest {
-    import std.stdio;
     import std.random;
-    import std.datetime : benchmark;
     import std.algorithm;
     int getMax(int[2][] v, int x) {
         int ans = int.min;
@@ -87,7 +98,6 @@ unittest {
         }
         return ans;
     }
-    writeln("ConvexHull Random5000");
     void f1() {
         int[2][] v = new int[2][](100);
         int[] smp = new int[](100);
@@ -136,6 +146,9 @@ unittest {
             assert(c.yMax(smp[i]) == getMax(v, smp[i]));
         }
     }
-    auto ti = benchmark!(f1, f2)(2500);
-    writeln(ti[0].msecs, "ms ", ti[1].msecs, "ms");
+
+    import std.stdio;
+    import dcomp.stopwatch;
+    auto ti = benchmark!(f1, f2)(500);
+    writeln("ConvexHull Random500: ", ti[].map!(a => a.toMsecs()));
 }

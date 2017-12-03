@@ -58,7 +58,8 @@ ulong[2] mul128(ulong a, ulong b) {
 }
 
 unittest {
-    import std.random, std.algorithm, std.datetime, std.stdio, std.conv;
+    import std.random, std.algorithm, std.stdio, std.conv;
+    import dcomp.stopwatch;
     StopWatch sw; sw.start;
     ulong[2] naive_mul(ulong a, ulong b) {
         import std.bigint, std.conv;
@@ -80,7 +81,7 @@ unittest {
             assert(equal(mul128(l, r)[], naive_mul(l, r)[]));
         }
     }
-    writeln("Mul128: ", sw.peek.msecs);
+    writeln("Mul128: ", sw.peek.toMsecs);
 }
 
 /// [a[1], a[0]] / b = return, 答えが64bitに収まらないとヤバイ
@@ -149,8 +150,9 @@ ulong mod128(ulong[2] a, ulong b) {
 }
 
 unittest {
-    import std.bigint, std.conv, std.datetime, std.stdio;
+    import std.bigint, std.conv, std.stdio;
     import std.random, std.algorithm;
+    import dcomp.stopwatch;
     StopWatch sw; sw.start;
     bool overflow_check(ulong[2] a, ulong b) {
         auto a2 = (BigInt(a[1]) << 64) + BigInt(a[0]);
@@ -193,5 +195,5 @@ unittest {
             assert(mod128(l, r) == naive_mod(l, r));
         }
     }
-    writeln("Div128: ", sw.peek.msecs);
+    writeln("Div128: ", sw.peek.toMsecs);
 }

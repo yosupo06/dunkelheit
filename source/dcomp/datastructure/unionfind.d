@@ -55,7 +55,8 @@ unittest {
 }
 
 unittest {
-    import std.datetime, std.stdio, std.range;
+    import std.stdio, std.range;
+    import dcomp.stopwatch;
     // speed check
     StopWatch sw; sw.start;
     UnionFind uf;
@@ -77,5 +78,5 @@ unittest {
             uf.merge(i, i+len/2);
         }
     }
-    writeln("UnionFind Speed Test: ", sw.peek.msecs);
+    writeln("UnionFind Speed Test: ", sw.peek.toMsecs());
 }

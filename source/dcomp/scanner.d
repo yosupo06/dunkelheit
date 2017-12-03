@@ -117,7 +117,7 @@ unittest {
     import std.file : tempDir;
     import std.algorithm : equal;
     import std.stdio : File, writeln;
-    import std.datetime;
+    import dcomp.stopwatch;
     string fileName = buildPath(tempDir, "kyuridenanmaida.txt");
     auto fout = File(fileName, "w");
     foreach (i; 0..1_000_000) {
@@ -152,5 +152,5 @@ unittest {
         assert(b == 3*i+1);
         assert(c == 3*i+2);
     }
-    writeln(sw.peek.msecs, "ms");
+    writeln(sw.peek.toMsecs, "ms");
 }

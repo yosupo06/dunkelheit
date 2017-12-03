@@ -288,8 +288,8 @@ unittest {
         assert(sm == m.determinent);
         assert(_m == m);
     }    
-    import std.datetime;
-    writeln("Det: ", benchmark!(f!2, f!3, f!11, fMod2)(10000)[].map!"a.msecs");
+    import dcomp.stopwatch;
+    writeln("Det: ", benchmark!(f!2, f!3, f!11, fMod2)(10000)[].map!(a => a.toMsecs));
 }
 
 
@@ -385,6 +385,6 @@ unittest {
         assert(m == _m);
         assert(m * x2 == r);
     }
-    import std.datetime;
-    writeln("SolveLinear: ", benchmark!(f!2, f!3, f!11, fMod2)(10000)[].map!"a.msecs");
+    import dcomp.stopwatch;
+    writeln("SolveLinear: ", benchmark!(f!2, f!3, f!11, fMod2)(10000)[].map!(a => a.toMsecs));
 }
