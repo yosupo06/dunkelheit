@@ -124,7 +124,6 @@ unittest {
         fout.writeln(3*i, " ", 3*i+1, " ", 3*i+2);
     }
     fout.close;
-    writeln("Scanner Speed Test(3*1,000,000 int)");
     StopWatch sw;
     sw.start;
     Scanner sc = new Scanner(File(fileName, "r"));
@@ -152,5 +151,5 @@ unittest {
         assert(b == 3*i+1);
         assert(c == 3*i+2);
     }
-    writeln(sw.peek.toMsecs, "ms");
+    writeln("Scanner Speed Test(3*1,000,000 int): ", sw.peek.toMsecs);
 }
