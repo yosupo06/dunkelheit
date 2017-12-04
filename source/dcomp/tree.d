@@ -2,7 +2,7 @@ module dcomp.tree;
 
 import std.traits;
 
-struct Tree(T, alias _op, T _e) {
+struct SimpleTree(T, alias _op, T _e) {
     import std.functional : binaryFun;
     alias op = binaryFun!_op;
     static immutable T e = _e;
@@ -78,16 +78,25 @@ struct Tree(T, alias _op, T _e) {
             update();
             return bal();
         }
-
         const(T) at(uint k) const {
             assert(0 <= k && k < length);
             if (length == 1) return v;
             if (k < ch[0].length) return ch[0].at(k);
             return ch[1].at(k-ch[0].length);
         }
+        void atAssign(uint k, in T x) {
+            assert(0 <= k && k < length);
+            if (length == 1) {
+                v = x;
+                return;
+            }
+            if (k < ch[0].length) ch[0].atAssign(k, x);
+            else ch[1].atAssign(k-ch[0].length, x);
+            update();
+        }        
         const(T) sum(int a, int b) const {
-            if (b <= 0 || length <= a) return e;
-            if (a <= 0 && length <= b) return v;
+            if (b <= 0 || length.to!int <= a) return e;
+            if (a <= 0 && length.to!int <= b) return v;
             return op(ch[0].sum(a, b), ch[1].sum(a - ch[0].length, b - ch[0].length));
         }
         void check() {
@@ -101,12 +110,12 @@ struct Tree(T, alias _op, T _e) {
         void pr() {
             import std.stdio;
             if (length == 1) {
-                write("(1)");
+                writef("(%d)", v);
                 return;
             }
             write("(");
             ch[0].pr();
-            write(length);
+            write(v);
             ch[1].pr();
             write(")");
         }
@@ -148,7 +157,16 @@ struct Tree(T, alias _op, T _e) {
     Node* tr;
     this(T v) { tr = new Node(v); }
     this(Node* tr) { this.tr = tr; }
-
+    this(in T[] v) {
+        if (v.length == 0) return;
+        if (v.length == 1) {
+            tr = new Node(v[0]);
+            return;
+        }
+        auto ltr = SimpleTree(v[0..$/2]);
+        auto rtr = SimpleTree(v[$/2..$]);
+        this = ltr.merge(rtr);
+    }
     @property size_t length() const { return (!tr ? 0 : tr.length); }
     alias opDollar = length;
     
@@ -164,13 +182,18 @@ struct Tree(T, alias _op, T _e) {
         assert(0 <= k && k < length);
         tr = tr.removeAt(k.to!int);
     }
-    Tree trim(size_t a, size_t b) {
+    SimpleTree trim(size_t a, size_t b) {
         auto v = split(tr, b.to!uint);
         auto u = split(v[0], a.to!uint);
         tr = merge(u[0], v[1]);
-        return Tree(u[1]);
+        return SimpleTree(u[1]);
     }
-    ref Tree merge(Tree r) {
+    SimpleTree split(size_t k) {
+        auto u = split(tr, k.to!uint);
+        tr = u[0];
+        return SimpleTree(u[1]);
+    }
+    ref SimpleTree merge(SimpleTree r) {
         tr = merge(tr, r.tr);
         return this;
     }
@@ -178,8 +201,11 @@ struct Tree(T, alias _op, T _e) {
         assert(0 <= k && k < length);
         return tr.at(k.to!int);
     }
+    void opIndexAssign(in T x, size_t k) {
+        return tr.atAssign(k.to!int, x);
+    }
     struct Range {
-        Tree* eng;
+        SimpleTree* eng;
         size_t start, end;
         @property T sum() {
             return eng.tr.sum(start.to!uint, end.to!uint);
@@ -206,79 +232,67 @@ struct Tree(T, alias _op, T _e) {
     void check() {
         if (tr) tr.check();
     }
-}
-
-import std.traits;
-int binSearch(bool rev, alias pred, T, N)(N* r, int a, int b) {
-    alias args = TemplateArgsOf!T;
-    alias opTT = args[1];
-    auto x = args[2];
-    with (r) {
-        static if (!rev) {
-            //left
-            if (pred(x)) return a-1;
-            int pos = a;
-            void f(N* n, int a, int b, int offset) {
-                if (b <= offset || offset + n.length <= a) return;
-                if (a <= offset && offset + n.length <= b && !pred(opTT(x, n.v))) {
-                    x = opTT(x, n.v);
-                    pos = offset + n.length;
-                    return;
-                }
-                if (n.length == 1) return;
-                f(n.ch[0], a, b, offset);
-                if (pos >= offset + n.ch[0].length) {
-                    f(n.ch[1], a, b, offset + n.ch[0].length);
-                }
-            }
-
-            f(r, a, b, 0);
-            return pos;
-        } else {
-            //right
-
-            if (pred(x)) return b;
-            int pos = b-1;
-            void f(N* n, int a, int b, int offset) {
-                if (b <= offset || offset + n.length <= a) return;
-                if (a <= offset && offset + n.length <= b && !pred(opTT(n.v, x))) {
-                    x = opTT(n.v, x);
-                    pos = offset - 1;
-                    return;
-                }
-                if (n.length == 1) return;
-                f(n.ch[1], a, b, offset + n.ch[0].length);
-                if (pos < offset + n.ch[0].length) {
-                    f(n.ch[0], a, b, offset);
-                }
-            }
-
-            f(r, a, b, 0);
-            return pos;
-        }
+    void pr() {
+        if (tr) tr.pr();
     }
 }
-
 
 import std.traits : isInstanceOf;
-import std.conv : to;
 
-ptrdiff_t binSearchLeft(alias pred, T)(T t, ptrdiff_t a, ptrdiff_t b)
-if(isInstanceOf!(Tree, T)) {
-    if (t.tr is null) {
-        if (pred(T.e)) return -1;
-        return 0;
+ptrdiff_t binSearchLeft(alias pred, T)(T t, ptrdiff_t _a, ptrdiff_t _b)
+if(isInstanceOf!(SimpleTree, T)) {
+    import std.conv : to;
+    import std.traits : Unqual;
+    int a = _a.to!int, b = _b.to!int;
+    Unqual!(typeof(T.e)) x = T.e;
+    if (pred(x)) return a-1;
+    if (t.tr is null) return 0;
+    
+    alias op = T.op;
+    int pos = a;
+    void f(T.Node* n, int a, int b, int offset) {
+        if (b <= offset || offset + n.length <= a) return;
+        if (a <= offset && offset + n.length <= b && !pred(op(x, n.v))) {
+            x = op(x, n.v);
+            pos = offset + n.length;
+            return;
+        }
+        if (n.length == 1) return;
+        f(n.ch[0], a, b, offset);
+        if (pos >= offset + n.ch[0].length) {
+            f(n.ch[1], a, b, offset + n.ch[0].length);
+        }
     }
-    return t.tr.binSearch!(false, pred, T)(a.to!int, b.to!int);
+    f(t.tr, a, b, 0);
+    return pos;
 }
 
 ptrdiff_t binSearchRight(alias pred, T)(T t, ptrdiff_t a, ptrdiff_t b)
-if(isInstanceOf!(Tree, T)) {
-    if (t.tr is null) {
-        if (pred(T.e)) return 0;
-        return -1;
+if(isInstanceOf!(SimpleTree, T)) {
+    import std.conv : to;
+    import std.traits : Unqual;
+    int a = _a.to!int, b = _b.to!int;
+    Unqual!(typeof(T.e)) x = T.e;
+    if (pred(x)) return b;
+    if (t.tr is null) return 0;
+
+    alias op = T.op;
+    int pos = b-1;
+    void f(T.Node* n, int a, int b, int offset) {
+        if (b <= offset || offset + n.length <= a) return;
+        if (a <= offset && offset + n.length <= b && !pred(opTT(n.v, x))) {
+            x = opTT(n.v, x);
+            pos = offset - 1;
+            return;
+        }
+        if (n.length == 1) return;
+        f(n.ch[1], a, b, offset + n.ch[0].length);
+        if (pos < offset + n.ch[0].length) {
+            f(n.ch[0], a, b, offset);
+        }
     }
-    return t.tr.binSearch!(true, pred, T)(a.to!int, b.to!int);
+    f(t.tr, a, b, 0);
+    return pos;
 }
 
 unittest {
@@ -288,7 +302,7 @@ unittest {
     alias Mint = ModInt!(10^^9 + 7);
     auto rndM = (){ return Mint(uniform(0, 10^^9 + 7)); };
     void check() {
-        alias T = Tree!(Mint, "a+b", Mint(0));
+        alias T = SimpleTree!(Mint, "a+b", Mint(0));
         T t;
         Mint sm = 0;
         foreach (i; 0..100) {
@@ -311,7 +325,7 @@ unittest {
     import dcomp.stopwatch;
     StopWatch sw; sw.start;
     auto nv = redBlackTree!(true, int)([]);
-    alias T = Tree!(int, max, int.min);
+    alias T = SimpleTree!(int, max, int.min);
     auto tr = T();
     foreach (ph; 0..10000) {
         int ty = uniform(0, 2);
