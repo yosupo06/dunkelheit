@@ -71,11 +71,9 @@ struct Tree(T, alias _op, T _e) {
             if (k < ch[0].length) {
                 ch[0] = ch[0].removeAt(k);
                 if (ch[0] is null) return ch[1];
-                ch[0].check();
             } else {
                 ch[1] = ch[1].removeAt(k-ch[0].length);
                 if (ch[1] is null) return ch[0];
-                ch[1].check();
             }
             update();
             return bal();
@@ -116,59 +114,17 @@ struct Tree(T, alias _op, T _e) {
     static NP merge(NP l, NP r, NP buf = null) {
         if (!l) return r;
         if (!r) return l;
-        auto lsz = l.length, rsz = r.length;
-        if (lsz*2 > rsz*5) {
-            auto nl = l.ch[0];
-            auto nr = merge(l.ch[1], r, buf);
-/*            if (nl.length*5 >= nr.length*2) {
-                l.ch[1] = nr;
-                l.update();
-                return l;
-            }
-            if (nr.ch[0].length*2 <= nr.ch[1].length*3) {
-                l.ch[1] = nr.ch[0];
-                l.update();
-                nr.ch[0] = l;
-                nr.update();
-                return nr;
-            }
-            auto mid = nr.ch[0];
-            nr.ch[0] = mid.ch[1];
-            nr.update();
-            l.ch[1] = mid.ch[0];
-            l.update();
-            mid.ch[0] = l; mid.ch[1] = nr;
-            mid.update();
-            return mid;*/
-            l.ch[1] = nr;
+        if (l.length*2 > r.length*5) {
+            l.ch[1] = merge(l.ch[1], r, buf);
             l.update();
             return l.bal();
-        } else if (lsz*5 < rsz*2) {
-            auto nl = merge(l, r.ch[0], buf);
-            auto nr = r.ch[1];
-            if (nl.length*2 <= nr.length*5) {
-                r.ch[0] = nl;
-                r.update();
-                return r;
-            }
-            if (nl.ch[0].length*3 >= nl.ch[1].length*2) {
-                r.ch[0] = nl.ch[1];
-                r.update();
-                nl.ch[1] = r;
-                nl.update();
-                return nl;
-            }
-            auto mid = nl.ch[1];
-            nl.ch[1] = mid.ch[0];
-            nl.update();
-            r.ch[0] = mid.ch[1];
+        } else if (l.length*5 < r.length*2) {
+            r.ch[0] = merge(l, r.ch[0], buf);
             r.update();
-            mid.ch[0] = nl; mid.ch[1] = r;
-            mid.update();
-            return mid;
+            return r.bal();
         }
         if (buf == null) buf = new Node();
-        buf.ch[0] = l; buf.ch[1] = r;
+        buf.ch = [l, r];
         buf.update();
         return buf;
     }
@@ -189,15 +145,10 @@ struct Tree(T, alias _op, T _e) {
         return p;
     }
     import std.conv : to;
-    import std.math : abs;    
     Node* tr;
+    this(T v) { tr = new Node(v); }
+    this(Node* tr) { this.tr = tr; }
 
-    this(T v) {
-        tr = new Node(v);
-    }
-    this(Node* tr) {
-        this.tr = tr;
-    }
     @property size_t length() const { return (!tr ? 0 : tr.length); }
     alias opDollar = length;
     
@@ -246,7 +197,6 @@ struct Tree(T, alias _op, T _e) {
         import std.range : iota;
         import std.algorithm : map;
         import std.conv : to;
-        import std.string : join;
         string s;
         s ~= "Tree(";
         s ~= iota(length).map!(i => this[i]).to!string;
@@ -361,13 +311,20 @@ unittest {
     import dcomp.stopwatch;
     StopWatch sw; sw.start;
     auto nv = redBlackTree!(true, int)([]);
-    auto tr = Tree!(int, max, int.min)();
+    alias T = Tree!(int, max, int.min);
+    auto tr = T();
     foreach (ph; 0..10000) {
         int ty = uniform(0, 2);
         if (ty == 0) {
             int x = uniform(0, 100);
             nv.insert(x);
-            tr.insert(tr.binSearchLeft!(y => x <= y)(0, tr.length), x);
+            auto idx = tr.binSearchLeft!(y => x <= y)(0, tr.length);
+            if (uniform(0, 2)) {
+                auto tr2 = tr.trim(idx, tr.length); 
+                tr.merge(T(x)).merge(tr2);
+            } else {
+                tr.insert(idx, x);
+            }
         } else {
             if (!nv.length) continue;
             int i = uniform(0, nv.length.to!int);
@@ -376,7 +333,11 @@ unittest {
             assert(u.front == tr[i]);
             int x = tr[i];
             nv.removeKey(x);
-            tr.removeAt(i);
+            if (uniform(0, 2)) {
+                tr.removeAt(i);
+            } else {
+                tr.trim(i, i+1);
+            }
         }
         tr.check();
         assert(nv.length == tr.length);
