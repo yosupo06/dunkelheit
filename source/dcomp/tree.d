@@ -245,6 +245,7 @@ struct Tree(T, alias _opTT, T _eT, bool hasLazy = false, L = bool, alias _opTL =
     }
     static if (hasLazy) {        
         void opIndexOpAssign(string op : "+")(in L x, size_t[2] rng) {
+            if (!tr) return;
             tr.add(rng[0].to!uint, rng[1].to!uint, x);
         }
     }
@@ -259,6 +260,7 @@ struct Tree(T, alias _opTT, T _eT, bool hasLazy = false, L = bool, alias _opTL =
         Tree* eng;
         size_t start, end;
         @property T sum() {
+            if (!eng.tr) return eT;
             return eng.tr.sum(start.to!uint, end.to!uint);
         }
     }
@@ -388,7 +390,7 @@ unittest {
             [Mint(0), Mint(0)].fixed, Mint(0));
         T1 t1;
         T2 t2;
-        foreach (ph; 0..100) {
+        foreach (ph; 0..1000) {
             assert(t1.length == t2.length);
             int L = t1.length.to!int;
             int ty = uniform(0, 3);
@@ -413,6 +415,8 @@ unittest {
                 }
                 t2[l..r] += x;
             }
+            t1.check();
+            t2.check();
         }
     }
     check();
