@@ -38,7 +38,7 @@ struct DequePayload(T) {
         this[length-1] = v; 
     }
     void removeFront() {
-        assert(!empty, "Deque.removeFront: Deque is empty");        
+        assert(!empty, "Deque.removeFront: Deque is empty");
         st++; length--;
         if (st == cap) st = 0;
     }

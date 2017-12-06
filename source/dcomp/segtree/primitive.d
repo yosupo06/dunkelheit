@@ -31,7 +31,7 @@ struct SegTree(alias E, Args...) {
         assert(0 <= k && k < eng.length());
         eng.singleSet(k.to!uint, x);
     }
-    size_t[2] opSlice(size_t dim)(size_t start, size_t end) {
+    size_t[2] opSlice(size_t dim : 0)(size_t start, size_t end) {
         assert(0 <= start && start <= end && end <= eng.length());
         return [start, end];
     }

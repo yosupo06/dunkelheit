@@ -165,7 +165,7 @@ unittest {
     ulong naive_mod(ulong[2] a, ulong b) {
         auto a2 = (BigInt(a[1]) << 64) + BigInt(a[0]);
         return (a2 % b).to!string.to!ulong;
-    }    
+    }
     ulong[2][] li;
     ulong[] ri;
     foreach (i; 0..50) {

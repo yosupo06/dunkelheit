@@ -117,7 +117,6 @@ T[] factTable(T)(size_t length) if (isModInt!T) {
     return T(1).recurrence!((a, n) => a[n-1]*T(n)).take(length).array;
 }
 
-// optimize
 T[] invFactTable(T)(size_t length) if (isModInt!T) {
     import std.algorithm : map, reduce;
     import std.range : take, recurrence, iota;
