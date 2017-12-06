@@ -78,9 +78,7 @@ struct Stack(T) {
         @property size_t length() const { return r - l; }
         alias opDollar = length;
 
-        @property RangeT save() { return RangeT(p, l, r); }
-        @property RangeT!(const A) save() const { return typeof(return)(p, l, r); }
-        @property RangeT!(immutable A) save() immutable { return typeof(return)(p, l, r); }
+        @property auto save() { return this; }
         
         ref inout(E) opIndex(size_t i) inout {
             version(assert) if (empty) throw new RangeError();
@@ -88,6 +86,7 @@ struct Stack(T) {
         }
         @property ref inout(E) front() inout { return this[0]; }
         @property ref inout(E) back() inout { return this[$-1]; }
+
         void popFront() {
             version(assert) if (empty) throw new RangeError();
             l++;
@@ -96,13 +95,15 @@ struct Stack(T) {
             version(assert) if (empty) throw new RangeError();
             r--;
         }
-        auto opIndex() inout { return this.save; }
+        
         size_t[2] opSlice(size_t dim : 0)(size_t start, size_t end) const {
             assert(start <= end && end <= length);
             return [start, end];
         }
-        RangeT opIndex(size_t[2] rng) { return typeof(return)(p, l+rng[0], l+rng[1]); }
-        RangeT!(const A) opIndex(size_t[2] rng) const { return typeof(return)(p, l+rng[0], l+rng[1]); }
+        auto opIndex(size_t[2] rng) { return RangeT(p, l+rng[0], l+rng[1]); }
+        auto opIndex(size_t[2] rng) const { return RangeT!(const A)(p, l+rng[0], l+rng[1]); }
+        auto opIndex(size_t[2] rng) immutable { return RangeT!(immutable A)(p, l+rng[0], l+rng[1]); }
+        auto opIndex() inout { return this[0..$]; }
     } 
 }
 
