@@ -30,7 +30,6 @@ struct StackPayload(T, size_t MINCAP = 4) if (MINCAP >= 1) {
         import core.memory : GC;
         import core.stdc.string : memcpy;
         import std.conv;
-        if (newCap < MINCAP) newCap = MINCAP;
         if (newCap <= _cap) return;
         void* newData = GC.malloc(newCap * T.sizeof);
         _cap = newCap.to!uint;
@@ -47,7 +46,8 @@ struct StackPayload(T, size_t MINCAP = 4) if (MINCAP >= 1) {
     }
 
     void insertBack(T item) {
-        if (_len == _cap) reserve(_cap * 2);
+        import std.algorithm : max;
+        if (_len == _cap) reserve(max(_cap * 2, MINCAP));
         _data[_len++] = item;
     } ///
     alias opOpAssign(string op : "~") = insertBack; /// ditto
