@@ -104,13 +104,13 @@ struct Deque(T, bool mayNull = true) {
     void clear() { if (_p) _p.clear(); } ///
 
     /// Warning: break range
-    void insertFront(T v) {
+    void insertFront(T item) {
         if (mayNull && !_p) _p = new Payload();
-        _p.insertFront(v);
+        _p.insertFront(item);
     }
-    void insertBack(T v) {
+    void insertBack(T item) {
         if (mayNull && !_p) _p = new Payload();
-        _p.insertBack(v);
+        _p.insertBack(item);
     } ///
     alias opOpAssign(string op : "~") = insertBack; /// ditto
     alias stableInsertBack = insertBack; /// ditto
