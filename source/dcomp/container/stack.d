@@ -41,9 +41,9 @@ struct Stack(T) {
     
     void clear() { if (_p) _p.clear(); } ///
 
-    void insertBack(T v) {
+    void insertBack(T item) {
         if (!_p) _p = new Payload();
-        _p.insertBack(v);
+        _p.insertBack(item);
     } ///
     alias opOpAssign(string op : "~") = insertBack; /// ditto
     alias stableInsertBack = insertBack; /// ditto

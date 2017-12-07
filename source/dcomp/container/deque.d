@@ -33,16 +33,16 @@ struct DequePayload(T) {
         _start = _len = 0;
     }
     import std.algorithm : max;
-    void insertFront(T v) {
+    void insertFront(T item) {
         if (_len == _cap) reserve(max(_cap * 2, 4));
         if (_start == 0) _start += _cap;
         _start--; _len++;
-        this[0] = v; 
+        this[0] = item;
     }
-    void insertBack(T v) {
+    void insertBack(T item) {
         if (_len == _cap) reserve(max(_cap * 2, 4));
         _len++;
-        this[_len-1] = v; 
+        this[_len-1] = item;
     }
     void removeFront() {
         assert(!empty, "Deque.removeFront: Deque is empty");
