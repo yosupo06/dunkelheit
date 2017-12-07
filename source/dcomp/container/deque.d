@@ -55,9 +55,8 @@ struct DequePayload(T) {
     }
 }
 
-
 /**
-Deque リングバッファ実装でDListより速い
+Deque on ring buffer
  */
 struct Deque(T, bool mayNull = true) {
     import core.exception : RangeError;
@@ -66,115 +65,127 @@ struct Deque(T, bool mayNull = true) {
     import std.traits : isImplicitlyConvertible;
 
     alias Payload = DequePayload!T;
-//    alias Range = Payload.Range;
-//    alias ConstRange = Payload.ConstRange;
-//    alias ImmutableRange = Payload.ImmutableRange;
+    Payload* _p;
     
-    alias Range = RangeT!(DequePayload!T);
-    alias ConstRange = RangeT!(const DequePayload!T);
-    alias ImmutableRange = RangeT!(immutable DequePayload!T);
+    static if (!mayNull) @disable this();
 
-    static struct RangeT(A) {
-        import std.traits : CopyTypeQualifiers;
-        alias E = CopyTypeQualifiers!(A, T);
-        A *p;
-        size_t a, b;
-        @property bool empty() const { return b <= a; }
-        @property size_t length() const { return b-a; }
-        @property RangeT save() { return RangeT(p, a, b); }
-        @property RangeT!(const A) save() const {
-            return typeof(return)(p, a, b);
-        }
-        alias opDollar = length;
-        @property ref inout(E) front() inout { return (*p)[a]; }
-        @property ref inout(E) back() inout { return (*p)[b-1]; }
-        void popFront() {
-            version(assert) if (empty) throw new RangeError();
-            a++;
-        }
-        void popBack() {
-            version(assert) if (empty) throw new RangeError();
-            b--;
-        }
-        ref inout(E) opIndex(size_t i) inout { return (*p)[i]; }
-        RangeT opSlice() { return this.save; }
-        RangeT opSlice(size_t i, size_t j) {
-            version(assert) if (i > j || a + j > b) throw new RangeError();
-            return typeof(return)(p, a+i, a+j);
-        }
-        RangeT!(const A) opSlice() const { return this.save; }
-        RangeT!(const A) opSlice(size_t i, size_t j) const {
-            version(assert) if (i > j || a + j > b) throw new RangeError();
-            return typeof(return)(p, a+i, a+j);
-        }
-    }
-
-
-    Payload* p;
-    private void I() { if (mayNull && !p) p = new Payload(); }
-    private void C() const {
-        version(assert) if (mayNull && !p) throw new RangeError();
-    }
-    static if (!mayNull) {
-        @disable this();
-    }
-    //some value
-    private this(Payload* p) {
-        this.p = p;
-    }
+    /// Deque(1, 2, 3)
     this(U)(U[] values...) if (isImplicitlyConvertible!(U, T)) {
-        p = new Payload();
+        _p = new Payload();
         foreach (v; values) {
             insertBack(v);
         }
     }
-    //range
+    /// Deque(iota(3))
     this(Range)(Range r)
     if (isInputRange!Range &&
     isImplicitlyConvertible!(ElementType!Range, T) &&
     !is(Range == T[])) {
-        p = new Payload();
+        _p = new Payload();
         foreach (v; r) {
             insertBack(v);
         }
     }
+    private this(Payload* p) { _p = p; }
     static Deque make() { return Deque(new Payload()); }
-    @property bool havePayload() const { return (!mayNull || p); }
-    /// 空かどうか取得
-    @property bool empty() const { return (!havePayload || p.empty); }
-    /// 長さを取得
-    @property size_t length() const { return (havePayload ? p.length : 0); }
-    /// ditto
-    alias opDollar = length;
-    ref inout(T) opIndex(size_t i) inout {C; return (*p)[i]; }
-    /// 先頭要素
-    ref inout(T) front() inout {C; return (*p)[0]; }
-    /// 末尾要素
-    ref inout(T) back() inout {C; return (*p)[$-1]; }
-    void clear() { if (p) p.clear(); }
-    /// 先頭に追加 rangeが壊れるので注意
-    void insertFront(T v) {I; p.insertFront(v); }
-    /// 末尾に追加
-    void insertBack(T v) {I; p.insertBack(v); }
-    /// ditto
-    alias stableInsertBack = insertBack;
-    /// 先頭を削除 rangeが壊れるので注意
-    void removeFront() {C; p.removeFront(); }
-    /// 末尾を削除
-    void removeBack() {C; p.removeBack(); }
-    /// 全体のrangeを取得
-    Range opSlice() {I; return Range(p, 0, length); }
+    
+    private bool havePayload() const { return (!mayNull || _p); }    
+    @property bool empty() const { return (!havePayload || _p.empty); } ///
+    @property size_t length() const { return (havePayload ? _p.length : 0); } ///
+    alias opDollar = length; /// ditto
+
+    ref inout(T) opIndex(size_t i) inout {
+        assert(!empty, "Deque.opIndex: Deque is empty");
+        return (*_p)[i];
+    } ///
+    ref inout(T) front() inout { return this[0]; } ///
+    ref inout(T) back() inout { return this[$-1]; } ///
+
+    void clear() { if (_p) _p.clear(); } ///
+
+    /// Warning: break range
+    void insertFront(T v) {
+        if (mayNull && !_p) _p = new Payload();
+        _p.insertFront(v);
+    }
+    void insertBack(T v) {
+        if (mayNull && !_p) _p = new Payload();
+        _p.insertBack(v);
+    } ///
+    alias opOpAssign(string op : "~") = insertBack; /// ditto
+    alias stableInsertBack = insertBack; /// ditto
+
+    /// Warning: break range
+    void removeFront() {
+        assert(!mayNull || _p, "Deque.removeFront: Deque is empty");
+        _p.removeFront();
+    }
+    void removeBack() {
+        assert(!mayNull || _p, "Deque.removeBack: Deque is empty");
+        _p.removeBack();
+    } ///
+    alias stableRemoveBack = removeBack; /// ditto
+
+    /// Random-access range    
+    alias Range = RangeT!(DequePayload!T);
+    alias ConstRange = RangeT!(const DequePayload!T); /// ditto
+    alias ImmutableRange = RangeT!(immutable DequePayload!T); /// ditto
+
+    size_t[2] opSlice(size_t dim : 0)(size_t start, size_t end) const {
+        assert(start <= end && end <= length);
+        return [start, end];
+    } ///
+    Range opIndex(size_t[2] rng) { return Range(_p, rng[0], rng[1]); } /// Get slice
+    ConstRange opIndex(size_t[2] rng) const { return ConstRange(_p, rng[0], rng[1]); } /// ditto
+    ImmutableRange opIndex(size_t[2] rng) immutable { return ImmutableRange(_p, rng[0], rng[1]); } /// ditto
+    auto opIndex() inout { return this[0..$]; } /// ditto
+
+    static struct RangeT(QualifiedPayload) {
+        alias A = QualifiedPayload;
+        import std.traits : CopyTypeQualifiers;
+        alias E = CopyTypeQualifiers!(A, T);
+        A *p;
+        size_t l, r;
+
+        @property bool empty() const { return r <= l; }
+        @property size_t length() const { return r - l; }
+        alias opDollar = length;
+
+        @property auto save() { return this; }
+        
+        ref inout(E) opIndex(size_t i) inout {
+            version(assert) if (empty) throw new RangeError();
+            return (*p)[l+i];
+        }
+        @property ref inout(E) front() inout { return this[0]; }
+        @property ref inout(E) back() inout { return this[$-1]; }
+
+        void popFront() {
+            version(assert) if (empty) throw new RangeError();
+            l++;
+        }
+        void popBack() {
+            version(assert) if (empty) throw new RangeError();
+            r--;
+        }
+        
+        size_t[2] opSlice(size_t dim : 0)(size_t start, size_t end) const {
+            assert(start <= end && end <= length);
+            return [start, end];
+        }
+        auto opIndex(size_t[2] rng) { return RangeT(p, l+rng[0], l+rng[1]); }
+        auto opIndex(size_t[2] rng) const { return RangeT!(const A)(p, l+rng[0], l+rng[1]); }
+        auto opIndex(size_t[2] rng) immutable { return RangeT!(immutable A)(p, l+rng[0], l+rng[1]); }
+        auto opIndex() inout { return this[0..$]; }
+    } 
 }
 
 ///
 unittest {
     import std.algorithm : equal;
-    import std.range.primitives : isRandomAccessRange;
-    import std.container.util : make;
     auto q = Deque!int();
 
-    //insert,remove
-    assert(equal(q[], new int[](0)));
+    assert(equal(q[], new int[0]));
     q.insertBack(1);
     assert(equal(q[], [1]));
     q.insertBack(2);

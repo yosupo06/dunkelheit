@@ -27,7 +27,6 @@ struct Stack(T) {
         foreach (v; r) this ~= v;
     }
 
-    @property bool havePayload() const { return (_p !is null); }
     @property bool empty() const { return (!_p || _p.empty); } ///
     @property size_t length() const { return (_p ? _p.length : 0); } ///
     alias opDollar = length; /// ditto
