@@ -1,76 +1,100 @@
 module dcomp.container.radixheap;
 
-import dcomp.foundation;
 import dcomp.container.stackpayload;
-
 
 import std.functional : unaryFun;
 import std.traits : isSigned, isUnsigned;
 
-template RadixHeap(T, alias _pred = "a")
-if (isSigned!(typeof(unaryFun!_pred(T())))) {
-    import std.traits : Unsigned;
-    alias pred = unaryFun!_pred;
-    alias S = typeof(pred(T()));
-    alias U = Unsigned!S;
-    U pred2(in T x) {
-        return pred(x) ^ (U(1) << (U.sizeof*8-1));
+/**
+Radix Heap
+ */
+template RadixHeap(T, alias pred = "a") {
+    alias _pred = unaryFun!pred; // _pred(value) = key
+    alias K = typeof(_pred(T())); // key type
+    ///
+    static if (isUnsigned!K) {
+        // unsigned
+
+        struct RadixHeap {
+            static struct Payload {
+                StackPayload!T[K.sizeof*8+1] _v;
+                size_t _len;
+                K _last;
+
+                // bsr(x) + 1
+                private static int bsr1(K x) {
+                    import core.bitop : bsr;
+                    return (x == 0) ? 0 : bsr(x)+1;
+                }
+                private void assign(T item) {
+                    K key = _pred(item);
+                    assert(_last <= key);
+                    _v[bsr1(key^_last)] ~= item;
+                }
+                private void pull() {
+                    import std.range, std.algorithm;
+                    if (_v[0].length) return;
+                    auto i = iota(K.sizeof*8+1).find!(a => _v[a].length).front;
+                    // reassign _v[i]
+                    _last = _v[i].data[].map!pred.reduce!min;
+                    _v[i].data.each!(a => assign(a));
+                    _v[i].clear();
+                }
+
+                void insert(T item) {
+                    _len++;
+                    assign(item);
+                }
+                T front() {
+                    pull();
+                    return _v[0].back;
+                }
+                void removeFront() {
+                    pull();
+                    _len--;
+                    _v[0].removeBack();
+                }
+            }
+            Payload* _p;
+
+            @property bool empty() const { return (!_p || _p._len == 0); } ///
+            @property size_t length() const { return (!_p ? 0 : _p._len); } ///
+            alias opDollar = length; /// ditto
+
+            /// Warning: return minimum
+            T front() {
+                assert(!empty, "RadixHeap.front: heap is empty");
+                return _p.front;
+            }
+            void insert(T item) {
+                if (!_p) _p = new Payload();
+                _p.insert(item);
+            } ///
+            void removeFront() {
+                assert(!empty, "RadixHeap.removeFront: heap is empty");
+                _p.removeFront();
+            } ///
+        }
+    } else static if (isSigned!K) {
+        // signed
+        import std.traits : Unsigned;
+        static Unsigned!K pred2(in T item) {
+            return _pred(item) ^ (K(1) << (K.sizeof*8 - 1));
+        }
+        alias RadixHeap = RadixHeap!(T, pred2);
+    } else {
+        static assert(false);
     }
-    alias RadixHeap = RadixHeap!(T, pred2);
 }
 
-import core.bitop;
-
-struct RadixHeap(T, alias _pred = "a")
-if (isUnsigned!(typeof(unaryFun!_pred(T())))) {
-    import std.algorithm;
-    import core.exception : RangeError;
-    alias pred = unaryFun!_pred;
-    alias U = typeof(pred(T()));
-    static int bsr1(U x) {
-        return (x == 0) ? 0 : bsr(x)+1;
-    }
-    static struct Payload {
-        StackPayload!T[U.sizeof*8+1] v;
-        size_t length;
-        U last;
-        void insert(T p) {
-            U x = pred(p);
-            assert(last <= x);
-            length++;
-            v[bsr1(x^last)] ~= p;
-        }
-        bool empty() const {
-            return length == 0;
-        }
-        T front() {
-            if (!v[0].length) {
-                int i = 1;
-                while (!v[i].length) i++;
-                last = v[i].data[].map!pred.fold!"min(a, b)";
-                foreach (T p; v[i].data) {
-                    v[bsr1(pred(p)^last)] ~= p;
-                }
-                v[i].clear();
-            }
-            return v[0].data[$-1];
-        }
-        void removeFront() {
-            front();
-            length--;
-            v[0].removeBack();
-        }        
-    }
-    Payload* p;
-    private void I() { if (!p) p = new Payload(); }
-    private void C() const {
-        version(assert) if (!p) throw new RangeError();
-    }
-    void insert(T x) {I; p.insert(x); }
-    @property bool empty() const { return (p == null || p.empty); }
-    @property size_t length() const { return (p ? p.length : 0); }
-    T front() {C; return p.front; }
-    void removeFront() {I; p.removeFront(); }
+///
+unittest {
+    RadixHeap!int q;
+    q.insert(2);
+    q.insert(1);
+    assert(q.front == 1);
+    q.removeFront();
+    assert(q.front == 2);
 }
 
 unittest {

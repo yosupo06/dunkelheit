@@ -1,5 +1,7 @@
 module dcomp.matrix;
 
+import dcomp.bitop;
+
 /// 行列ライブラリ
 struct SMatrix(T, size_t H, size_t W) {
     alias DataType = T;
