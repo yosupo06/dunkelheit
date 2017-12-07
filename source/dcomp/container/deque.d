@@ -60,7 +60,6 @@ Deque on ring buffer
  */
 struct Deque(T, bool mayNull = true) {
     import core.exception : RangeError;
-    import core.memory : GC;
     import std.range : ElementType, isInputRange;
     import std.traits : isImplicitlyConvertible;
 
