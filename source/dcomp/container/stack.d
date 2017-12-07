@@ -8,24 +8,22 @@ struct Stack(T) {
 
     alias Payload = StackPayload!T;
     Payload* _p;
-    private void I() { if (!_p) _p = new Payload(); }
-    private void C() const {
-        version(assert) if (!_p) throw new RangeError();
-    }
 
     import std.traits : isImplicitlyConvertible;
-    import std.range : ElementType, isInputRange;
+    import std.range : ElementType, isInputRange, hasLength;
     /// Stack(1, 2, 3)
     this(U)(U[] values...) if (isImplicitlyConvertible!(U, T)) {
         _p = new Payload();
+        _p.reserve(values.length);
         foreach (v; values) this ~= v;
     }
     /// Stack(iota(3))
     this(Range)(Range r)
     if (isInputRange!Range &&
     isImplicitlyConvertible!(ElementType!Range, T) &&
-    !is(Range == T[])) {            
+    !is(Range == T[])) {
         _p = new Payload();
+        static if (hasLength!Range) _p.reserve(r.length);
         foreach (v; r) this ~= v;
     }
 
@@ -44,7 +42,10 @@ struct Stack(T) {
     
     void clear() { if (_p) _p.clear(); } ///
 
-    void insertBack(T v) {I; _p.insertBack(v); } ///
+    void insertBack(T v) {
+        if (!_p) _p = new Payload();
+        _p.insertBack(v);
+    } ///
     alias opOpAssign(string op : "~") = insertBack; /// ditto
     alias stableInsertBack = insertBack; /// ditto
     void removeBack() {

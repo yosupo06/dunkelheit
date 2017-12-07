@@ -18,9 +18,7 @@ struct StackPayload(T, size_t MINCAP = 4) if (MINCAP >= 1) {
     inout(T)[] data() inout { return (_data) ? _data[0.._len] : null; }
     
     ref inout(T) opIndex(size_t i) inout {
-        version(assert) {
-            if (_len <= i) throw new RangeError();
-        }
+        version(assert) if (_len <= i) throw new RangeError();
         return _data[i];
     } ///
     ref inout(T) front() inout { return this[0]; } ///
@@ -29,7 +27,7 @@ struct StackPayload(T, size_t MINCAP = 4) if (MINCAP >= 1) {
     void reserve(size_t newCap) {
         import core.memory : GC;
         import core.stdc.string : memcpy;
-        import std.conv;
+        import std.conv : to;
         if (newCap <= _cap) return;
         void* newData = GC.malloc(newCap * T.sizeof);
         _cap = newCap.to!uint;

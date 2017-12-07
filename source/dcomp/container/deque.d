@@ -2,54 +2,73 @@ module dcomp.container.deque;
 
 struct DequePayload(T) {
     import core.exception : RangeError;
-    import core.memory : GC;
-    import std.range : ElementType, isInputRange;
-    import std.traits : isImplicitlyConvertible;
-    T *d;
-    size_t st, length, cap;
-    @property bool empty() const { return length == 0; }
+
+    private T* _data;
+    private uint _start, _len, _cap;
+
+    @property bool empty() const { return _len == 0; }
+    @property size_t length() const { return _len; }
     alias opDollar = length;
+
     ref inout(T) opIndex(size_t i) inout {
-        version(assert) if (length <= i) throw new RangeError();
-        return d[(st+i >= cap) ? (st+i-cap) : st+i];
+        version(assert) if (_len <= i) throw new RangeError();
+        if (_start + i < _cap) return _data[_start + i];
+        else return _data[_start + i - _cap];
     }
-    private void expand() {
+    ref inout(T) front() inout { return this[0]; }
+    ref inout(T) back() inout { return this[$-1]; }
+
+    void reserve(size_t newCap) {
+        import core.memory : GC;
         import std.algorithm : max;
-        assert(length == cap);
-        auto nc = max(size_t(4), 2*cap);
-        T* nd = cast(T*)GC.malloc(nc * T.sizeof);
+        import std.conv : to;
+        if (newCap <= _cap) return;
+        T* newData = cast(T*)GC.malloc(newCap * T.sizeof);
         foreach (i; 0..length) {
-            nd[i] = this[i];
+            newData[i] = this[i];
         }
-        d = nd; st = 0; cap = nc;
+        _data = newData; _start = 0; _cap = newCap.to!uint;
     }
     void clear() {
-        st = length = 0;
+        _start = _len = 0;
     }
+    import std.algorithm : max;
     void insertFront(T v) {
-        if (length == cap) expand();
-        if (st == 0) st += cap;
-        st--; length++;
+        if (_len == _cap) reserve(max(_cap * 2, 4));
+        if (_start == 0) _start += _cap;
+        _start--; _len++;
         this[0] = v; 
     }
     void insertBack(T v) {
-        if (length == cap) expand();
-        length++;
-        this[length-1] = v; 
+        if (_len == _cap) reserve(max(_cap * 2, 4));
+        _len++;
+        this[_len-1] = v; 
     }
     void removeFront() {
         assert(!empty, "Deque.removeFront: Deque is empty");
-        st++; length--;
-        if (st == cap) st = 0;
+        _start++; _len--;
+        if (_start == _cap) _start = 0;
     }
     void removeBack() {
         assert(!empty, "Deque.removeBack: Deque is empty");        
-        length--;
+        _len--;
     }
-    
-    ref inout(T) front() inout { return this[0]; }
-    ref inout(T) back() inout { return this[$-1]; }
-    Range opSlice() {return Range(&this, 0, length); }
+}
+
+
+/**
+Deque リングバッファ実装でDListより速い
+ */
+struct Deque(T, bool mayNull = true) {
+    import core.exception : RangeError;
+    import core.memory : GC;
+    import std.range : ElementType, isInputRange;
+    import std.traits : isImplicitlyConvertible;
+
+    alias Payload = DequePayload!T;
+//    alias Range = Payload.Range;
+//    alias ConstRange = Payload.ConstRange;
+//    alias ImmutableRange = Payload.ImmutableRange;
     
     alias Range = RangeT!(DequePayload!T);
     alias ConstRange = RangeT!(const DequePayload!T);
@@ -89,23 +108,8 @@ struct DequePayload(T) {
             return typeof(return)(p, a+i, a+j);
         }
     }
-}
 
 
-/**
-Deque リングバッファ実装でDListより速い
- */
-struct Deque(T, bool mayNull = true) {
-    import core.exception : RangeError;
-    import core.memory : GC;
-    import std.range : ElementType, isInputRange;
-    import std.traits : isImplicitlyConvertible;
-
-    alias Payload = DequePayload!T;
-    alias Range = Payload.Range;
-    alias ConstRange = Payload.ConstRange;
-    alias ImmutableRange = Payload.ImmutableRange;
-    
     Payload* p;
     private void I() { if (mayNull && !p) p = new Payload(); }
     private void C() const {
