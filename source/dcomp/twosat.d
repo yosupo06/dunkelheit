@@ -8,52 +8,57 @@ import dcomp.container.stackpayload;
 
 /// 2-SAT を解く構造体
 struct TwoSat {
-    /// execをした後, 解けたならば答えが入る
-    bool[] res;
+    bool[] vars; /// assigned variable
 
-    struct Edge {int to;}
-    StackPayload!Edge[] g;
+    static struct Edge {uint to;}
+    private StackPayload!Edge[] g;
 
-    /// $(D (a == aExp) || (b == bExp)) という条件を追加
-    void addCond(int a, bool aExp, int b, bool bExp) {
-        g[2*a+(aExp?0:1)] ~= Edge(2*b+(bExp?1:0));
-        g[2*b+(bExp?0:1)] ~= Edge(2*a+(aExp?1:0));
+    /// Clause $(D (vars[a] == aExpect) || (vars[b] == bExpect))
+    void addClause(size_t a, bool expectedA, size_t b, bool expectedB) {
+        import std.conv : to;
+        g[2*a+(expectedA?0:1)] ~= Edge((2*b+(expectedB?1:0)).to!uint);
+        g[2*b+(expectedB?0:1)] ~= Edge((2*a+(expectedA?1:0)).to!uint);
     }
 
-    /// 解けたかをreturnする, 実際の答えはresに入る
-    bool exec() {
+    /**
+    Solve 2-sat
+
+    Returns:
+        satisfiable or not
+     */
+    bool solve() {
         import std.array : array;
         import std.algorithm : map;
-        import std.conv : to;
-        int n = res.length.to!int;
         auto sccInfo = scc(g.map!(v => v.data).array);
-        for (int i = 0; i < n; i++) {
+        foreach (i; 0..vars.length) {
             if (sccInfo.id[2*i] == sccInfo.id[2*i+1]) return false;
-            res[i] = sccInfo.id[2*i] < sccInfo.id[2*i+1];
+            vars[i] = sccInfo.id[2*i] < sccInfo.id[2*i+1];
         }
         return true;
     }
-    /// n:変数の数
-    this(int n) {
-        res = new bool[n];
+
+    /**
+    Params:
+        n = # of variables
+     */
+    this(size_t n) {
+        vars = new bool[n];
         g = new StackPayload!Edge[](2*n);
     }
 }
 
 ///
 unittest {
-    /+
-    (x0 v x1) ^ (~x0 v x2) ^ (~x1 v ~x2) を解く
-    +/
+    // Solve (x0 v x1) ^ (~x0 v x2) ^ (~x1 v ~x2)
     auto sat = TwoSat(3);
-    sat.addCond(0, true,  1, true);  //(x0 == true  || x1 == true)
-    sat.addCond(0, false, 2, true);  //(x0 == false || x2 == true)
-    sat.addCond(1, false, 2, false); //(x1 == false || x2 == false)
-    assert(sat.exec() == true);
-    auto res = sat.res;
-    assert(res[0] == true  || res[1] == true);
-    assert(res[0] == false || res[2] == true);
-    assert(res[1] == false || res[2] == false);
+    sat.addClause(0, true,  1, true);  // (vars[0] == true  || vars[1] == true)
+    sat.addClause(0, false, 2, true);  // (vars[0] == false || vars[2] == true)
+    sat.addClause(1, false, 2, false); // (vars[1] == false || vars[2] == false)
+    assert(sat.solve() == true);
+    auto vars = sat.vars;
+    assert(vars[0] == true  || vars[1] == true);
+    assert(vars[0] == false || vars[2] == true);
+    assert(vars[1] == false || vars[2] == false);
 }
 
 unittest {
@@ -78,19 +83,19 @@ unittest {
                 bool f = uniform(0, 2) == 1;
                 bool g = uniform(0, 2) == 1;
                 if (ans[x] != f && ans[y] != g) continue;
-                sat.addCond(x, f, y, g);
+                sat.addClause(x, f, y, g);
                 conds ~= [N(x, f), N(y, g)];
                 break;
             }
         }
-        assert(sat.exec());
-        auto res = sat.res;
+        assert(sat.solve());
+        auto vars = sat.vars;
         foreach (cond; conds) {
             int x = cond[0].i;
             bool f = cond[0].expect;
             int y = cond[1].i;
             bool g = cond[1].expect;
-            assert(res[x] == f || res[y] == g);
+            assert(vars[x] == f || vars[y] == g);
         }
     }
 
