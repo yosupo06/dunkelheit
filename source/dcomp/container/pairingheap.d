@@ -5,8 +5,8 @@ private NP meldPairingHeapNode(alias less, NP)(NP x, NP y) {
     if (!x) return y;
     if (!y) return x;
     if (less(x._item, y._item)) swap(x, y);
-    y._next = x._head;
-    x._head = y;
+    y.next = x.head;
+    x.head = y;
     return x;
 }
 
@@ -18,7 +18,7 @@ struct PairingHeap(T, alias less = "a < b") {
     private alias NP = Node*;
     private static struct Node {
         T _item;
-        NP _head, _next;
+        NP head, next;
         this(T item) {
             _item = item;
         }
@@ -26,50 +26,50 @@ struct PairingHeap(T, alias less = "a < b") {
 
     private struct Payload {
         import std.algorithm : swap;
-        private NP _node;
-        private uint _len;
+        private NP node;
+        private uint len;
 
         void insert(T item) {
-            _len++;
-            _node = meldPairingHeapNode!_less(_node, new Node(item));
+            len++;
+            node = meldPairingHeapNode!_less(node, new Node(item));
         }
-        inout(T) front() inout { return _node._item; }
+        inout(T) front() inout { return node._item; }
         void removeFront() {
-            _len--;
+            len--;
 
-            NP s = _node._head;
+            NP s = node.head;
             NP t;
             // merge and reverse: (s, s.next, s.next.next, ...)
             // result: (..., t.next.next, t.next, t)
             while (s) {
                 // pop first 2 nodes
                 NP first, second;
-                first = s; s = s._next; first._next = null;
+                first = s; s = s.next; first.next = null;
                 if (s) {
-                    second = s; s = s._next; second._next = null;
+                    second = s; s = s.next; second.next = null;
                 }
                 // merge 2 nodes and insert front of t
                 auto v = meldPairingHeapNode!_less(first, second);
-                v._next = t;
+                v.next = t;
                 t = v;
             }
-            _node = null;
+            node = null;
             // merge t
             while (t) {
-                NP first = t; t = t._next; first._next = null;
-                _node = meldPairingHeapNode!_less(first, _node);
+                NP first = t; t = t.next; first.next = null;
+                node = meldPairingHeapNode!_less(first, node);
             }
         }
         void meld(Payload* r) {
-            _len += r._len; r._len = 0;
-            _node = meldPairingHeapNode!_less(_node, r._node);
-            r._node = null;
+            len += r.len; r.len = 0;
+            node = meldPairingHeapNode!_less(node, r.node);
+            r.node = null;
         }
     }
     private Payload* _p;
 
-    @property bool empty() const { return !_p || _p._len == 0; } ///
-    @property size_t length() const { return (!_p) ? 0 : _p._len; } ///
+    @property bool empty() const { return !_p || _p.len == 0; } ///
+    @property size_t length() const { return (!_p) ? 0 : _p.len; } ///
 
     void insert(T item) {
         if (!_p) _p = new Payload();

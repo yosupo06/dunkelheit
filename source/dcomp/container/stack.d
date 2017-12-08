@@ -7,14 +7,14 @@ struct Stack(T) {
     import core.exception : RangeError;
 
     alias Payload = StackPayload!T;
-    Payload* _p;
+    private Payload* p;
 
     import std.traits : isImplicitlyConvertible;
     import std.range : ElementType, isInputRange, hasLength;
     /// Stack(1, 2, 3)
     this(U)(U[] values...) if (isImplicitlyConvertible!(U, T)) {
-        _p = new Payload();
-        _p.reserve(values.length);
+        p = new Payload();
+        p.reserve(values.length);
         foreach (v; values) this ~= v;
     }
     /// Stack(iota(3))
@@ -22,34 +22,34 @@ struct Stack(T) {
     if (isInputRange!Range &&
     isImplicitlyConvertible!(ElementType!Range, T) &&
     !is(Range == T[])) {
-        _p = new Payload();
-        static if (hasLength!Range) _p.reserve(r.length);
+        p = new Payload();
+        static if (hasLength!Range) p.reserve(r.length);
         foreach (v; r) this ~= v;
     }
 
-    @property bool empty() const { return (!_p || _p.empty); } ///
-    @property size_t length() const { return (_p ? _p.length : 0); } ///
+    @property bool empty() const { return (!p || p.empty); } ///
+    @property size_t length() const { return (p ? p.length : 0); } ///
     alias opDollar = length; /// ditto
-    @property inout(T)[] data() inout { return (!_p) ? [] : _p.data; } ///
+    @property inout(T)[] data() inout { return (!p) ? [] : p.data; } ///
 
     ref inout(T) opIndex(size_t i) inout {
         assert(!empty, "Stack.opIndex: Stack is empty");
-        return (*_p)[i];
+        return (*p)[i];
     } ///
     ref inout(T) front() inout { return this[0]; } ///
     ref inout(T) back() inout { return this[$-1]; } ///
     
-    void clear() { if (_p) _p.clear(); } ///
+    void clear() { if (p) p.clear(); } ///
 
     void insertBack(T item) {
-        if (!_p) _p = new Payload();
-        _p.insertBack(item);
+        if (!p) p = new Payload();
+        p.insertBack(item);
     } ///
     alias opOpAssign(string op : "~") = insertBack; /// ditto
     alias stableInsertBack = insertBack; /// ditto
     void removeBack() {
         assert(!empty, "Stack.removeBack: Stack is empty");
-        _p.removeBack();
+        p.removeBack();
     } ///
     alias stableRemoveBack = removeBack; /// ditto
 
@@ -62,9 +62,9 @@ struct Stack(T) {
         assert(start <= end && end <= length);
         return [start, end];
     } ///
-    Range opIndex(size_t[2] rng) { return Range(_p, rng[0], rng[1]); } /// Get slice
-    ConstRange opIndex(size_t[2] rng) const { return ConstRange(_p, rng[0], rng[1]); } /// ditto
-    ImmutableRange opIndex(size_t[2] rng) immutable { return ImmutableRange(_p, rng[0], rng[1]); } /// ditto
+    Range opIndex(size_t[2] rng) { return Range(p, rng[0], rng[1]); } /// Get slice
+    ConstRange opIndex(size_t[2] rng) const { return ConstRange(p, rng[0], rng[1]); } /// ditto
+    ImmutableRange opIndex(size_t[2] rng) immutable { return ImmutableRange(p, rng[0], rng[1]); } /// ditto
     auto opIndex() inout { return this[0..$]; } /// ditto
 
     static struct RangeT(QualifiedPayload) {

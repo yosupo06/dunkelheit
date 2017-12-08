@@ -1,20 +1,18 @@
 module dcomp.algorithm;
 
 import std.traits : isFloatingPoint, isIntegral;
+
 /**
-二分探索ライブラリ
+Do binary search, pred(l) must be false, pred(r) must be true, and pred must have monotonic
 
-$(D [pred(l) = false, false, ..., false, true, true, ..., pred(r) = true]) $(BR)
-このように, $(D pred(l) = false), $(D pred(r) = true), 単調性の3つを仮定する
-
-小数の場合, 引数cntで反復回数を指定する
-
+$(D [pred(l) = false, false, ..., false, true, true, ..., pred(r) = true])
+    
 Returns:
-    $(D pred(x) = true)なる最小のx
+    minimum x, s.t. $(D pred(x) = true)
  */
 T binSearch(alias pred, T)(T l, T r) if (isIntegral!T) {
     while (r-l > 1) {
-        T md = (l+r)/2;
+        T md = l + (r-l) / 2;
         if (!pred(md)) l = md;
         else r = md;
     }
@@ -40,7 +38,8 @@ unittest {
 }
 
 import std.range.primitives;
-/// 最小値探索関数
+
+/// Find minimum
 E minimum(alias pred = "a < b", Range, E = ElementType!Range)(Range range, E seed)
 if (isInputRange!Range && !isInfinite!Range) {
     import std.algorithm, std.functional;
@@ -49,7 +48,7 @@ if (isInputRange!Range && !isInfinite!Range) {
 
 /// ditto
 ElementType!Range minimum(alias pred = "a < b", Range)(Range range) {
-    assert(!range.empty, "range must not empty");
+    assert(!range.empty, "minimum: range must not empty");
     auto e = range.front; range.popFront;
     return minimum!pred(range, e);
 }
@@ -62,7 +61,7 @@ unittest {
     assert(minimum!"a > b"([2, 1, 3], 100) == 100);
 }
 
-/// 最大値探索関数
+/// Find maximum
 E maximum(alias pred = "a < b", Range, E = ElementType!Range)(Range range, E seed)
 if (isInputRange!Range && !isInfinite!Range) {
     import std.algorithm, std.functional;
@@ -71,7 +70,7 @@ if (isInputRange!Range && !isInfinite!Range) {
 
 /// ditto
 ElementType!Range maximum(alias pred = "a < b", Range)(Range range) {
-    assert(!range.empty, "range must not empty");
+    assert(!range.empty, "maximum: range must not empty");
     auto e = range.front; range.popFront;
     return maximum!pred(range, e);
 }
@@ -85,7 +84,7 @@ unittest {
 }
 
 /**
-要素を回転させるRange
+Range that rotate elements.
  */
 Rotator!Range rotator(Range)(Range r) {
     return Rotator!Range(r);
@@ -105,10 +104,10 @@ if (isForwardRange!Range && hasLength!Range) {
         start = start.save;
         now = now.save;
     }
-    @property bool empty() {
+    @property bool empty() const {
         return now.empty;
     }
-    @property auto front() {
+    @property auto front() const {
         assert(!now.empty);
         import std.range : take, chain;
         return chain(now, start.take(cnt));

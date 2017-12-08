@@ -4,16 +4,16 @@ struct DequePayload(T) {
     import core.exception : RangeError;
 
     private T* _data;
-    private uint _start, _len, _cap;
+    private uint start, len, cap;
 
-    @property bool empty() const { return _len == 0; }
-    @property size_t length() const { return _len; }
+    @property bool empty() const { return len == 0; }
+    @property size_t length() const { return len; }
     alias opDollar = length;
 
     ref inout(T) opIndex(size_t i) inout {
-        version(assert) if (_len <= i) throw new RangeError();
-        if (_start + i < _cap) return _data[_start + i];
-        else return _data[_start + i - _cap];
+        version(assert) if (len <= i) throw new RangeError();
+        if (start + i < cap) return _data[start + i];
+        else return _data[start + i - cap];
     }
     ref inout(T) front() inout { return this[0]; }
     ref inout(T) back() inout { return this[$-1]; }
@@ -22,36 +22,36 @@ struct DequePayload(T) {
         import core.memory : GC;
         import std.algorithm : max;
         import std.conv : to;
-        if (newCap <= _cap) return;
+        if (newCap <= cap) return;
         T* newData = cast(T*)GC.malloc(newCap * T.sizeof);
         foreach (i; 0..length) {
             newData[i] = this[i];
         }
-        _data = newData; _start = 0; _cap = newCap.to!uint;
+        _data = newData; start = 0; cap = newCap.to!uint;
     }
     void clear() {
-        _start = _len = 0;
+        start = len = 0;
     }
     import std.algorithm : max;
     void insertFront(T item) {
-        if (_len == _cap) reserve(max(_cap * 2, 4));
-        if (_start == 0) _start += _cap;
-        _start--; _len++;
+        if (len == cap) reserve(max(cap * 2, 4));
+        if (start == 0) start += cap;
+        start--; len++;
         this[0] = item;
     }
     void insertBack(T item) {
-        if (_len == _cap) reserve(max(_cap * 2, 4));
-        _len++;
-        this[_len-1] = item;
+        if (len == cap) reserve(max(cap * 2, 4));
+        len++;
+        this[len-1] = item;
     }
     void removeFront() {
         assert(!empty, "Deque.removeFront: Deque is empty");
-        _start++; _len--;
-        if (_start == _cap) _start = 0;
+        start++; len--;
+        if (start == cap) start = 0;
     }
     void removeBack() {
         assert(!empty, "Deque.removeBack: Deque is empty");        
-        _len--;
+        len--;
     }
 }
 

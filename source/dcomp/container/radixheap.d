@@ -9,7 +9,7 @@ import std.traits : isSigned, isUnsigned;
 Radix Heap
  */
 template RadixHeap(T, alias pred = "a") {
-    alias _pred = unaryFun!pred; // _pred(value) = key
+    alias _pred = unaryFun!pred; // pred(value) = key
     alias K = typeof(_pred(T())); // key type
     ///
     static if (isUnsigned!K) {
@@ -17,9 +17,9 @@ template RadixHeap(T, alias pred = "a") {
 
         struct RadixHeap {
             static struct Payload {
-                StackPayload!T[K.sizeof*8+1] _v;
-                size_t _len;
-                K _last;
+                StackPayload!T[K.sizeof*8+1] v;
+                size_t len;
+                K last;
 
                 // bsr(x) + 1
                 private static int bsr1(K x) {
@@ -28,51 +28,51 @@ template RadixHeap(T, alias pred = "a") {
                 }
                 private void assign(T item) {
                     K key = _pred(item);
-                    assert(_last <= key);
-                    _v[bsr1(key^_last)] ~= item;
+                    assert(last <= key);
+                    v[bsr1(key^last)] ~= item;
                 }
                 private void pull() {
                     import std.range, std.algorithm;
-                    if (_v[0].length) return;
-                    auto i = iota(K.sizeof*8+1).find!(a => _v[a].length).front;
-                    // reassign _v[i]
-                    _last = _v[i].data[].map!pred.reduce!min;
-                    _v[i].data.each!(a => assign(a));
-                    _v[i].clear();
+                    if (v[0].length) return;
+                    auto i = iota(K.sizeof*8+1).find!(a => v[a].length).front;
+                    // reassign v[i]
+                    last = v[i].data[].map!_pred.reduce!min;
+                    v[i].data.each!(a => assign(a));
+                    v[i].clear();
                 }
 
                 void insert(T item) {
-                    _len++;
+                    len++;
                     assign(item);
                 }
                 T front() {
                     pull();
-                    return _v[0].back;
+                    return v[0].back;
                 }
                 void removeFront() {
                     pull();
-                    _len--;
-                    _v[0].removeBack();
+                    len--;
+                    v[0].removeBack();
                 }
             }
-            Payload* _p;
+            Payload* p;
 
-            @property bool empty() const { return (!_p || _p._len == 0); } ///
-            @property size_t length() const { return (!_p ? 0 : _p._len); } ///
+            @property bool empty() const { return (!p || p.len == 0); } ///
+            @property size_t length() const { return (!p ? 0 : p.len); } ///
             alias opDollar = length; /// ditto
 
             /// Warning: return minimum
             T front() {
                 assert(!empty, "RadixHeap.front: heap is empty");
-                return _p.front;
+                return p.front;
             }
             void insert(T item) {
-                if (!_p) _p = new Payload();
-                _p.insert(item);
+                if (!p) p = new Payload();
+                p.insert(item);
             } ///
             void removeFront() {
                 assert(!empty, "RadixHeap.removeFront: heap is empty");
-                _p.removeFront();
+                p.removeFront();
             } ///
         }
     } else static if (isSigned!K) {
