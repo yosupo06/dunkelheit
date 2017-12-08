@@ -4,88 +4,104 @@ import dcomp.container.deque;
 
 
 /// Convex Hull's query type
-enum CHMode { incr, decr }
+enum CHQueryType {
+    incr, ///
+    decr, ///
+}
 
 /**
 Convex Hull Trick
 
 Params:
     T = value type
-    queryType = if queries are increase order, use CHMode.incr.
-                if queries are decrease order, use CHMode.decr.
+    queryType = if queries are increase, use CHMode.incr.
+                if queries are decrease, use CHMode.decr.
  */
-struct ConvexHull(T, CHMode queryType) {
+struct ConvexHull(T, CHQueryType queryType) {
     import std.algorithm : max;
-    alias L = T[2]; /// Line
-    static T value(L l, T x) { return l[0]*x + l[1]; }
+    alias L = T[2]; /// Line type $(D y = L[0] * x + L[1])
+    private static T value(L l, T x) { return l[0]*x + l[1]; }
     
-    Deque!L data;
-    bool isNeed(L x, L l, L r) const {
-        assert(l[0] <= x[0] && x[0] <= r[0], "x must be mid");
-        return (r[0]-x[0])*(l[1]-x[1]) < (x[0]-l[0])*(x[1]-r[1]);
+    Deque!L lines;
+    // can remove mid?
+    private static bool isNeed(L mid, L left, L right) {
+        assert(left[0] <= mid[0] && mid[0] <= right[0]);
+        return (right[0]-mid[0])*(left[1]-mid[1]) < (mid[0]-left[0])*(mid[1]-right[1]);
     }
-    /// insert line
-    void insertFront(L x) {
-        if (data.empty) {
-            data.insertFront(x);
+    private void insertFront(L l) {
+        if (lines.empty) {
+            lines.insertFront(l);
             return;
         }
-        assert(x[0] <= data[0][0]);
-        if (x[0] == data[0][0]) {
-            if (x[1] <= data[0][1]) return;
-            data.removeFront;
+        assert(l[0] <= lines[0][0]);
+        if (l[0] == lines[0][0]) {
+            if (l[1] <= lines[0][1]) return;
+            lines.removeFront;
         }
-        while (data.length >= 2 && !isNeed(data[0], x, data[1])) {
-            data.removeFront;
+        while (lines.length >= 2 && !isNeed(lines.front, l, lines[1])) {
+            lines.removeFront;
         }
-        data.insertFront(x);
-        if (data.length >= 3) {
-            assert(isNeed(data[1], data[0], data[2]));
-        }
+        lines.insertFront(l);
     }
-    /// ditto
-    void insertBack(L x) {
-        if (data.empty) {
-            data.insertBack(x);
+    private void insertBack(L l) {
+        if (lines.empty) {
+            lines.insertBack(l);
             return;
         }
-        assert(data[$-1][0] <= x[0]);
-        if (data[$-1][0] == x[0]) {
-            if (x[1] <= data[$-1][1]) return;
-            data.removeBack;
+        assert(lines[$-1][0] <= l[0]);
+        if (lines[$-1][0] == l[0]) {
+            if (l[1] <= lines[$-1][1]) return;
+            lines.removeBack;
         }
-        while (data.length >= 2 && !isNeed(data[$-1], data[$-2], x)) {
-            data.removeBack;
+        while (lines.length >= 2 && !isNeed(lines.back, lines[$-2], l)) {
+            lines.removeBack;
         }
-        data.insertBack(x);
+        lines.insertBack(l);
+    }
+    /**
+    Insert line
+
+    line's degree must be minimum or maximum
+     */
+    void insertLine(L line) {
+        if (lines.empty) {
+            lines.insertBack(line);
+            return;
+        }
+        if (line[0] <= lines[0][0]) insertFront(line);
+        else if (lines[$-1][0] <= line[0]) insertBack(line);
+        else {
+            assert(false, "line's degree must be minimum or maximum");
+        }
     }
     /// get maximum y
-    long yMax(T x) {
-        assert(data.length);
-        static if (queryType == CHMode.incr) {
-            while (data.length >= 2 &&
-                value(data[0], x) <= value(data[1], x)) {
-                data.removeFront;
+    long maxY(T x) {
+        assert(lines.length);
+        static if (queryType == CHQueryType.incr) {
+            while (lines.length >= 2 &&
+                value(lines[0], x) <= value(lines[1], x)) {
+                lines.removeFront;
             }
-            return value(data.front, x);
+            return value(lines.front, x);
         } else {
-            while (data.length >= 2 &&
-                value(data[$-2], x) >= value(data[$-1], x)) {
-                data.removeBack;
+            while (lines.length >= 2 &&
+                value(lines[$-2], x) >= value(lines[$-1], x)) {
+                lines.removeBack;
             }
-            return value(data.back, x);
+            return value(lines.back, x);
         }
     }
 }
 
+///
 unittest {
-    ConvexHull!(int, CHMode.incr) c;
-    c.insertFront([1, 1]);
-    c.insertBack([2, 1]);
-    c.insertBack([3, -100]);
-    assert(c.yMax(-1) == 0);
-    c.insertFront([0, 100]);
-    assert(c.yMax(0) == 100);
+    ConvexHull!(int, CHQueryType.incr) c;
+    c.insertLine([1, 4]);
+    c.insertLine([2, 1]);
+    c.insertLine([3, -100]);
+    assert(c.maxY(-1) == 3); // 1 * (-1) + 4 = 3
+    c.insertLine([-10, 100]);
+    assert(c.maxY(2) == 80); // 2 * (-10) + 100 = 80
 }
 
 unittest {
@@ -108,18 +124,18 @@ unittest {
         }
         sort(v);
         sort(smp);
-        ConvexHull!(int, CHMode.incr) c;
+        ConvexHull!(int, CHQueryType.incr) c;
         if (uniform(0, 2)) {
             foreach_reverse (i; 0..100) {
-                c.insertFront(v[i]);
+                c.insertLine(v[i]);
             }
         } else {
             foreach (i; 0..100) {
-                c.insertBack(v[i]);
+                c.insertLine(v[i]);
             }
         }
         foreach (i; 0..100) {
-            assert(c.yMax(smp[i]) == getMax(v, smp[i]));
+            assert(c.maxY(smp[i]) == getMax(v, smp[i]));
         }
     }
     void f2() {
@@ -132,18 +148,18 @@ unittest {
         }
         sort(v);
         sort(smp); reverse(smp);
-        ConvexHull!(int, CHMode.decr) c;
+        ConvexHull!(int, CHQueryType.decr) c;
         if (uniform(0, 2)) {
             foreach_reverse (i; 0..100) {
-                c.insertFront(v[i]);
+                c.insertLine(v[i]);
             }
         } else {
             foreach (i; 0..100) {
-                c.insertBack(v[i]);
+                c.insertLine(v[i]);
             }
         }
         foreach (i; 0..100) {
-            assert(c.yMax(smp[i]) == getMax(v, smp[i]));
+            assert(c.maxY(smp[i]) == getMax(v, smp[i]));
         }
     }
 

@@ -6,7 +6,7 @@ module dcomp.twosat;
 import dcomp.graph.scc;
 import dcomp.container.stackpayload;
 
-/// 2-SAT を解く構造体
+/// 2-SAT Solver
 struct TwoSat {
     bool[] vars; /// assigned variable
 
