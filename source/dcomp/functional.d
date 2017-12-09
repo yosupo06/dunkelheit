@@ -3,33 +3,33 @@ module dcomp.functional;
 /**
 メモ化ライブラリ
 
-std.functionalとは違い, 引数が連続している必要がある.
+std.functional.memoizeとは違い, 引数が連続している必要がある.
 ハッシュテーブルではなく配列で値を保存するため高速である.
  */
 struct memoCont(alias pred) {
-    import core.exception : RangeError;
-    import std.range, std.algorithm, std.conv;
-    import std.string : join;
     import std.traits : ReturnType, ParameterTypeTuple, isIntegral;
-    import std.typecons : tuple, Tuple;
-    import std.meta;
+    import std.meta : allSatisfy;
     alias R = ReturnType!pred;
     alias Args = ParameterTypeTuple!pred;
     static assert (allSatisfy!(isIntegral, Args));
     static immutable N = Args.length;
-    int[2][N] rng;
+    
+    private int[2][N] rng;
     int[N] len;
     R[] dp;
     bool[] used;
-    void init(int[2][N] rng) {
+    void init(in int[2][N] rng) {
+        import std.algorithm : reduce, map;
+        import std.range : array;
         this.rng = rng;
         len = rng[].map!(a => a[1]-a[0]+1).array;
-        int sz = len.reduce!"a*b";
+        auto sz = reduce!"a*b"(1, len);
         dp = new R[sz];
         used = new bool[sz];
     }
     R opCall(Args args) {
-        int idx, base = 1;
+        import core.exception : RangeError;
+        size_t idx, base = 1;
         foreach (i, v; args) {
             version(assert) {
                 if (v < rng[i][0] || rng[i][1] < v) {
@@ -61,7 +61,7 @@ unittest {
             return fact[n] * iFac[k] * iFac[n-k];
         }
 
-        /// メモ化再帰でnCkの計算をする
+        // メモ化再帰でnCkの計算をする
         static memoCont!C2base C2;
         static Mint C2base(int n, int k) {
             if (k == 0) return Mint(1);

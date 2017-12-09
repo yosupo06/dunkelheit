@@ -1,6 +1,6 @@
 module dcomp.foundation;
 
-//fold(for old compiler)
+// fold(for old compiler)
 static if (__VERSION__ <= 2070) {
     /*
     Copied by https://github.com/dlang/phobos/blob/master/std/algorithm/iteration.d
@@ -25,8 +25,6 @@ static if (__VERSION__ <= 2070) {
     }
 }
 
-
-
 /// 静的配列のリテラルであると明示的に指定する
 T[N] fixed(T, size_t N)(T[N] a) {return a;}
 
@@ -35,4 +33,3 @@ unittest {
     auto a = [[1, 2].fixed];
     assert(is(typeof(a) == int[2][]));
 }
-

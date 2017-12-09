@@ -2,34 +2,39 @@ module dcomp.datastructure.unionfind;
 
 /// UnionFind (Disjoint Set Union)
 struct UnionFind {
-    import std.algorithm : map, swap, each;
-    import std.range : iota, array;
-    import std.conv : to;
-    int[] id; // group id
-    int[][] groups; // group list
-    int count; // group count
-    /// n:頂点数
+    uint[] id; /// group id
+    uint[][] groups; /// group list
+    size_t count; /// group count
+    /**
+    Params:
+        n = # of element
+     */
     this(size_t n) {
-        id = iota(n.to!int).array;
-        groups = iota(n.to!int).map!(a => [a]).array;
-        count = n.to!int;
+        import std.algorithm : map;
+        import std.range : iota, array;
+        import std.conv : to;
+        uint _n = n.to!uint;
+        id = _n.iota.array;
+        groups = _n.iota.map!"[a]".array;
+        count = n;
     }
-    /// a, bをmerge
+    /// merge a, b
     void merge(size_t a, size_t b) {
+        import std.algorithm : swap, each;
         if (same(a, b)) return;
         count--;
-        int x = id[a], y = id[b];
+        uint x = id[a], y = id[b];
         if (groups[x].length < groups[y].length) swap(x, y);
         groups[y].each!(a => id[a] = x);
         groups[x] ~= groups[y];
         groups[y] = [];
     }
-    /// iと同じgroupの頂点を返す
-    int[] group(size_t i) {
+    /// elements that are same group with i
+    inout(uint[]) group(size_t i) inout {
         return groups[id[i]];
     }
-    /// a, bは同じgroupか？
-    bool same(size_t a, size_t b) {
+    /// a and b are same group?
+    bool same(size_t a, size_t b) const {
         return id[a] == id[b];
     }
 }

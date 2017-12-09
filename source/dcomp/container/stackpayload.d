@@ -1,6 +1,10 @@
 module dcomp.container.stackpayload;
 
-/// Stack Payload
+/**
+Stack Payload
+
+If you don't need dark speed, you should use dcomp.container.stack
+ */
 struct StackPayload(T, size_t MINCAP = 4) if (MINCAP >= 1) {
     import core.exception : RangeError;
 
