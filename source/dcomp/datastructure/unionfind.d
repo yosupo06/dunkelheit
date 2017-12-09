@@ -2,8 +2,8 @@ module dcomp.datastructure.unionfind;
 
 /// UnionFind(Disjoint Set Union)
 struct UnionFind {
-    uint[] id; /// group id
-    uint[][] groups; /// group list
+    private uint[] id; /// group id
+    private uint[][] groups; /// group list
     size_t count; /// group count
     /**
     Params:
@@ -30,8 +30,15 @@ struct UnionFind {
         groups[y] = [];
     }
     /// elements that are same group with i
-    inout(uint[]) group(size_t i) inout {
+    const(uint[]) group(size_t i) const {
         return groups[id[i]];
+    }
+    /**
+    i がグループのリーダーか返す.
+    各グループにはただ1つのみリーダーが存在する
+     */
+    bool isLeader(size_t i) const {
+        return i == id[i];
     }
     /// a and b are same group?
     bool same(size_t a, size_t b) const {
@@ -56,7 +63,14 @@ unittest {
     assert(uf.id[2] == uf.id[4]);
     assert(equal(uf.group(0), [0]));
     assert(equal(uf.group(1), [1]));
-    assert(equal(sort(uf.group(2)), [2, 3, 4]));
+    assert(equal(sort(uf.group(2).dup), [2, 3, 4]));
+
+    auto cnt = 0;
+    foreach (i; 0..5) {
+        if (!uf.isLeader(i)) continue;
+        cnt += uf.group(i).length;
+    }
+    assert(cnt == 5); // view all element exactly once
 }
 
 unittest {

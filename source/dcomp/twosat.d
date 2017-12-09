@@ -1,6 +1,3 @@
-/**
-2-SAT を解くライブラリ
- */
 module dcomp.twosat;
 
 import dcomp.graph.scc;
