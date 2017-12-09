@@ -2,7 +2,6 @@ module dcomp.datastructure.convexhull;
 
 import dcomp.container.deque;
 
-
 /// Convex Hull's query type
 enum CHQueryType {
     incr, ///

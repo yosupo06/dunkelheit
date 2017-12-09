@@ -1,6 +1,6 @@
 module dcomp.datastructure.unionfind;
 
-///UnionFind(Disjoint Set Union)
+/// UnionFind (Disjoint Set Union)
 struct UnionFind {
     import std.algorithm : map, swap, each;
     import std.range : iota, array;
