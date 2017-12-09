@@ -58,11 +58,12 @@ unittest {
             qf.merge(x, y);
         }
 
+        import std.conv;
         //component count
         int connect = (){
             auto qf = UnionFind(n);
             edges.each!(v => qf.merge(v[0], v[1]));
-            return qf.count;
+            return qf.count.to!int;
         }();
 
         auto br = bridge(g);
@@ -72,7 +73,7 @@ unittest {
             int c = (){
                 auto qf = UnionFind(n);
                 edges.each!((j, v){if (i != j) qf.merge(v[0], v[1]);});
-                return qf.count;
+                return qf.count.to!int;
             }();
             if (connect == c) {
                 //not bridge
