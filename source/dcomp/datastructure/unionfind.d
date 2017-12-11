@@ -1,6 +1,6 @@
 module dcomp.datastructure.unionfind;
 
-/// UnionFind(Disjoint Set Union)
+/// UnionFind (Disjoint Set Union)
 struct UnionFind {
     private uint[] id; /// group id
     private uint[][] groups; /// group list
