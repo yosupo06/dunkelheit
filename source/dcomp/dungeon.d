@@ -1,19 +1,20 @@
 module dcomp.dungeon;
 
-/// [+col, +row, -col, -row]
+/// [+row, +col, -row, -col]
 immutable static int[2][4] direction4 = [
-    [0, 1], [1, 0], [0, -1], [-1, 0],
+    [1, 0], [0, 1], [-1, 0], [0, -1],
 ];
+
 /// [+col, +row+col, +row, +row-col, ...]
 immutable static int[2][8] direction8 = [
-    [0, 1],
-    [1, 1],
     [1, 0],
-    [1, -1],
-    [0, -1],
-    [-1, -1],
-    [-1, 0],
+    [1, 1],
+    [0, 1],
     [-1, 1],
+    [-1, 0],
+    [-1, -1],
+    [0, -1],
+    [1, -1],
 ];
 
 static int[2] addInt2(in int[2] a, in int[2] b) {
@@ -35,7 +36,6 @@ struct Dungeon {
     static int[2] move8(int[2] p, int dir) {
         return addInt2(p, direction8[dir]);
     }
-
 
     immutable int R, C;
     /**
@@ -59,7 +59,7 @@ struct Dungeon {
     }
 }
 
-
+///
 auto neighbors4(int[2] p) {
     static struct Rng {
         int[2] center;
@@ -71,6 +71,16 @@ auto neighbors4(int[2] p) {
     return Rng(p, 0);
 }
 
+///
+unittest {
+    import std.algorithm : equal;
+    assert(equal(
+        [3, 5].neighbors4,
+        [[4, 5], [3, 6], [2, 5], [3, 4]],
+        ));
+}
+
+/// list neighbors only inside
 auto neighbors4(int[2] p, in Dungeon dg) {
     static struct Rng {
         int[2] center;
@@ -89,4 +99,13 @@ auto neighbors4(int[2] p, in Dungeon dg) {
         }
     }
     return Rng(p, dg);
+}
+
+///
+unittest {
+    import std.algorithm : equal;
+    assert(equal(
+        [0, 0].neighbors4(Dungeon(3, 3)),
+        [[1, 0], [0, 1]],
+        ));
 }

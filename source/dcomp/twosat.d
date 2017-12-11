@@ -18,7 +18,7 @@ struct TwoSat {
     }
 
     /**
-    Solve 2-sat
+    Solve 2-SAT
 
     Returns:
         satisfiable or not
