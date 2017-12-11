@@ -100,11 +100,11 @@ struct Line2D(R) {
     Point2D!R vec() const { return y-x; }
 }
 
-R distLP(R)(Line2D!R l, Point2D!R p) if (isFloatingPoint!R) {
+R distLP(R)(in Line2D!R l, in Point2D!R p) if (isFloatingPoint!R) {
     import std.math : abs;
     return abs(cross(l.vec, p-l.x) / l.vec.abs);
 }
-R distSP(R)(Line2D!R s, Point2D!R p) if (isFloatingPoint!R) {
+R distSP(R)(in Line2D!R s, in Point2D!R p) if (isFloatingPoint!R) {
     import std.algorithm : min;
     auto s2 = Point2D!R(-s.vec.y, s.vec.x);
     if (ccw(s.x, s.x+s2, p) == 1) return (s.x-p).abs;
