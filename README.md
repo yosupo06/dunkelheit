@@ -43,3 +43,10 @@ dub run dcomp:combine -- -h
 dub run dcomp:document
 ```
 で `./docs` 以下に作成されます。
+
+# オンラインジャッジ調査(12/12)
+
+AtCoder : dmd(2.070.1), ldc(0.17.0), 60000 byte(と言いつつ…)
+Codeforces(Warning: windows, 32bit) : dmd(2.074) 64k(65535 byte)
+Hackerrank : dmd(2.076.1) 50kb(50*1024 ?)
+Yukicoder : dmd(2.076.0) 64k(65536 byte)

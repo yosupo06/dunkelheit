@@ -34,7 +34,7 @@ struct FastDivULong {
 ///
 unittest {
     assert(11 / FastDivULong(3) == 3);
-    assert(11 / FastDivULong(3) == 2);
+    assert(11 % FastDivULong(3) == 2);
 }
 
 unittest {
