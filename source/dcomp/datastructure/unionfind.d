@@ -40,7 +40,7 @@ struct UnionFind {
     bool isLeader(size_t i) const {
         return i == id[i];
     }
-    /// a and b are same group?
+    /// Are a and b same group?
     bool same(size_t a, size_t b) const {
         return id[a] == id[b];
     }

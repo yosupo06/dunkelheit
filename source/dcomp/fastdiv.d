@@ -1,24 +1,25 @@
 module dcomp.fastdiv;
 
 import dcomp.foundation, dcomp.int128;
-import core.bitop;
 
 /**
 Barrett reductionを使用し、高速除算を行う。
 ulongをこれで置き換えれば大体うまく動く。
  */
 struct FastDivULong {
-    ulong value, m;
-    int lg;
+    const ulong value, m;
+    const int lg;
     this(ulong value) {
+        import core.bitop : bsr;
         this.value = value;
+        assert(value);
         if (value <= 1) return;
-        lg = value.bsr;
-        if (1UL<<lg != value) lg++;
+        int _lg = value.bsr;
+        if (1UL<<_lg != value) _lg++;
+        lg = _lg;
         m = div128([0UL, (2UL<<(lg-1))-value], value)+1;
     }
     ulong opBinaryRight(string op:"/")(ulong x) const {
-        assert(value != 0);
         if (value == 1) return x;
         ulong r;
         r = mul128(m, x)[1];
@@ -26,8 +27,14 @@ struct FastDivULong {
         return r;
     }
     ulong opBinaryRight(string op:"%")(ulong x) const {
-        return x - x/this*value;
+        return x - (x/this)*value;
     }
+}
+
+///
+unittest {
+    assert(11 / FastDivULong(3) == 3);
+    assert(11 / FastDivULong(3) == 2);
 }
 
 unittest {
