@@ -8,10 +8,10 @@ struct SCCInfo {
     int[] id; /// 頂点id -> 強連結成分id
     int[][] groups; /// 強連結成分id -> その連結成分の頂点idたち
     /// iと同じgroupの頂点を返す
-    int[] group(int i) {
+    const(int[]) group(size_t i) const {
         return groups[id[i]];
     }    
-    this(int n) {
+    this(size_t n) {
         id = new int[n];
     }
 }
@@ -21,7 +21,7 @@ SCCInfo scc(T)(T g) {
     import std.range;
     import std.algorithm : each, map, min, reverse;
     import std.conv : to;
-    int n = g.length.to!int;
+    auto n = g.length;
     auto sccInfo = SCCInfo(n);
     with (sccInfo) {
         bool[] inS = new bool[n];
@@ -56,7 +56,7 @@ SCCInfo scc(T)(T g) {
             }
         }
         foreach (i; 0..n) {
-            if (ord[i] == -1) dfs(i);
+            if (ord[i] == -1) dfs(i.to!int);
         }
         groups = gBuf.data;
         reverse(groups);
@@ -81,8 +81,8 @@ unittest {
     assert(info.id[0] == info.id[1] && info.id[1] == info.id[2]);
     assert(info.id[3] == info.id[4]);
     assert(info.id[0] < info.id[3]); //idはトポロジカル順
-    assert(equal(info.group(0).sort!"a<b", [0, 1, 2]));
-    assert(equal(info.group(3).sort!"a<b", [3, 4]));
+    assert(equal(info.group(0).dup.sort!"a<b", [0, 1, 2]));
+    assert(equal(info.group(3).dup.sort!"a<b", [3, 4]));
 }
 
 unittest {

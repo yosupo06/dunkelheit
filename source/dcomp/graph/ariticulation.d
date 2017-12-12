@@ -8,14 +8,13 @@ struct AriticulationInfo {
 };
 
 AriticulationInfo ariticulation(T)(T g) {
-    return ariticulation(g, dfsTree(g, -1));
+    return ariticulation(g, dfsTree(g));
 }
 
-AriticulationInfo ariticulation(T)(T g, DFSTree info) {
+AriticulationInfo ariticulation(T)(T g, DFSTreeInfo info) {
     AriticulationInfo arit;
-    size_t V = g.length;
-    arit.isArit.length = V;
-    arit.isDiv.length = V;
+    arit.isArit.length = g.length;
+    arit.isDiv.length = g.length;
     foreach (p ; info.vlis) {
         if (info.par[p] == -1) {
             //root
@@ -32,6 +31,22 @@ AriticulationInfo ariticulation(T)(T g, DFSTree info) {
                 }
             }
         }
-    }    
+    }
     return arit;
+}
+
+unittest {
+    import std.algorithm : equal;
+    import std.typecons;
+    alias E = Tuple!(int, "to");
+    E[][] g = new E[][4];
+    g[0] ~= E(1); g[1] ~= E(0);
+    g[0] ~= E(2); g[2] ~= E(0);
+    g[1] ~= E(2); g[2] ~= E(1);
+    g[1] ~= E(3); g[3] ~= E(1);
+    auto ai = g.ariticulation;
+    import std.stdio;
+    writeln(dfsTree(g));
+    writeln(ai);
+    assert(equal(ai.isArit, [false, true, false, false]));
 }

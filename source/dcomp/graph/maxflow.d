@@ -2,26 +2,30 @@ module dcomp.graph.maxflow;
 
 import dcomp.container.deque;
 
-///maxflowの情報
+/// maxflowの情報
 struct MaxFlowInfo(C) {
-    C flow; ///流量
-    bool[] dual; ///最小カット(S側:false, T側:true)
+    C flow; /// 流量
+    bool[] dual; /// 最小カット(S側:false, T側:true)
 }
 
-///最大流ライブラリ, Dinic
-MaxFlowInfo!(C) maxFlow(C, C EPS, T)(T g, int s, int t, C gap = C.max) {
+/**
+MaxFlow(Dinic)
+Params:
+    g = graph
+    s = source node
+    t = sink node
+    gap = maximum flow
+ */
+MaxFlowInfo!(C) maxFlow(C, C EPS, T)(T g, size_t s, size_t t, C gap = C.max) {
     assert(s != t);
-    import std.algorithm : map;
-    import std.range : array;
     import std.conv : to;
-    int n = g.length.to!int;
-    int[] level = new int[n];
-    int[] iter = new int[n];
+    int[] level = new int[g.length];
+    int[] iter = new int[g.length];
 
     void bfs() {
         level[] = -1; level[s] = 0;
         auto que = Deque!int();
-        que.insertBack(s);
+        que.insertBack(s.to!int);
         while (!que.empty) {
             int v = que.front; que.removeFront;
             foreach (e; g[v]) {
@@ -59,57 +63,19 @@ MaxFlowInfo!(C) maxFlow(C, C EPS, T)(T g, int s, int t, C gap = C.max) {
         if (level[t] < 0) break;
         iter[] = 0;
         while (true) {
-            C f = dfs(s, gap - flow);
+            C f = dfs(s.to!int, gap - flow);
             if (!f) break;
             flow += f;
         }
     }
 
+    import std.algorithm : map;
+    import std.range : array;
     auto mfInfo = MaxFlowInfo!C();
     mfInfo.flow = flow;
     mfInfo.dual = level.map!"a == -1".array;
     return mfInfo;
 }
-
-
-
-///最大流ライブラリ, Dinic
-MaxFlowInfo!(C) maxFlowSlow(C, T)(T g, int s, int t, C gap = C.max) {
-    assert(s != t);
-    import std.algorithm : map;
-    import std.range : array;
-    import std.conv : to;
-    int n = g.length.to!int;
-
-    bool[] used = new bool[n];
-    bool dfs(int v) {
-        if (v == t) return true;
-        import std.stdio;
-        used[v] = true;
-        foreach (ref e; g[v]) {
-            if (used[e.to]) continue;
-            if (!e.cap) continue;
-            if (dfs(e.to)) {
-                e.cap -= 1;
-                g[e.to][e.rev].cap += 1;
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    C flow = 0;
-    while (flow < gap) {
-        used[] = false;
-        if (!dfs(s)) break;
-        flow++;
-    }
-    auto mfInfo = MaxFlowInfo!C();
-    mfInfo.flow = flow;
-    mfInfo.dual = used.map!"!a".array;
-    return mfInfo;
-}
-
 
 ///
 unittest {
@@ -135,6 +101,40 @@ unittest {
     assert(equal(res.dual, [false, false, true, true]));
 }
 
+MaxFlowInfo!(C) maxFlowSlow(C, T)(T g, int s, int t, C gap = C.max) {
+    assert(s != t);
+    import std.algorithm : map;
+    import std.range : array;
+    import std.conv : to;
+    auto n = g.length;
+
+    bool[] used = new bool[n];
+    bool dfs(int v) {
+        if (v == t) return true;
+        used[v] = true;
+        foreach (ref e; g[v]) {
+            if (used[e.to]) continue;
+            if (!e.cap) continue;
+            if (dfs(e.to)) {
+                e.cap -= 1;
+                g[e.to][e.rev].cap += 1;
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    C flow = 0;
+    while (flow < gap) {
+        used[] = false;
+        if (!dfs(s)) break;
+        flow++;
+    }
+    auto mfInfo = MaxFlowInfo!C();
+    mfInfo.flow = flow;
+    mfInfo.dual = used.map!"!a".array;
+    return mfInfo;
+}
 
 unittest {
     import std.algorithm, std.conv, std.stdio, std.range;

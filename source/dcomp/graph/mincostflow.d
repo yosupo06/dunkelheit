@@ -2,14 +2,14 @@ module dcomp.graph.mincostflow;
 
 import dcomp.container.deque;
 
-/// 最小費用流の乗法
+/// 最小費用流の情報
 struct MinCostFlowInfo(C, D, D EPS, T) {
     T g;
     int s, t;
-    C nc, capFlow; ///今の最短路の容量, 今流した量
-    D nd, flow; ///今の最短路の長さ, 今流したコスト
+    C nc, capFlow; /// 今の最短路の容量, 今流した量
+    D nd, flow; /// 今の最短路の長さ, 今流したコスト
     D[] dual; /// 双対問題の答え(=ポテンシャル)
-    int[] pv, pe;
+    private int[] pv, pe;
     this(T g, int s, int t) {
         this.g = g;
         this.s = s;
@@ -22,11 +22,8 @@ struct MinCostFlowInfo(C, D, D EPS, T) {
 }
 
 /// 最小費用流
-MinCostFlowInfo!(C, D, EPS, T) minCostFlow(C, D, D EPS, T)(T g, int s, int t, bool neg) {
+MinCostFlowInfo!(C, D, EPS, T) minCostFlow(C, D, D EPS, T)(T g, int s, int t, bool neg = false) {
     assert(s != t);
-    import std.algorithm : map;
-    import std.range : array;
-    import std.conv : to;
     auto mcfInfo = MinCostFlowInfo!(C, D, EPS, T)(g, s, t);
     mcfInfo.dualRef(neg);
     return mcfInfo;

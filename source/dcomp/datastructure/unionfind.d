@@ -2,8 +2,8 @@ module dcomp.datastructure.unionfind;
 
 /// UnionFind (Disjoint Set Union)
 struct UnionFind {
-    private uint[] id; /// group id
-    private uint[][] groups; /// group list
+    private int[] id; /// group id
+    private int[][] groups; /// group list
     size_t count; /// group count
     /**
     Params:
@@ -13,7 +13,7 @@ struct UnionFind {
         import std.algorithm : map;
         import std.range : iota, array;
         import std.conv : to;
-        uint _n = n.to!uint;
+        int _n = n.to!int;
         id = _n.iota.array;
         groups = _n.iota.map!"[a]".array;
         count = n;
@@ -30,7 +30,7 @@ struct UnionFind {
         groups[y] = [];
     }
     /// elements that are same group with i
-    const(uint[]) group(size_t i) const {
+    const(int[]) group(size_t i) const {
         return groups[id[i]];
     }
     /**

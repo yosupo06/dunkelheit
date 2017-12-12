@@ -45,7 +45,11 @@ DFSTreeInfo dfsTree(T)(T g) {
             if (used[i]) continue;
             dfs(i, -1);
         }
-        par.filter!"a!=-1".each!((i, v) => tr[v] ~= i.to!int);
+        foreach (i; 0..n) {
+            if (par[i] == -1) continue;
+            tr[par[i]] ~= i;
+        }
+//        par.filter!"a!=-1".each!((i, v) => tr[v] ~= i.to!int);
         ord.each!((i, v) => vlis[v] = i.to!int);
     }
     return info;
