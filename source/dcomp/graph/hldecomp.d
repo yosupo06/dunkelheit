@@ -1,17 +1,20 @@
 module dcomp.graph.hldecomp;
 
+import dcomp.container.stackpayload;
+
 struct HLInfo {
     int[2][] id; //vertex -> [line id, line pos]
     int[][] lines; //line id -> line list(top to bottom)
     int[2][] par; //line id -> [parent line id, parent line pos]
     int[] lineDPS; //line id -> line depth
-    this(int n) {
+    this(size_t n) {
         id = new int[2][n];
     }
 }
 
 /// calc lca(a, b)
 int calcLCA(in HLInfo hl, int a, int b) {
+    import std.algorithm : swap;
     with (hl) {
         int[2] xl = id[a];
         int[2] yl = id[b];
@@ -29,7 +32,7 @@ int calcLCA(in HLInfo hl, int a, int b) {
 }
 
 HLInfo hlDecomposition(T)(in T g, int rt) {
-    int n = g.length.to!int;
+    auto n = g.length;
     auto hl = HLInfo(n);
     with (hl) {
         int[] sz = new int[n];
@@ -43,8 +46,8 @@ HLInfo hlDecomposition(T)(in T g, int rt) {
         }
         calcSZ(rt, -1);
         int idc = 0;
-        FastAppender!(int[2][]) par_buf;
-        FastAppender!(int[]) line_buf, dps_buf;
+        StackPayload!(int[2]) par_buf;
+        StackPayload!int line_buf, dps_buf;
         void dfs(int p, int b, int height) {
             line_buf ~= p;
             id[p] = [idc, height];

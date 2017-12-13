@@ -27,7 +27,7 @@ unittest {
     assert(pow(3, 5, 2) == 486);
 }
 
-
+///
 T powMod(T, U, V)(T x, U n, V md)
 if (isIntegral!U || is(U == BigInt)) {
     T r = T(1);
@@ -39,9 +39,11 @@ if (isIntegral!U || is(U == BigInt)) {
     return r % md;
 }
 
+import dcomp.int128;
+
+///
 ulong ulongPowMod(U)(ulong x, U n, ulong md)
 if (isIntegral!U || is(U == BigInt)) {
-    import dcomp.int128;
     x %= md;
     ulong r = 1;
     while (n) {
@@ -68,8 +70,8 @@ unittest {
     assert(lcm(0, 100) == 0);
 }
 
-//todo: to binary extgcd
-///a*T[0]+b*T[1]=T[2], T[2]=gcd
+//todo: consider binary extgcd
+/// a*T[0]+b*T[1]=T[2], T[2]=gcd
 T[3] extGcd(T)(in T a, in T b) 
 if (!isIntegral!T || isSigned!T) //unsignedはNG
 {

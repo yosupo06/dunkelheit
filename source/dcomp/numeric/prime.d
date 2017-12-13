@@ -48,6 +48,7 @@ unittest {
 
 import dcomp.numeric.primitive;
 
+//Millar-Rabin Test
 bool isPrime(ulong n) {
     import dcomp.int128;
     if (n <= 1) return false;
