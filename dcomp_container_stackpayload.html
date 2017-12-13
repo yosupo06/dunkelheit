@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dcomp.container.radixheap</title>
+    <title>dcomp.container.stackpayload</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/default.css">    
     <link rel="stylesheet" href="css/my.css">
@@ -77,7 +77,7 @@
       </div>
       <div class="col-md-10 content_wrapper main-dlang">
         <article class="module">
-          <h1 class="module_name">dcomp.container.radixheap</h1>
+          <h1 class="module_name">dcomp.container.stackpayload</h1>
           <section id="module_content">
 <section class="section ddoc_module_members_section">
   <div class="ddoc_module_members">
@@ -85,7 +85,7 @@
   <li class="ddoc_member">
   <div class="ddoc_member_header">
   <div class="ddoc_header_anchor">
-  <a href="#RadixHeap" id="RadixHeap"><code class="code">RadixHeap</code></a>
+  <a href="#StackPayload" id="StackPayload"><code class="code">StackPayload</code></a>
 </div>
 </div><div class="ddoc_decl">
   <section class="section">
@@ -94,7 +94,8 @@
       <div class="dlang">
         <p class="para">
           <code class="code">
-            <span class="ddoc_anchor" id="RadixHeap"></span>template <span class="color_yellow">RadixHeap</span>(T, alias pred = "a")<span class="color_red"></span>
+            <span class="ddoc_anchor" id="StackPayload"></span>struct <span class="color_yellow">StackPayload</span>(T, size_t MINCAP = 4) if (MINCAP &gt;= 1);
+<span class="color_red"></span>
           </code>
         </p>
       </div>
@@ -105,37 +106,23 @@
   <section class="section ddoc_sections">
   <div class="ddoc_summary">
   <p class="para">
-    Radix Heap
+    Stack Payload
+
   </p>
 </div>
-<div class="ddoc_examples">
-  <h4>Examples</h4>
+<div class="ddoc_description">
+  <h4>Discussion</h4>
   <p class="para">
-    
-<section class="code_listing">
-  <div class="code_sample">
-    <div class="dlang">
-      <ol class="code_lines">
-        <li><code class="code"><span class="color_yellow">RadixHeap</span>!<span class="color_blue">int</span> q;
-q.insert(2);
-q.insert(1);
-<span class="color_blue">assert</span>(q.front == 1);
-q.removeFront();
-<span class="color_blue">assert</span>(q.front == 2);
-</code></li>
-      </ol>
-    </div>
-  </div>
-</section>
-
+    If you don't need dark speed, you should use dcomp.container.stack
   </p>
 </div>
+
 </section>
 <ul class="ddoc_members">
   <li class="ddoc_member">
   <div class="ddoc_member_header">
   <div class="ddoc_header_anchor">
-  <a href="#RadixHeap.RadixHeap" id="RadixHeap.RadixHeap"><code class="code">RadixHeap</code></a>
+  <a href="#StackPayload.data" id="StackPayload.data"><code class="code">data</code></a>
 </div>
 </div><div class="ddoc_decl">
   <section class="section">
@@ -144,82 +131,7 @@ q.removeFront();
       <div class="dlang">
         <p class="para">
           <code class="code">
-            <span class="ddoc_anchor" id="RadixHeap.RadixHeap"></span>struct <span class="color_yellow">RadixHeap</span>;
-<span class="color_red"></span>
-          </code>
-        </p>
-      </div>
-    </div>
-  </section>
-</div>
-<div class="ddoc_decl">
-  
-<ul class="ddoc_members">
-  <li class="ddoc_member">
-  <div class="ddoc_member_header">
-  <div class="ddoc_header_anchor">
-  <a href="#RadixHeap.RadixHeap.empty" id="RadixHeap.RadixHeap.empty"><code class="code">empty</code></a>
-</div>
-</div><div class="ddoc_decl">
-  <section class="section">
-    <div class="declaration">
-      <h4>Declaration</h4>
-      <div class="dlang">
-        <p class="para">
-          <code class="code">
-            <span class="ddoc_anchor" id="RadixHeap.RadixHeap.empty"></span>const @property bool <span class="color_yellow">empty</span>();
-<span class="color_red"></span>
-          </code>
-        </p>
-      </div>
-    </div>
-  </section>
-</div>
-<div class="ddoc_decl">
-  
-
-</div>
-
-</li><li class="ddoc_member">
-  <div class="ddoc_member_header">
-  <div class="ddoc_header_anchor">
-  <a href="#RadixHeap.RadixHeap.length" id="RadixHeap.RadixHeap.length"><code class="code">length</code></a>
-</div>
-</div><div class="ddoc_decl">
-  <section class="section">
-    <div class="declaration">
-      <h4>Declaration</h4>
-      <div class="dlang">
-        <p class="para">
-          <code class="code">
-            <span class="ddoc_anchor" id="RadixHeap.RadixHeap.length"></span>const @property size_t <span class="color_yellow">length</span>();
-<span class="color_red"></span><br>
-<span class="ddoc_anchor" id="RadixHeap.RadixHeap.opDollar"></span>alias <span class="color_yellow">opDollar</span> = length;
-<span class="color_red"></span>
-          </code>
-        </p>
-      </div>
-    </div>
-  </section>
-</div>
-<div class="ddoc_decl">
-  
-
-</div>
-
-</li><li class="ddoc_member">
-  <div class="ddoc_member_header">
-  <div class="ddoc_header_anchor">
-  <a href="#RadixHeap.RadixHeap.front" id="RadixHeap.RadixHeap.front"><code class="code">front</code></a>
-</div>
-</div><div class="ddoc_decl">
-  <section class="section">
-    <div class="declaration">
-      <h4>Declaration</h4>
-      <div class="dlang">
-        <p class="para">
-          <code class="code">
-            <span class="ddoc_anchor" id="RadixHeap.RadixHeap.front"></span>T <span class="color_yellow">front</span>();
+            <span class="ddoc_anchor" id="StackPayload.data"></span>inout inout(T)[] <span class="color_yellow">data</span>();
 <span class="color_red"></span>
           </code>
         </p>
@@ -229,10 +141,16 @@ q.removeFront();
 </div>
 <div class="ddoc_decl">
   <section class="section ddoc_sections">
-  <div class="ddoc_section">
+  <div class="ddoc_summary">
+  <p class="para">
+    Data Slice
+
+  </p>
+</div>
+<div class="ddoc_section">
   <p class="para">
     <span class="ddoc_section_h">Warning:</span>
-return minimum
+Return value points same place with stackpayload
   </p>
 </div>
 
@@ -243,7 +161,7 @@ return minimum
 </li><li class="ddoc_member">
   <div class="ddoc_member_header">
   <div class="ddoc_header_anchor">
-  <a href="#RadixHeap.RadixHeap.insert" id="RadixHeap.RadixHeap.insert"><code class="code">insert</code></a>
+  <a href="#StackPayload.opIndex" id="StackPayload.opIndex"><code class="code">opIndex</code></a>
 </div>
 </div><div class="ddoc_decl">
   <section class="section">
@@ -252,7 +170,7 @@ return minimum
       <div class="dlang">
         <p class="para">
           <code class="code">
-            <span class="ddoc_anchor" id="RadixHeap.RadixHeap.insert"></span>void <span class="color_yellow">insert</span>(T item);
+            <span class="ddoc_anchor" id="StackPayload.opIndex"></span>inout ref inout(T) <span class="color_yellow">opIndex</span>(size_t i);
 <span class="color_red"></span>
           </code>
         </p>
@@ -268,7 +186,7 @@ return minimum
 </li><li class="ddoc_member">
   <div class="ddoc_member_header">
   <div class="ddoc_header_anchor">
-  <a href="#RadixHeap.RadixHeap.removeFront" id="RadixHeap.RadixHeap.removeFront"><code class="code">removeFront</code></a>
+  <a href="#StackPayload.front" id="StackPayload.front"><code class="code">front</code></a>
 </div>
 </div><div class="ddoc_decl">
   <section class="section">
@@ -277,7 +195,7 @@ return minimum
       <div class="dlang">
         <p class="para">
           <code class="code">
-            <span class="ddoc_anchor" id="RadixHeap.RadixHeap.removeFront"></span>void <span class="color_yellow">removeFront</span>();
+            <span class="ddoc_anchor" id="StackPayload.front"></span>inout ref inout(T) <span class="color_yellow">front</span>();
 <span class="color_red"></span>
           </code>
         </p>
@@ -290,8 +208,161 @@ return minimum
 
 </div>
 
-</li>
-</ul>
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#StackPayload.back" id="StackPayload.back"><code class="code">back</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="StackPayload.back"></span>inout ref inout(T) <span class="color_yellow">back</span>();
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#StackPayload.reserve" id="StackPayload.reserve"><code class="code">reserve</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="StackPayload.reserve"></span>void <span class="color_yellow">reserve</span>(size_t newCap);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#StackPayload.free" id="StackPayload.free"><code class="code">free</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="StackPayload.free"></span>void <span class="color_yellow">free</span>();
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#StackPayload.clear" id="StackPayload.clear"><code class="code">clear</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="StackPayload.clear"></span>void <span class="color_yellow">clear</span>();
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    This method don't release memory
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#StackPayload.insertBack" id="StackPayload.insertBack"><code class="code">insertBack</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="StackPayload.insertBack"></span>void <span class="color_yellow">insertBack</span>(T item);
+<span class="color_red"></span><br>
+<span class="ddoc_anchor" id="StackPayload.opOpAssign"></span>template <span class="color_yellow">opOpAssign</span>(string op : "~")<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#StackPayload.removeBack" id="StackPayload.removeBack"><code class="code">removeBack</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="StackPayload.removeBack"></span>void <span class="color_yellow">removeBack</span>();
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  
 
 </div>
 

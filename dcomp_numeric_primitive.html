@@ -20,10 +20,12 @@
 	<li><a href="dcomp_array.html">array</a></li>
 	<li><a href="dcomp_ascii.html">ascii</a></li>
 	<li><a href="dcomp_bigint.html">bigint</a></li>
+	<li><a href="dcomp_bitop.html">bitop</a></li>
 	<li><a href="dcomp_container_index.html">container</a> <ul>		<li><a href="dcomp_container_deque.html">deque</a></li>
 		<li><a href="dcomp_container_pairingheap.html">pairingheap</a></li>
 		<li><a href="dcomp_container_radixheap.html">radixheap</a></li>
 		<li><a href="dcomp_container_stack.html">stack</a></li>
+		<li><a href="dcomp_container_stackpayload.html">stackpayload</a></li>
 	</ul></li>
 	<li><a href="dcomp_datastructure_index.html">datastructure</a> <ul>		<li><a href="dcomp_datastructure_convexhull.html">convexhull</a></li>
 		<li><a href="dcomp_datastructure_fastset.html">fastset</a></li>
@@ -43,7 +45,7 @@
 		<li><a href="dcomp_graph_dfstree.html">dfstree</a></li>
 		<li><a href="dcomp_graph_dijkstra.html">dijkstra</a></li>
 		<li><a href="dcomp_graph_directedmst.html">directedmst</a></li>
-		<li><a href="dcomp_graph_lca.html">lca</a></li>
+		<li><a href="dcomp_graph_hldecomp.html">hldecomp</a></li>
 		<li><a href="dcomp_graph_maxflow.html">maxflow</a></li>
 		<li><a href="dcomp_graph_mincostflow.html">mincostflow</a></li>
 		<li><a href="dcomp_graph_namori.html">namori</a></li>
@@ -55,6 +57,7 @@
 	</ul></li>
 	<li><a href="dcomp_matrix.html">matrix</a></li>
 	<li><a href="dcomp_modint.html">modint</a></li>
+	<li><a href="dcomp_modpoly.html">modpoly</a></li>
 	<li><a href="dcomp_numeric_index.html">numeric</a> <ul>		<li><a href="dcomp_numeric_convolution.html">convolution</a></li>
 		<li><a href="dcomp_numeric_prime.html">prime</a></li>
 		<li><a href="dcomp_numeric_primitive.html">primitive</a></li>
@@ -66,11 +69,9 @@
 		<li><a href="dcomp_segtree_segex.html">segex</a></li>
 		<li><a href="dcomp_segtree_simpleseg.html">simpleseg</a></li>
 	</ul></li>
+	<li><a href="dcomp_stopwatch.html">stopwatch</a></li>
 	<li><a href="dcomp_string.html">string</a></li>
-	<li><a href="dcomp_tree_index.html">tree</a> <ul>		<li><a href="dcomp_tree_avl.html">avl</a></li>
-		<li><a href="dcomp_tree_primitive.html">primitive</a></li>
-		<li><a href="dcomp_tree_test.html">test</a></li>
-	</ul></li>
+	<li><a href="dcomp_tree.html">tree</a></li>
 	<li><a href="dcomp_twosat.html">twosat</a></li>
 </ul>
       </div>
@@ -112,6 +113,56 @@ Unqual!T <span class="color_yellow">pow</span><span class="color_red">(T, U, V)<
 </div>
 
 </section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#powMod" id="powMod"><code class="code">powMod</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="powMod"></span>T <span class="color_yellow">powMod</span><span class="color_red">(T, U, V)</span>(T x, U n, V md) if (isIntegral!U || is(U == BigInt));
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#ulongPowMod" id="ulongPowMod"><code class="code">ulongPowMod</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="ulongPowMod"></span>ulong <span class="color_yellow">ulongPowMod</span><span class="color_red">(U)</span>(ulong x, U n, ulong md) if (isIntegral!U || is(U == BigInt));
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  
 
 </div>
 
