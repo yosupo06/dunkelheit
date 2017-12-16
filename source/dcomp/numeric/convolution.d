@@ -57,6 +57,7 @@ double[] fftSinList(size_t S) {
     return buf[S];
 }
 
+/// fft
 void fft(bool type)(Complex!double[] c) {
     import std.algorithm : swap;
     import core.bitop : bsr;
@@ -90,6 +91,7 @@ void fft(bool type)(Complex!double[] c) {
     c[] = a[];
 }
 
+/// multiply two double[]
 double[] multiply(in double[] a, in double[] b) {
     alias P = Complex!double;
     size_t A = a.length, B = b.length;

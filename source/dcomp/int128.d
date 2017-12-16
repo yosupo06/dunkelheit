@@ -1,7 +1,5 @@
 /**
 64bit op 64bit -> 128bit の乗算/除算ライブラリ
-
-TODO : 32bit環境での除算を真面目に実装する
  */
 
 module dcomp.int128;

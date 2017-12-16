@@ -1,3 +1,4 @@
+/// とりあえずimportしておこう
 module dcomp.foundation;
 
 // fold(for old compiler)
