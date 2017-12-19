@@ -3,7 +3,8 @@ module dcomp.tree;
 import std.traits;
 import dcomp.array;
 
-struct Tree(T, alias _opTT, T _eT, bool hasLazy = false, L = bool, alias _opTL = "a", alias _opLL = "a", L _eL = false) {
+struct Tree(T, alias _opTT, T _eT, bool hasLazy = false,
+L = bool, alias _opTL = "a", alias _opLL = "a", L _eL = false) {
     import std.functional : binaryFun;
     alias opTT = binaryFun!_opTT;
     static immutable T eT = _eT;

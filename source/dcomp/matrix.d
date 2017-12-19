@@ -20,25 +20,38 @@ struct SMatrix(T, size_t H, size_t W) {
     ref inout(T) opIndex(size_t i1, size_t i2) inout {
         return data[i1][i2];
     }
-    auto opBinary(string op:"+", R)(R r)
+    auto opBinary(string op:"+", R)(in R r) const
     if(height == R.height && width == R.width) {
-        auto res = this;
+        SMatrix res = this;
         foreach (y; 0..height) foreach (x; 0..W) res[y, x] += r[y, x];
         return res;
     }
-    auto opBinary(string op:"*", R)(R r)
+    auto opBinary(string op:"*", R)(in R r) const
     if(width == R.height) {
+        auto rBuf = SMatrix!(T, R.width, R.height)();
+        foreach (y; 0..R.height) {
+            foreach (x; 0..R.width) {
+                rBuf[x, y] = r[y, x];
+            }
+        }
         auto res = SMatrix!(T, height, R.width)();
         foreach (y; 0..height) {
             foreach (x; 0..R.width) {
+                T sm;
+                auto lv = this.data[y][];
+                auto rv = rBuf.data[x][];
                 foreach (k; 0..width) {
-                    res[y, x] += this[y, k]*r[k, x];
+//                    res[y, x] += this[y, k]*r[k, x];
+//                    sm += this[y, k]*rBuf[x, k];
+                    sm += lv[k] * rv[k];
+//                    res[y, x] += this[y, k]*rBuf[x, k];
                 }
+                res[y, x] = sm;
             }
         }
         return res;
     }
-    auto opOpAssign(string op, T)(T r) {return mixin ("this=this"~op~"r");}
+    auto opOpAssign(string op, T)(in T r) {return mixin ("this=this"~op~"r");}
 
     void swapLine(size_t x, size_t y) {
         import std.algorithm : swap;
@@ -132,28 +145,34 @@ struct DMatrix(T) {
     @property size_t height() const {return h;}
     @property size_t width() const {return w;}
 
-    auto ref opIndex(size_t i1, size_t i2) {
+    ref inout(T) opIndex(size_t i1, size_t i2) inout {
         return data[i1*width+i2];
     }
-    auto opBinary(string op:"+", R)(R r) {
+    auto opBinary(string op:"+", R)(in R r) const {
         assert(height == r.height && width == r.width);
-        auto res = this;
+        auto res = this.dup;
         foreach (y; 0..height) foreach (x; 0..width) res[y, x] += r[y, x];
         return res;
     }
-    auto opBinary(string op:"*", R)(R r) {
+    auto opBinary(string op:"*", R)(in R r) const {
         assert(width == r.height);
+        auto rBuf = DMatrix!(T)(R.width, R.height);
+        foreach (y; 0..R.height) {
+            foreach (x; 0..R.width) {
+                rBuf[x, y] = r[y, x];
+            }
+        }
         auto res = DMatrix!(T)(height, r.width);
         foreach (y; 0..height) {
             foreach (x; 0..r.width) {
                 foreach (k; 0..width) {
-                    res[y, x] += this[y, k]*r[k, x];
+                    res[y, x] += this[y, k]*rBuf[x, k];
                 }
             }
         }
         return res;
     }
-    auto opOpAssign(string op, T)(T r) {return mixin ("this=this"~op~"r");}    
+    auto opOpAssign(string op, T)(in T r) {return mixin ("this=this"~op~"r");}    
 }
 
 ///
@@ -161,6 +180,14 @@ unittest {
     import dcomp.numeric.primitive;
     auto mat = DMatrix!int(2, 2, [0, 1, 1, 1]);
     assert(pow(mat, 10, DMatrix!int(2, 2, [1, 0, 0, 1]))[0, 0] == 34); //Fib_10
+}
+
+unittest {
+    auto mat1 = DMatrix!int(2, 2, [1, 1, 1, 1]);
+    auto mat2 = DMatrix!int(2, 2, [2, 2, 2, 2]);
+    auto mat3 = mat1 + mat2;
+    assert(mat1[0, 0] == 1);
+    assert(mat2[0, 0] == 2);
 }
 
 auto matrix(size_t H, size_t W, alias pred)() {
