@@ -1,3 +1,4 @@
+# ADD github_username, github_password to drone's secret!!
 pipeline:
   test:
     image: asia.gcr.io/develop-156705/dmd:${D_VERSION}
@@ -7,11 +8,10 @@ pipeline:
   doc:
     image: asia.gcr.io/develop-156705/dmd:${D_VERSION}
     commands:
-      - echo $AAA
-      - echo $${DRONE_NETRC_PASSWORD}
-      - whoami
+      - echo machine github.com >> ~/.netrc
+      - echo login $GITHUB_USERNAME >> ~/.netrc
+      - echo password $GITHUB_PASSWORD >> ~/.netrc
       - cat ~/.netrc
-      - cat /root/.netrc
       - git config --global user.email "yosupo06@gmail.com"
       - git config --global user.name "Kohei Morita"
       - git subtree pull --prefix docs/ origin gh-pages -m 'Merge branch'
@@ -19,7 +19,7 @@ pipeline:
       - git add -A
       - git commit --allow-empty -m 'make documents'
       - git subtree push --prefix docs/ origin gh-pages
-    secrets: [aaa, drone_netrc_password]
+    secrets: [github_username, github_password]
     when:
       branch: master
       matrix:
