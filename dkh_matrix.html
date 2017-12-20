@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dkh</title>
+    <title>dkh.matrix</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/default.css">    
     <link rel="stylesheet" href="css/my.css">
@@ -78,8 +78,99 @@
       </div>
       <div class="col-md-10 content_wrapper main-dlang">
         <article class="module">
-          <h1 class="module_name">dkh</h1>
+          <h1 class="module_name">dkh.matrix</h1>
           <section id="module_content">
+<section class="section ddoc_module_members_section">
+  <div class="ddoc_module_members">
+    <ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#SMatrix" id="SMatrix"><code class="code">SMatrix</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="SMatrix"></span>struct <span class="color_yellow">SMatrix</span>(T, size_t H, size_t W);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    行列ライブラリ
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#SMatrixMod2" id="SMatrixMod2"><code class="code">SMatrixMod2</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="SMatrixMod2"></span>struct <span class="color_yellow">SMatrixMod2</span>(size_t H, size_t W);
+<span class="color_red"></span><br>
+<span class="ddoc_anchor" id="DMatrix"></span>struct <span class="color_yellow">DMatrix</span>(T);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    行列ライブラリ(Mod2)
+  </p>
+</div>
+<div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code"><span class="color_blue">import</span> dkh.numeric.primitive;
+<span class="color_blue">auto</span> mat = <span class="color_yellow">DMatrix</span>!<span class="color_blue">int</span>(2, 2, [0, 1, 1, 1]);
+<span class="color_blue">assert</span>(pow(mat, 10, <span class="color_yellow">DMatrix</span>!<span class="color_blue">int</span>(2, 2, [1, 0, 0, 1]))[0, 0] == 34); <span class="color_red">//Fib_10
+</span></code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div>
+</section>
+
+</div>
+
+</li>
+</ul>
+  </div>
+</section>
 </section>
         </article>
       </div>

@@ -1,0 +1,376 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dkh.datastructure.convexhull</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/default.css">    
+    <link rel="stylesheet" href="css/my.css">
+  </head>
+  <body class="ddoc dlang" id="ddoc_main">
+    <div class="row">
+      <div class="col-md-2 main-nav">
+        
+<h1> dunkelheit reference </h1>
+<HR>
+
+<ul>	<li><a href="dkh_algorithm.html">algorithm</a></li>
+	<li><a href="dkh_array.html">array</a></li>
+	<li><a href="dkh_ascii.html">ascii</a></li>
+	<li><a href="dkh_bigint.html">bigint</a></li>
+	<li><a href="dkh_bitop.html">bitop</a></li>
+	<li><a href="dkh_container_index.html">container</a> <ul>		<li><a href="dkh_container_deque.html">deque</a></li>
+		<li><a href="dkh_container_pairingheap.html">pairingheap</a></li>
+		<li><a href="dkh_container_radixheap.html">radixheap</a></li>
+		<li><a href="dkh_container_sortedtree.html">sortedtree</a></li>
+		<li><a href="dkh_container_stack.html">stack</a></li>
+		<li><a href="dkh_container_stackpayload.html">stackpayload</a></li>
+	</ul></li>
+	<li><a href="dkh_datastructure_index.html">datastructure</a> <ul>		<li><a href="dkh_datastructure_convexhull.html">convexhull</a></li>
+		<li><a href="dkh_datastructure_fastset.html">fastset</a></li>
+		<li><a href="dkh_datastructure_unionfind.html">unionfind</a></li>
+	</ul></li>
+	<li><a href="dkh_dungeon.html">dungeon</a></li>
+	<li><a href="dkh_fastdiv.html">fastdiv</a></li>
+	<li><a href="dkh_foundation.html">foundation</a></li>
+	<li><a href="dkh_functional.html">functional</a></li>
+	<li><a href="dkh_geo_index.html">geo</a> <ul>		<li><a href="dkh_geo_circle.html">circle</a></li>
+		<li><a href="dkh_geo_polygon.html">polygon</a></li>
+		<li><a href="dkh_geo_primitive.html">primitive</a></li>
+	</ul></li>
+	<li><a href="dkh_graph_index.html">graph</a> <ul>		<li><a href="dkh_graph_ariticulation.html">ariticulation</a></li>
+		<li><a href="dkh_graph_bipatitematching.html">bipatitematching</a></li>
+		<li><a href="dkh_graph_bridge.html">bridge</a></li>
+		<li><a href="dkh_graph_dfstree.html">dfstree</a></li>
+		<li><a href="dkh_graph_dijkstra.html">dijkstra</a></li>
+		<li><a href="dkh_graph_directedmst.html">directedmst</a></li>
+		<li><a href="dkh_graph_hldecomp.html">hldecomp</a></li>
+		<li><a href="dkh_graph_maxflow.html">maxflow</a></li>
+		<li><a href="dkh_graph_mincostflow.html">mincostflow</a></li>
+		<li><a href="dkh_graph_namori.html">namori</a></li>
+		<li><a href="dkh_graph_primitive.html">primitive</a></li>
+		<li><a href="dkh_graph_scc.html">scc</a></li>
+	</ul></li>
+	<li><a href="dkh_int128.html">int128</a></li>
+	<li><a href="dkh_ldc_index.html">ldc</a> <ul>		<li><a href="dkh_ldc_inline.html">inline</a></li>
+	</ul></li>
+	<li><a href="dkh_matrix.html">matrix</a></li>
+	<li><a href="dkh_modint.html">modint</a></li>
+	<li><a href="dkh_modpoly.html">modpoly</a></li>
+	<li><a href="dkh_numeric_index.html">numeric</a> <ul>		<li><a href="dkh_numeric_convolution.html">convolution</a></li>
+		<li><a href="dkh_numeric_prime.html">prime</a></li>
+		<li><a href="dkh_numeric_primitive.html">primitive</a></li>
+	</ul></li>
+	<li><a href="dkh_scanner.html">scanner</a></li>
+	<li><a href="dkh_segtree_index.html">segtree</a> <ul>		<li><a href="dkh_segtree_lazyseg.html">lazyseg</a></li>
+		<li><a href="dkh_segtree_naive.html">naive</a></li>
+		<li><a href="dkh_segtree_primitive.html">primitive</a></li>
+		<li><a href="dkh_segtree_segex.html">segex</a></li>
+		<li><a href="dkh_segtree_simpleseg.html">simpleseg</a></li>
+	</ul></li>
+	<li><a href="dkh_stopwatch.html">stopwatch</a></li>
+	<li><a href="dkh_string.html">string</a></li>
+	<li><a href="dkh_tree.html">tree</a></li>
+	<li><a href="dkh_twosat.html">twosat</a></li>
+</ul>
+      </div>
+      <div class="col-md-10 content_wrapper main-dlang">
+        <article class="module">
+          <h1 class="module_name">dkh.datastructure.convexhull</h1>
+          <section id="module_content">
+<section class="section ddoc_module_members_section">
+  <div class="ddoc_module_members">
+    <ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#CHQueryType" id="CHQueryType"><code class="code">CHQueryType</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="CHQueryType"></span>enum <span class="color_yellow">CHQueryType</span>: int;
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    Convex Hull's query type
+  </p>
+</div>
+
+</section>
+<ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#CHQueryType.incr" id="CHQueryType.incr"><code class="code">incr</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="CHQueryType.incr"></span><span class="color_yellow">incr</span><span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#CHQueryType.decr" id="CHQueryType.decr"><code class="code">decr</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="CHQueryType.decr"></span><span class="color_yellow">decr</span><span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  
+
+</div>
+
+</li>
+</ul>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#ConvexHull" id="ConvexHull"><code class="code">ConvexHull</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="ConvexHull"></span>struct <span class="color_yellow">ConvexHull</span>(T, CHQueryType queryType);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    Convex Hull Trick
+
+  </p>
+</div>
+<div class="ddoc_params">
+  <h4>Parameters</h4>
+  <table cellspacing="0" cellpadding="5" border="0" class="graybox">
+    <tbody>
+      <tr class="ddoc_param_row">
+  <td scope="ddoc_param_id">
+  <code class="code">
+    <em class="term">T</em>
+  </code>
+</td>
+<td>
+  <div class="ddoc_param_desc">
+    <p class="para">
+      value type
+    </p>
+  </div>
+</td>
+</tr>
+<tr class="ddoc_param_row">
+  <td scope="ddoc_param_id">
+  <code class="code">
+    <em class="term">queryType</em>
+  </code>
+</td>
+<td>
+  <div class="ddoc_param_desc">
+    <p class="para">
+      if queries are increase, use CHMode.incr.
+                if queries are decrease, use CHMode.decr.
+    </p>
+  </div>
+</td>
+</tr>
+
+    </tbody>
+  </table>
+</div>
+<div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code"><span class="color_yellow">ConvexHull</span>!(<span class="color_blue">int</span>, CHQueryType.incr) c;
+c.insertLine([1, 4]);
+c.insertLine([2, 1]);
+c.insertLine([3, -100]);
+<span class="color_blue">assert</span>(c.maxY(-1) == 3); <span class="color_red">// 1 * (-1) + 4 = 3
+</span>c.insertLine([-10, 100]);
+<span class="color_blue">assert</span>(c.maxY(2) == 80); <span class="color_red">// 2 * (-10) + 100 = 80
+</span></code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div>
+</section>
+<ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#ConvexHull.L" id="ConvexHull.L"><code class="code">L</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="ConvexHull.L"></span>alias <span class="color_yellow">L</span> = T[2];
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    Line type <code class="code">y = <span class="color_yellow">L</span>[0] * x + <span class="color_yellow">L</span>[1]</code>
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#ConvexHull.insertLine" id="ConvexHull.insertLine"><code class="code">insertLine</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="ConvexHull.insertLine"></span>void <span class="color_yellow">insertLine</span>(L line);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    Insert line
+
+  </p>
+</div>
+<div class="ddoc_description">
+  <h4>Discussion</h4>
+  <p class="para">
+    line's degree must be minimum or maximum
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#ConvexHull.maxY" id="ConvexHull.maxY"><code class="code">maxY</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="ConvexHull.maxY"></span>long <span class="color_yellow">maxY</span>(T x);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    get maximum y
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li>
+</ul>
+
+</div>
+
+</li>
+</ul>
+  </div>
+</section>
+</section>
+        </article>
+      </div>
+    </div>
+  </body>
+</html>

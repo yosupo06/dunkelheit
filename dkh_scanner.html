@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dkh</title>
+    <title>dkh.scanner</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/default.css">    
     <link rel="stylesheet" href="css/my.css">
@@ -78,8 +78,87 @@
       </div>
       <div class="col-md-10 content_wrapper main-dlang">
         <article class="module">
-          <h1 class="module_name">dkh</h1>
+          <h1 class="module_name">dkh.scanner</h1>
           <section id="module_content">
+<section class="section ddoc_module_members_section">
+  <div class="ddoc_module_members">
+    <ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#Scanner" id="Scanner"><code class="code">Scanner</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="Scanner"></span>class <span class="color_yellow">Scanner</span>;
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    <span class="color_yellow">Scanner</span> 速くはないが遅くもない printf/scanfよりちょっと遅いくらい？
+  </p>
+</div>
+<div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code"><span class="color_blue">import</span> std.path : buildPath;
+<span class="color_blue">import</span> std.file : tempDir;
+<span class="color_blue">import</span> std.algorithm : equal;
+<span class="color_blue">import</span> std.stdio : File;
+string fileName = buildPath(tempDir, <span class="color_red">"kyuridenanmaida.txt"</span>);
+<span class="color_blue">auto</span> fout = File(fileName, <span class="color_red">"w"</span>);
+fout.writeln(<span class="color_red">"1 2 3"</span>);
+fout.writeln(<span class="color_red">"ab cde"</span>);
+fout.writeln(<span class="color_red">"1.0 1.0 2.0"</span>);
+fout.close;
+<span class="color_yellow">Scanner</span> sc = <span class="color_blue">new</span> <span class="color_yellow">Scanner</span>(File(fileName, <span class="color_red">"r"</span>));
+<span class="color_blue">int</span> a;
+<span class="color_blue">int</span>[2] b;
+<span class="color_blue">char</span>[2] c;
+string d;
+<span class="color_blue">double</span> e;
+<span class="color_blue">double</span>[] f;
+sc.read(a, b, c, d, e, f);
+<span class="color_blue">assert</span>(a == 1);
+<span class="color_blue">assert</span>(equal(b[], [2, 3])); <span class="color_red">// 配列型は行末まで読み込む
+</span><span class="color_blue">assert</span>(equal(c[], <span class="color_red">"ab"</span>)); <span class="color_red">// char型配列はトークンをそのまま返す
+</span><span class="color_blue">assert</span>(equal(d, <span class="color_red">"cde"</span>)); <span class="color_red">// stringもchar型配列と同様
+</span><span class="color_blue">assert</span>(e == 1.0); <span class="color_red">// 小数も可
+</span><span class="color_blue">assert</span>(equal(f, [1.0, 2.0]));
+<span class="color_blue">assert</span>(sc.read(a) == 0); <span class="color_red">// EOF
+</span></code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div>
+</section>
+
+</div>
+
+</li>
+</ul>
+  </div>
+</section>
 </section>
         </article>
       </div>

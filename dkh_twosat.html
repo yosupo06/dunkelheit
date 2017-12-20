@@ -1,0 +1,307 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dkh.twosat</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/default.css">    
+    <link rel="stylesheet" href="css/my.css">
+  </head>
+  <body class="ddoc dlang" id="ddoc_main">
+    <div class="row">
+      <div class="col-md-2 main-nav">
+        
+<h1> dunkelheit reference </h1>
+<HR>
+
+<ul>	<li><a href="dkh_algorithm.html">algorithm</a></li>
+	<li><a href="dkh_array.html">array</a></li>
+	<li><a href="dkh_ascii.html">ascii</a></li>
+	<li><a href="dkh_bigint.html">bigint</a></li>
+	<li><a href="dkh_bitop.html">bitop</a></li>
+	<li><a href="dkh_container_index.html">container</a> <ul>		<li><a href="dkh_container_deque.html">deque</a></li>
+		<li><a href="dkh_container_pairingheap.html">pairingheap</a></li>
+		<li><a href="dkh_container_radixheap.html">radixheap</a></li>
+		<li><a href="dkh_container_sortedtree.html">sortedtree</a></li>
+		<li><a href="dkh_container_stack.html">stack</a></li>
+		<li><a href="dkh_container_stackpayload.html">stackpayload</a></li>
+	</ul></li>
+	<li><a href="dkh_datastructure_index.html">datastructure</a> <ul>		<li><a href="dkh_datastructure_convexhull.html">convexhull</a></li>
+		<li><a href="dkh_datastructure_fastset.html">fastset</a></li>
+		<li><a href="dkh_datastructure_unionfind.html">unionfind</a></li>
+	</ul></li>
+	<li><a href="dkh_dungeon.html">dungeon</a></li>
+	<li><a href="dkh_fastdiv.html">fastdiv</a></li>
+	<li><a href="dkh_foundation.html">foundation</a></li>
+	<li><a href="dkh_functional.html">functional</a></li>
+	<li><a href="dkh_geo_index.html">geo</a> <ul>		<li><a href="dkh_geo_circle.html">circle</a></li>
+		<li><a href="dkh_geo_polygon.html">polygon</a></li>
+		<li><a href="dkh_geo_primitive.html">primitive</a></li>
+	</ul></li>
+	<li><a href="dkh_graph_index.html">graph</a> <ul>		<li><a href="dkh_graph_ariticulation.html">ariticulation</a></li>
+		<li><a href="dkh_graph_bipatitematching.html">bipatitematching</a></li>
+		<li><a href="dkh_graph_bridge.html">bridge</a></li>
+		<li><a href="dkh_graph_dfstree.html">dfstree</a></li>
+		<li><a href="dkh_graph_dijkstra.html">dijkstra</a></li>
+		<li><a href="dkh_graph_directedmst.html">directedmst</a></li>
+		<li><a href="dkh_graph_hldecomp.html">hldecomp</a></li>
+		<li><a href="dkh_graph_maxflow.html">maxflow</a></li>
+		<li><a href="dkh_graph_mincostflow.html">mincostflow</a></li>
+		<li><a href="dkh_graph_namori.html">namori</a></li>
+		<li><a href="dkh_graph_primitive.html">primitive</a></li>
+		<li><a href="dkh_graph_scc.html">scc</a></li>
+	</ul></li>
+	<li><a href="dkh_int128.html">int128</a></li>
+	<li><a href="dkh_ldc_index.html">ldc</a> <ul>		<li><a href="dkh_ldc_inline.html">inline</a></li>
+	</ul></li>
+	<li><a href="dkh_matrix.html">matrix</a></li>
+	<li><a href="dkh_modint.html">modint</a></li>
+	<li><a href="dkh_modpoly.html">modpoly</a></li>
+	<li><a href="dkh_numeric_index.html">numeric</a> <ul>		<li><a href="dkh_numeric_convolution.html">convolution</a></li>
+		<li><a href="dkh_numeric_prime.html">prime</a></li>
+		<li><a href="dkh_numeric_primitive.html">primitive</a></li>
+	</ul></li>
+	<li><a href="dkh_scanner.html">scanner</a></li>
+	<li><a href="dkh_segtree_index.html">segtree</a> <ul>		<li><a href="dkh_segtree_lazyseg.html">lazyseg</a></li>
+		<li><a href="dkh_segtree_naive.html">naive</a></li>
+		<li><a href="dkh_segtree_primitive.html">primitive</a></li>
+		<li><a href="dkh_segtree_segex.html">segex</a></li>
+		<li><a href="dkh_segtree_simpleseg.html">simpleseg</a></li>
+	</ul></li>
+	<li><a href="dkh_stopwatch.html">stopwatch</a></li>
+	<li><a href="dkh_string.html">string</a></li>
+	<li><a href="dkh_tree.html">tree</a></li>
+	<li><a href="dkh_twosat.html">twosat</a></li>
+</ul>
+      </div>
+      <div class="col-md-10 content_wrapper main-dlang">
+        <article class="module">
+          <h1 class="module_name">dkh.twosat</h1>
+          <section id="module_content">
+<section class="section ddoc_module_members_section">
+  <div class="ddoc_module_members">
+    <ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#TwoSat" id="TwoSat"><code class="code">TwoSat</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="TwoSat"></span>struct <span class="color_yellow">TwoSat</span>;
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    2-SAT Solver
+  </p>
+</div>
+<div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code"><span class="color_red">// Solve (x0 v x1) ^ (~x0 v x2) ^ (~x1 v ~x2)
+</span><span class="color_blue">auto</span> sat = <span class="color_yellow">TwoSat</span>(3);
+sat.addClause(0, <span class="color_blue">true</span>,  1, <span class="color_blue">true</span>);  <span class="color_red">// (vars[0] == true  || vars[1] == true)
+</span>sat.addClause(0, <span class="color_blue">false</span>, 2, <span class="color_blue">true</span>);  <span class="color_red">// (vars[0] == false || vars[2] == true)
+</span>sat.addClause(1, <span class="color_blue">false</span>, 2, <span class="color_blue">false</span>); <span class="color_red">// (vars[1] == false || vars[2] == false)
+</span><span class="color_blue">assert</span>(sat.solve() == <span class="color_blue">true</span>);
+<span class="color_blue">auto</span> vars = sat.vars;
+<span class="color_blue">assert</span>(vars[0] == <span class="color_blue">true</span>  || vars[1] == <span class="color_blue">true</span>);
+<span class="color_blue">assert</span>(vars[0] == <span class="color_blue">false</span> || vars[2] == <span class="color_blue">true</span>);
+<span class="color_blue">assert</span>(vars[1] == <span class="color_blue">false</span> || vars[2] == <span class="color_blue">false</span>);
+</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div>
+</section>
+<ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#TwoSat.vars" id="TwoSat.vars"><code class="code">vars</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="TwoSat.vars"></span>bool[] <span class="color_yellow">vars</span>;
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    assigned variable
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#TwoSat.addClause" id="TwoSat.addClause"><code class="code">addClause</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="TwoSat.addClause"></span>void <span class="color_yellow">addClause</span>(size_t a, bool expectedA, size_t b, bool expectedB);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    Clause <code class="code">(vars[a] == aExpect) || (vars[b] == bExpect)</code>
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#TwoSat.solve" id="TwoSat.solve"><code class="code">solve</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="TwoSat.solve"></span>bool <span class="color_yellow">solve</span>();
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    Solve 2-SAT
+
+  </p>
+</div>
+<div class="ddoc_returns">
+  <h4>Return Value</h4>
+  <p class="para">
+    satisfiable or not
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#TwoSat.this" id="TwoSat.this"><code class="code">this</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="TwoSat.this"></span>this(size_t n);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_params">
+  <h4>Parameters</h4>
+  <table cellspacing="0" cellpadding="5" border="0" class="graybox">
+    <tbody>
+      <tr class="ddoc_param_row">
+  <td scope="ddoc_param_id">
+  <code class="code">
+    <em class="term">size_t n</em>
+  </code>
+</td>
+<td>
+  <div class="ddoc_param_desc">
+    <p class="para">
+      # of variables
+    </p>
+  </div>
+</td>
+</tr>
+
+    </tbody>
+  </table>
+</div>
+
+</section>
+
+</div>
+
+</li>
+</ul>
+
+</div>
+
+</li>
+</ul>
+  </div>
+</section>
+</section>
+        </article>
+      </div>
+    </div>
+  </body>
+</html>
