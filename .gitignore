@@ -1,9 +1,9 @@
 .DS_Store
 .dub
 *.a
-dcomp_combine
-dcomp_document
-dcomp-test-library
+dunkelheit_combine
+dunkelheit_document
+dunkelheit-test-library
 __test__library__
 dub.selections.json
 docs.json

@@ -1,6 +1,6 @@
-[![Build Status](http://drone.yosupo.com/api/badges/yosupo06/dcomp/status.svg)](http://drone.yosupo.com/yosupo06/dcomp)
+[![Build Status](http://drone.yosupo.com/api/badges/yosupo06/dunkelheit/status.svg)](http://drone.yosupo.com/yosupo06/dunkelheit)
 
-[Document](https://yosupo06.github.io/dcomp/)
+[Document](https://yosupo06.github.io/dunkelheit/)
 
 
 D言語の競技プログラミング用ライブラリです / 申し訳ないですが、プルリクを頂いても多分拒否します
@@ -9,7 +9,7 @@ D言語の競技プログラミング用ライブラリです / 申し訳ない�
 dubの公式サイトには登録していないので、
 
 ```
-git checkout https://github.com/yosupo06/dcomp
+git checkout https://github.com/yosupo06/dunkelheit
 dub add-local .
 ```
 
@@ -28,11 +28,11 @@ dub run --single A.d
 
 提出用にソースコードを結合するスクリプトも付いていて、
 ```
-dub run dcomp:combine -- -i=source.d -o=source_submit.d -c -u
+dub run dunkelheit:combine -- -i=source.d -o=source_submit.d -c -u
 ```
 とすると、`source_submit.d`という提出用ファイルが生成されます。
 ```
-dub run dcomp:combine -- -h
+dub run dunkelheit:combine -- -h
 ```
 でヘルプが出てきます
 
@@ -40,13 +40,13 @@ dub run dcomp:combine -- -h
 
 ドキュメントは
 ```
-dub run dcomp:document
+dub run dunkelheit:document
 ```
 で `./docs` 以下に作成されます。
 
 # オンラインジャッジ調査(12/12)
 
-AtCoder : dmd(2.070.1), ldc(0.17.0), 60000 byte(と言いつつ…)
-Codeforces(Warning: windows, 32bit) : dmd(2.074) 64k(65535 byte)
-Hackerrank : dmd(2.076.1) 50kb(50*1024 ?)
-Yukicoder : dmd(2.076.0) 64k(65536 byte)
+- AtCoder : dmd(2.070.1), ldc(0.17.0), 60000 byte(と言いつつ…)
+- Codeforces(Warning: windows, 32bit) : dmd(2.074) 64k(65535 byte)
+- Hackerrank : dmd(2.076.1) 50kb(50*1024 ?)
+- Yukicoder : dmd(2.076.0) 64k(65536 byte)

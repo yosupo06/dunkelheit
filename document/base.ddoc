@@ -1,5 +1,5 @@
 NAVBAR = 
-<h1> DComp reference </h1>
+<h1> dunkelheit reference </h1>
 <HR>
 $(NAVBODY)
 

@@ -3,7 +3,7 @@ import std.algorithm, std.string, std.range;
 import std.file, std.path;
 
 string toHTMLFileName(string s) {
-    if (s == "dcomp/package.d") return "index.html";
+    if (s == "dkh/package.d") return "index.html";
     return s
         .stripExtension
         .replace("/", "_")

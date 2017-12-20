@@ -1,10 +1,10 @@
 /+ dub.sdl:
     name "A"
-    dependency "dcomp" version=">=0.9.0"
+    dependency "dunkelheit" version=">=0.9.0"
 +/
 
 import std.stdio, std.algorithm, std.range, std.conv;
-import dcomp.foundation, dcomp.scanner;
+import dkh.foundation, dkh.scanner;
 
 int main() {
     Scanner sc = new Scanner(stdin);
