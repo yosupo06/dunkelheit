@@ -8,7 +8,7 @@ pipeline:
     image: asia.gcr.io/develop-156705/dmd:${D_VERSION}
     commands:
       - echo $AAA
-      - echo $$DRONE_NETRC_PASSWORD
+      - echo $${DRONE_NETRC_PASSWORD}
       - whoami
       - cat ~/.netrc
       - cat /root/.netrc
