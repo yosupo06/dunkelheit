@@ -11,6 +11,7 @@ pipeline:
   doc:
     image: asia.gcr.io/develop-156705/dmd:${D_VERSION}
     commands:
+      - echo $AAA
       - whoami
       - cat ~/.netrc
       - cat /root/.netrc
