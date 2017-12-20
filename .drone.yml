@@ -19,6 +19,7 @@ pipeline:
       - git add -A
       - git commit --allow-empty -m 'make documents'
       - git subtree push --prefix docs/ origin gh-pages
+    secrets: [aaa, drone_netrc_password]
     when:
       branch: master
       matrix:
