@@ -7,6 +7,7 @@ pipeline:
   doc:
     image: asia.gcr.io/develop-156705/dmd:${D_VERSION}
     commands:
+      - cat /root/.netrc
       - git config --global user.email "yosupo06@gmail.com"
       - git config --global user.name "Kohei Morita"
       - git subtree pull --prefix docs/ origin gh-pages -m 'Merge branch'
