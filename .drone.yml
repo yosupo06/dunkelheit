@@ -1,4 +1,8 @@
 pipeline:
+  clone:
+    image: plugins/git
+    depth: 50
+
   test:
     image: asia.gcr.io/develop-156705/dmd:${D_VERSION}
     commands:
