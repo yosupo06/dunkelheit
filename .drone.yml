@@ -11,7 +11,6 @@ pipeline:
       - echo machine github.com >> ~/.netrc
       - echo login $GITHUB_USERNAME >> ~/.netrc
       - echo password $GITHUB_PASSWORD >> ~/.netrc
-      - cat ~/.netrc
       - git config --global user.email "yosupo06@gmail.com"
       - git config --global user.name "Kohei Morita"
       - git subtree pull --prefix docs/ origin gh-pages -m 'Merge branch'
