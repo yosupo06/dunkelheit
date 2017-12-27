@@ -72,12 +72,22 @@ class Scanner {
         }
         return true;
     }
-    int read(T, Args...)(ref T x, auto ref Args args) {
+
+    int unsafeRead(T, Args...)(ref T x, auto ref Args args) {
         if (!readSingle(x)) return 0;
         static if (args.length == 0) {
             return 1;
         } else {
             return 1 + read(args);
+        }
+    }
+    void read(bool enforceEOF = false, T, Args...)(ref T x, auto ref Args args) {
+        import std.exception;
+        enforce(readSingle(x));
+        static if (args.length == 0) {
+            enforce(enforceEOF == false || !succ());
+        } else {
+            read!enforceEOF(args);
         }
     }
 }
@@ -102,14 +112,13 @@ unittest {
     string d;
     double e;
     double[] f;
-    sc.read(a, b, c, d, e, f);
+    sc.read!true(a, b, c, d, e, f);
     assert(a == 1);
     assert(equal(b[], [2, 3])); // 配列型は行末まで読み込む
     assert(equal(c[], "ab")); // char型配列はトークンをそのまま返す
     assert(equal(d, "cde")); // stringもchar型配列と同様
     assert(e == 1.0); // 小数も可
     assert(equal(f, [1.0, 2.0]));
-    assert(sc.read(a) == 0); // EOF
 }
 
 unittest {
