@@ -90,6 +90,15 @@ class Scanner {
             read!enforceEOF(args);
         }
     }
+    void read(bool enforceEOF = false, Args...)(auto ref Args args) {
+        import std.exception;
+        static if (args.length == 0) {
+            enforce(enforceEOF == false || !succ());
+        } else {
+            enforce(readSingle(args[0]));
+            read!enforceEOF(args);
+        }
+    }
 }
 
 
@@ -112,7 +121,9 @@ unittest {
     string d;
     double e;
     double[] f;
-    sc.read!true(a, b, c, d, e, f);
+    sc.read!false(a, b, c);
+    sc.read!false();
+    sc.read!true(d, e, f);
     assert(a == 1);
     assert(equal(b[], [2, 3])); // 配列型は行末まで読み込む
     assert(equal(c[], "ab")); // char型配列はトークンをそのまま返す
