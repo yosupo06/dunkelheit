@@ -8,6 +8,7 @@ import dkh.foundation, dkh.scanner;
 
 int main() {
     Scanner sc = new Scanner(stdin);
+    scope(exit) sc.read!true;
     int a, b;
     int[] c;
     sc.read(a, b, c);
