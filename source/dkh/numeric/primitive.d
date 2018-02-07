@@ -31,12 +31,18 @@ unittest {
 T powMod(T, U, V)(T x, U n, V md)
 if (isIntegral!U || is(U == BigInt)) {
     T r = T(1);
-    while (n) {
-        if (n & 1) r = (r*x)%md;
+    Unqual!U m = n;
+    while (m) {
+        if (m & 1) r = (r*x)%md;
         x = (x*x)%md;
-        n >>= 1;
+        m >>= 1;
     }
     return r % md;
+}
+
+unittest {
+    immutable int B = 3;
+    assert(powMod(5, B, 100) == 25); //125 % 100
 }
 
 import dkh.int128;
@@ -91,6 +97,24 @@ unittest {
             auto e = extGcd(i, j);
             assert(e[2] == gcd(i, j));
             assert(e[0] * i + e[1] * j == e[2]);
+        }
+    }
+}
+
+T invMod(T)(T x, T md) {
+    auto r = extGcd!T(x, md);
+    assert(r[2] == 1);
+    auto z = r[0];
+    return (z % md + md) % md;
+}
+
+unittest {
+    import std.numeric : gcd;
+    foreach (i; 1..100) {
+        foreach (j; 1..i) {
+            if (gcd(i, j) != 1) continue;
+            auto k = invMod(j, i);
+            assert(j * k % i == 1);
         }
     }
 }

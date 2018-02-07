@@ -1,6 +1,6 @@
 module dkh.container.sortedtree;
 
-struct SortedTreePayload(T, alias less) {
+struct SortedTreePayload(T, alias less, bool allowDuplicates = false) {
     alias NP = Node*;
     static struct Node {
         NP[2] ch; NP par;
@@ -45,10 +45,12 @@ struct SortedTreePayload(T, alias less) {
                 if (!ch[0]) ch[0] = new Node(x);
                 else ch[0] = ch[0].insert(x);
                 ch[0].par = &this;
-            } else {
+            } else if (allowDuplicates || less(v, x)) {
                 if (!ch[1]) ch[1] = new Node(x);
                 else ch[1] = ch[1].insert(x);
                 ch[1].par = &this;
+            } else {
+                return &this;
             }
             update();
             return balanced();
@@ -169,6 +171,43 @@ struct SortedTreePayload(T, alias less) {
 }
 
 
+/**
+std.container.rbtree on weighted-balanced tree
+ */
+struct SortedTree(T, alias less, bool allowDuplicates = false) {
+    alias Payload = SortedTreePayload!(T, less, allowDuplicates);
+    SortedTreePayload* p;
+    @property size_t length() const { return !p ? 0 : p.len; }
+    void insert(in T x) {
+        if (!p) p = new Payload();
+        p.insert(x);
+    }
+    T opIndex(size_t i) const {
+        assert(i < length);
+        return n.at(cast(uint)(i));
+    }
+    alias at = opIndex;
+    void removeAt(uint i) {
+        assert(i < length);
+        n = n.removeAt(i);
+        if (n) n.par = null;
+    }
+    void removeKey(in T x) {
+        if (n) n = n.removeKey(x);
+        if (n) n.par = null;
+    }
+    size_t lowerCount(in T x) {
+        return !n ? 0 : n.lowerCount(x);
+    }
+    void validCheck() {
+        //for debug
+        if (n) {
+            assert(!n.par);
+            n.validCheck();
+        }
+    }    
+}
+
 unittest {
     import std.random;
     import std.algorithm;
@@ -177,35 +216,39 @@ unittest {
     import std.stdio;
     import std.range;
 
+    void check(bool allowDup)() {
+        auto nv = redBlackTree!(allowDup, int)([]);
+        auto tr = SortedTreePayload!(int, (a, b) => a<b, allowDup)();
+        foreach (ph; 0..10000) {
+            int ty = uniform(0, 3);
+            if (ty == 0) {
+                int x = uniform(0, 100);
+                nv.insert(x);
+                tr.insert(x);
+            } else if (ty == 1) {
+                if (!nv.length) continue;
+                int i = uniform(0, nv.length.to!int);
+                auto u = nv[];
+                foreach (_; 0..i) u.popFront();
+                assert(u.front == tr.at(i));
+                int x = tr.at(i);
+                nv.removeKey(x);
+                if (uniform(0, 2) == 0) {
+                    tr.removeAt(i);
+                } else {
+                    tr.removeKey(x);
+                }
+            } else {
+                int x = uniform(0, 101);
+                assert(nv.lowerBound(x).array.length == tr.lowerCount(x));
+            }
+            tr.validCheck();
+            assert(nv.length == tr.length);
+        }
+    }
     import dkh.stopwatch;
     StopWatch sw; sw.start;
-    auto nv = redBlackTree!(true, int)([]);
-    auto tr = SortedTreePayload!(int, (a, b) => a<b)();
-    foreach (ph; 0..10000) {
-        int ty = uniform(0, 3);
-        if (ty == 0) {
-            int x = uniform(0, 100);
-            nv.insert(x);
-            tr.insert(x);
-        } else if (ty == 1) {
-            if (!nv.length) continue;
-            int i = uniform(0, nv.length.to!int);
-            auto u = nv[];
-            foreach (_; 0..i) u.popFront();
-            assert(u.front == tr.at(i));
-            int x = tr.at(i);
-            nv.removeKey(x);
-            if (uniform(0, 2) == 0) {
-                tr.removeAt(i);
-            } else {
-                tr.removeKey(x);
-            }
-        } else {
-            int x = uniform(0, 101);
-            assert(nv.lowerBound(x).array.length == tr.lowerCount(x));
-        }
-        tr.validCheck();
-        assert(nv.length == tr.length);
-    }
+    check!true();
+    check!false();
     writeln("Set TEST: ", sw.peek.toMsecs);
 }

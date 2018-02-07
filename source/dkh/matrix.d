@@ -222,7 +222,7 @@ auto determinent(Mat)(in Mat _m) {
         if (m[i, i] == M(0)) {
             foreach (j; i+1..N) {
                 if (m[j, i] != M(0)) {
-                    foreach (k; 0..N) m.swapLine(i, j);
+                    m.swapLine(i, j);
                     base *= M(-1);
                     break;
                 }
