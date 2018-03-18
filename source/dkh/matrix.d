@@ -78,14 +78,17 @@ struct SMatrixMod2(size_t H, size_t W) {
     @property static size_t width() {return W;}
 
     const(DataType) opIndex(size_t i1, size_t i2) const {
+        assert(i1 < H && i2 < W);
         return DataType(((data[i1][i2/B] >> (i2%B)) & 1UL) ? 1 : 0);
     }
     void opIndexAssign(DataType d, size_t i1, size_t i2) {
+        assert(i1 < H && i2 < W);
         size_t r = i2 % 64;
         if (d.v) data[i1][i2/B] |= (1UL<<r);
         else data[i1][i2/B] &= ~(1UL<<r);
     }
     void opIndexAssign(bool d, size_t i1, size_t i2) {
+        assert(i1 < H && i2 < W);
         size_t r = i2 % 64;
         if (d) data[i1][i2/B] |= (1UL<<r);
         else data[i1][i2/B] &= ~(1UL<<r);

@@ -101,6 +101,7 @@ unittest {
     }
 }
 
+/// calc inverse, (x * invMod(x)) % md == 1
 T invMod(T)(T x, T md) {
     auto r = extGcd!T(x, md);
     assert(r[2] == 1);
