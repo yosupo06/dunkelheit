@@ -1,7 +1,20 @@
 module dkh.numeric.primitive;
 
-import std.traits;
-import std.bigint;
+import std.traits, std.bigint;
+
+/// lcm
+T lcm(T)(in T a, in T b) {
+    import std.numeric : gcd;
+    return a / gcd(a,b) * b;
+}
+
+///
+unittest {
+    assert(lcm(2, 4) == 4);
+    assert(lcm(3, 5) == 15);
+    assert(lcm(1, 1) == 1);
+    assert(lcm(0, 100) == 0);
+}
 
 /// 高速累乗
 Unqual!T pow(T, U)(T x, U n)
@@ -43,37 +56,6 @@ if (isIntegral!U || is(U == BigInt)) {
 unittest {
     immutable int B = 3;
     assert(powMod(5, B, 100) == 25); //125 % 100
-}
-
-import dkh.int128;
-
-///
-ulong ulongPowMod(U)(ulong x, U n, ulong md)
-if (isIntegral!U || is(U == BigInt)) {
-    x %= md;
-    ulong r = 1;
-    while (n) {
-        if (n & 1) {
-            r = mul128(r, x).mod128(md);
-        }
-        x = mul128(x, x).mod128(md);
-        n >>= 1;
-    }
-    return r % md;
-}
-
-/// lcm
-T lcm(T)(in T a, in T b) {
-    import std.numeric : gcd;
-    return a / gcd(a,b) * b;
-}
-
-///
-unittest {
-    assert(lcm(2, 4) == 4);
-    assert(lcm(3, 5) == 15);
-    assert(lcm(1, 1) == 1);
-    assert(lcm(0, 100) == 0);
 }
 
 //todo: consider binary extgcd

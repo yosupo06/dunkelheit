@@ -1,5 +1,23 @@
 module dkh.numeric.prime;
 
+import std.traits;
+import dkh.int128;
+
+///
+ulong ulongPowMod(U)(ulong x, U n, ulong md)
+if (isIntegral!U || is(U == BigInt)) {
+    x %= md;
+    ulong r = 1;
+    while (n) {
+        if (n & 1) {
+            r = mul128(r, x).mod128(md);
+        }
+        x = mul128(x, x).mod128(md);
+        n >>= 1;
+    }
+    return r % md;
+}
+
 /// xの約数一覧を返す
 T[] divisorList(T)(T x) {
     import std.algorithm : sort;

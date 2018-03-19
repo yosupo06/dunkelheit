@@ -148,7 +148,6 @@ struct SortedTreePayload(T, alias less, bool allowDuplicates = false) {
         assert(i < length);
         return n.at(cast(uint)(i));
     }
-    alias at = opIndex;
     void removeAt(uint i) {
         assert(i < length);
         n = n.removeAt(i);
@@ -176,35 +175,31 @@ std.container.rbtree on weighted-balanced tree
  */
 struct SortedTree(T, alias less, bool allowDuplicates = false) {
     alias Payload = SortedTreePayload!(T, less, allowDuplicates);
-    SortedTreePayload* p;
-    @property size_t length() const { return !p ? 0 : p.len; }
+    Payload* _p;
+    @property size_t empty() const { return !_p || _p.length == 0; }
+    @property size_t length() const { return !_p ? 0 : _p.length; }
+    alias opDollar = length;
     void insert(in T x) {
-        if (!p) p = new Payload();
-        p.insert(x);
+        if (!_p) _p = new Payload();
+        _p.insert(x);
     }
     T opIndex(size_t i) const {
         assert(i < length);
-        return n.at(cast(uint)(i));
+        return (*_p)[i];
     }
-    alias at = opIndex;
     void removeAt(uint i) {
         assert(i < length);
-        n = n.removeAt(i);
-        if (n) n.par = null;
+        _p.removeAt(i);
     }
     void removeKey(in T x) {
-        if (n) n = n.removeKey(x);
-        if (n) n.par = null;
+        _p.removeKey(x);
     }
     size_t lowerCount(in T x) {
-        return !n ? 0 : n.lowerCount(x);
+        return !_p ? 0 : _p.lowerCount(x);
     }
     void validCheck() {
         //for debug
-        if (n) {
-            assert(!n.par);
-            n.validCheck();
-        }
+        if (_p) _p.validCheck();
     }    
 }
 
@@ -230,8 +225,54 @@ unittest {
                 int i = uniform(0, nv.length.to!int);
                 auto u = nv[];
                 foreach (_; 0..i) u.popFront();
-                assert(u.front == tr.at(i));
-                int x = tr.at(i);
+                assert(u.front == tr[i]);
+                int x = tr[i];
+                nv.removeKey(x);
+                if (uniform(0, 2) == 0) {
+                    tr.removeAt(i);
+                } else {
+                    tr.removeKey(x);
+                }
+            } else {
+                int x = uniform(0, 101);
+                assert(nv.lowerBound(x).array.length == tr.lowerCount(x));
+            }
+            tr.validCheck();
+            assert(nv.length == tr.length);
+        }
+    }
+    import dkh.stopwatch;
+    StopWatch sw; sw.start;
+    check!true();
+    check!false();
+    writeln("Set TEST: ", sw.peek.toMsecs);
+}
+
+
+unittest {
+    import std.random;
+    import std.algorithm;
+    import std.conv;
+    import std.container.rbtree;
+    import std.stdio;
+    import std.range;
+
+    void check(bool allowDup)() {
+        auto nv = redBlackTree!(allowDup, int)([]);
+        auto tr = SortedTree!(int, (a, b) => a<b, allowDup)();
+        foreach (ph; 0..10000) {
+            int ty = uniform(0, 3);
+            if (ty == 0) {
+                int x = uniform(0, 100);
+                nv.insert(x);
+                tr.insert(x);
+            } else if (ty == 1) {
+                if (!nv.length) continue;
+                int i = uniform(0, nv.length.to!int);
+                auto u = nv[];
+                foreach (_; 0..i) u.popFront();
+                assert(u.front == tr[i]);
+                int x = tr[i];
                 nv.removeKey(x);
                 if (uniform(0, 2) == 0) {
                     tr.removeAt(i);

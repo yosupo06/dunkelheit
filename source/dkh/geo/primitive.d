@@ -6,6 +6,11 @@ template EPS(R) {
     R EPS;
 }
 
+/**
+-1: negative
+ 0: almost 0
+ 1: positive
+ */
 int sgn(R)(R a) {
     static if (isFloatingPoint!R) {
         import std.math : isNaN;
