@@ -24,7 +24,7 @@ struct ModInt(uint MD) if (MD < int.max) {
     auto opBinary(string op:"^^", T)(T r) const {return pow(this, r, ModInt(1));}
     auto opOpAssign(string op)(ModInt r) {return mixin ("this=this"~op~"r");}
     /// xの逆元を求める
-    static ModInt inv(ModInt x) {return ModInt(invMod!int(x.v, MD));}
+    static ModInt inv(ModInt x) {return x^^(MD-2);};
     string toString() const {return v.to!string;}
 }
 
@@ -110,7 +110,7 @@ unittest {
 
 template isModInt(T) {
     const isModInt =
-        is(T : ModInt!MD, uint MD) || is(S : DModInt!S, string s);
+        is(T : ModInt!MD, uint MD) || is(T : DModInt!S, string S);
 }
 
 

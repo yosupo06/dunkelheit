@@ -132,6 +132,7 @@ struct SMatrixMod2(size_t H, size_t W) {
 
 /// ditto
 struct DMatrix(T) {
+    alias DataType = T;
     size_t h, w;
     T[] data;
     this(size_t h, size_t w) {
@@ -175,7 +176,11 @@ struct DMatrix(T) {
         }
         return res;
     }
-    auto opOpAssign(string op, T)(in T r) {return mixin ("this=this"~op~"r");}    
+    auto opOpAssign(string op, T)(in T r) {return mixin ("this=this"~op~"r");}
+    void swapLine(size_t x, size_t y) {
+        import std.algorithm : swap;
+        foreach (i; 0..w) swap(this[x, i], this[y, i]);
+    }    
 }
 
 ///
@@ -203,6 +208,18 @@ auto matrix(size_t H, size_t W, alias pred)() {
     }
     return res;
 }
+
+auto matrix(alias pred)(size_t H, size_t W) {
+    import std.traits : ReturnType;
+    auto res = DMatrix!(typeof(pred(0, 0)))(H, W);
+    foreach (y; 0..H) {
+        foreach (x; 0..W) {
+            res[y, x] = pred(y, x);
+        }
+    }
+    return res;
+}
+
 auto matrixMod2(size_t H, size_t W, alias pred)() {
     import std.traits : ReturnType;
     SMatrixMod2!(H, W) res;
@@ -280,6 +297,36 @@ unittest {
         assert(sm == m.determinent);
         assert(_m == m);
     }
+    void fD(uint Mod)() {
+        alias Mint = ModInt!Mod;
+        alias Mat = DMatrix!Mint;
+        alias Vec = DMatrix!Mint;
+        static Mint rndM() {
+            return Mint(uniform(0, Mod));
+        }
+        Mat m = matrix!((i, j) => rndM())(3, 3);
+        Mint sm = 0;
+        auto idx = [0, 1, 2];
+        do {
+            Mint buf = 1;
+            foreach (i; 0..3) {
+                buf *= m[i, idx[i]];
+            }
+            sm += buf;
+        } while (idx.nextEvenPermutation);
+        idx = [0, 2, 1];
+        do {
+            Mint buf = 1;
+            foreach (i; 0..3) {
+                buf *= m[i, idx[i]];
+            }
+            sm -= buf;
+        } while (idx.nextEvenPermutation);
+        auto _m = m.dup;
+        auto u = m.determinent;
+        assert(sm == m.determinent);
+        assert(_m == m);
+    }    
     void fMod2() {
         alias Mint = ModInt!2;
         alias Mat = SMatrixMod2!(3, 3);
@@ -321,7 +368,7 @@ unittest {
         assert(_m == m);
     }    
     import dkh.stopwatch;
-    writeln("Det: ", benchmark!(f!2, f!3, f!11, fMod2)(10000)[].map!(a => a.toMsecs));
+    writeln("Det: ", benchmark!(f!2, f!3, f!11, fD!2, fD!3, fD!11, fMod2)(10000)[].map!(a => a.toMsecs));
 }
 
 
