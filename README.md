@@ -2,51 +2,55 @@
 
 [Document](https://yosupo06.github.io/dunkelheit/)
 
+D language library for competitive programming.
 
-D言語の競技プログラミング用ライブラリです / 申し訳ないですが、プルリクを頂いても多分拒否します
-
-
-dubの公式サイトには登録していないので、
-
+Because this library don't register to dub, so add package by hand as follow, please:
 ```
 git checkout https://github.com/yosupo06/dunkelheit
 dub add-local .
 ```
 
-で手動でパッケージとして追加してください。(もっといい方法があるかも？)
+# How to Execute
 
-# 実行
-sample.dを適当な名前(例えばA.d)としてコピーして
+1. Copy sample.d to A.d
+2. Type follow command
+3. Get executable file as `./A`
 
 ```
 dub run --single A.d
 ```
 
-とすると、`./A`という名前の実行ファイルが出来ます。
+# Combine source code
 
-# ソースコード結合
+Because for online judge, we can handle single file,
+We prepared to script that combine source code and this library.
 
-提出用にソースコードを結合するスクリプトも付いていて、
+If you type,
+
 ```
 dub run dunkelheit:combine -- -i=source.d -o=source_submit.d -c -u
 ```
-とすると、`source_submit.d`という提出用ファイルが生成されます。
+
+you get `source_submit.d`.
+
+You can view help of dunkelheit:combine with
+
 ```
 dub run dunkelheit:combine -- -h
 ```
-でヘルプが出てきます
 
-# ドキュメント
+# Documents
 
-ドキュメントは
+You can make document with
+
 ```
 dub run dunkelheit:document
 ```
-で `./docs` 以下に作成されます。
 
-# オンラインジャッジ調査(12/12)
 
-- AtCoder : dmd(2.070.1), ldc(0.17.0), 60000 byte(と言いつつ…)
+# Online judge survey
+
+- AtCoder : dmd(2.070.1), ldc(0.17.0), 60000 byte(acutually limit is more bigger?)
 - Codeforces(Warning: windows, 32bit) : dmd(2.074) 64k(65535 byte)
 - Hackerrank : dmd(2.076.1) 50kb(50*1024 ?)
 - Yukicoder : dmd(2.076.0) 64k(65536 byte)

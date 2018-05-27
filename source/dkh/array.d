@@ -1,6 +1,6 @@
 module dkh.array;
 
-/// 静的配列のリテラルであると明示的に指定する
+/// Make static array literal
 T[N] fixed(T, size_t N)(T[N] a) {return a;}
 
 ///

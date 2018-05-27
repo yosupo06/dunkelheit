@@ -41,10 +41,7 @@ struct SMatrix(T, size_t H, size_t W) {
                 auto lv = this.data[y][];
                 auto rv = rBuf.data[x][];
                 foreach (k; 0..width) {
-//                    res[y, x] += this[y, k]*r[k, x];
-//                    sm += this[y, k]*rBuf[x, k];
                     sm += lv[k] * rv[k];
-//                    res[y, x] += this[y, k]*rBuf[x, k];
                 }
                 res[y, x] = sm;
             }

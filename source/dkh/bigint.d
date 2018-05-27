@@ -4,9 +4,8 @@ import core.checkedint, core.bitop;
 import dkh.int128, dkh.foundation;
 
 /**
-多倍長整数.
-静的に長さを指定しする, $(D N*64bit)となる.
-例えば$(D uintN!2)とすれば、$(D uint128)として使える.
+Bigint with fixed length. The length is $(D (N*64)bit).
+Ex. if you use $(D uintN!2), it mean uint128.
  */
 struct uintN(int N) if (N >= 1) {
     ulong[N] d;

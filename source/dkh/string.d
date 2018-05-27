@@ -1,10 +1,11 @@
 module dkh.string;
 
-/// Suffix Arrayのデータを保持する構造体
+/// Suffix Array Informations
 struct SA(T) {
-    T[] s; /// 元の文字列
-    ///sa, rsa, lcp
-    int[] sa, rsa, lcp;
+    T[] s; /// base string
+    int[] sa; /// suffix array
+    int[] rsa; /// reverse sa, rsa[sa[i]] == i
+    int[] lcp; /// lcp
     this(in T[] s) {
         size_t n = s.length;
         this.s = s.dup;
@@ -82,7 +83,7 @@ int[] sais(T)(in T[] _s, int B = 200) {
 }
 
 
-/// SAを返す. 内部でSA-ISを使用しており, 各文字は[0, B)に収まっている必要がある
+/// return SA!T. each character must be inside [T(0), T(B)).
 SA!T suffixArray(T)(in T[] _s, int B = 200) {
     import std.conv, std.algorithm;
     int n = _s.length.to!int;

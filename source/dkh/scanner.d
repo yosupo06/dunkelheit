@@ -3,7 +3,7 @@ module dkh.scanner;
 import dkh.container.stackpayload;
 
 /**
-Scanner 速くはないが遅くもない printf/scanfよりちょっと遅いくらい？
+Scanner, not slow, not fast.
 */
 class Scanner {
     import std.stdio : File;

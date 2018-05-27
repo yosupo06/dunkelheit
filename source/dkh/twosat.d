@@ -10,7 +10,7 @@ struct TwoSat {
     static struct Edge {uint to;}
     private StackPayload!Edge[] g;
 
-    /// Clause $(D (vars[a] == aExpect) || (vars[b] == bExpect))
+    /// Clause $(D (vars[a] == expectedA) || (vars[b] == expectedB))
     void addClause(size_t a, bool expectedA, size_t b, bool expectedB) {
         import std.conv : to;
         g[2*a+(expectedA?0:1)] ~= Edge((2*b+(expectedB?1:0)).to!uint);
