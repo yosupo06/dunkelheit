@@ -4,12 +4,6 @@
 
 D language library for competitive programming.
 
-Because this library don't register to dub, so add package by hand as follow, please:
-```
-git checkout https://github.com/yosupo06/dunkelheit
-dub add-local .
-```
-
 # How to Execute
 
 1. Copy sample.d to A.d
