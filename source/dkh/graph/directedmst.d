@@ -1,7 +1,25 @@
+/**
+Calculate directed minimam spanning tree
+*/
+
 module dkh.graph.directedmst;
 
-import std.stdio;
+import dkh.algorithm;
+import dkh.graph.primitive;
 
+/**
+Information of directed mst
+*/
+struct DirectedMSTInfo(E, C) {
+    C cost; /// mst cost
+    E[] res; /// edge list
+    this(size_t n) {
+        cost = C(0);
+        res = new E[n];
+    }
+}
+
+/// calc directed mst
 DirectedMSTInfo!(_E, D) directedMST(T, _E = EdgeType!T, D = typeof(_E.dist))(T _g, size_t r) {
     import std.algorithm, std.range, std.conv, std.typecons;
     alias E = Tuple!(int, "from", _E, "edge");
@@ -136,20 +154,19 @@ DirectedMSTInfo!(_E, D) directedMST(T, _E = EdgeType!T, D = typeof(_E.dist))(T _
     return info;
 }
 
+///
+unittest {
+    import std.typecons;
+    alias E = Tuple!(int, "to", int, "dist");
 
-
-import dkh.algorithm;
-import dkh.graph.primitive;
-struct DirectedMSTInfo(E, C) {
-    C cost;
-    E[] res;
-    this(size_t n) {
-        cost = C(0);
-        res = new E[n];
-    }
+    E[][] g = new E[][4];
+    g[0] ~= E(1, 10);
+    g[2] ~= E(1, 10);
+    g[3] ~= E(1, 3);
+    g[2] ~= E(3, 4);
+    auto info = directedMSTSlow(g, 1);
+    assert(info.cost == 17);
 }
-
-
 
 DirectedMSTInfo!(E, typeof(E.dist)) directedMSTSlow(T, E = EdgeType!T)(T g, size_t r) {
     import std.algorithm : filter;
@@ -214,20 +231,7 @@ DirectedMSTInfo!(E, typeof(E.dist)) directedMSTSlow(T, E = EdgeType!T)(T g, size
 }
 
 unittest {
-    import std.typecons;
-    alias E = Tuple!(int, "to", int, "dist");
-
-    E[][] g = new E[][4];
-    g[0] ~= E(1, 10);
-    g[2] ~= E(1, 10);
-    g[3] ~= E(1, 3);
-    g[2] ~= E(3, 4);
-    auto info = directedMSTSlow(g, 1);
-    assert(info.cost == 17);
-}
-
-unittest {
-    import std.range, std.algorithm, std.typecons, std.random, std.conv;
+    import std.range, std.algorithm, std.typecons, std.random, std.conv, std.stdio;
     alias E = Tuple!(int, "to", int, "dist");
     auto gen = Random(114514);
     void test() {
@@ -286,7 +290,7 @@ unittest {
 }
 
 unittest {
-    import std.range, std.algorithm, std.typecons, std.random, std.conv, std.math;
+    import std.range, std.algorithm, std.typecons, std.random, std.conv, std.math, std.stdio;
     alias E = Tuple!(int, "to", double, "dist");
     auto gen = Random(114514);
     void test() {

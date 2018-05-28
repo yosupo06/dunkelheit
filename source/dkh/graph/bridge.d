@@ -1,3 +1,6 @@
+/**
+Unstable
+*/
 module dkh.graph.bridge;
 
 import dkh.graph.dfstree;

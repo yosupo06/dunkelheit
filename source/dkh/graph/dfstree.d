@@ -1,3 +1,6 @@
+/**
+Unstable
+*/
 module dkh.graph.dfstree;
 
 struct DFSTreeInfo {

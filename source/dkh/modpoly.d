@@ -1,3 +1,7 @@
+/**
+Unstable
+*/
+
 module dkh.modpoly;
 
 import dkh.numeric.primitive;

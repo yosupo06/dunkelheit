@@ -9,7 +9,7 @@ unittest {
     assert(is(typeof(a) == int[2][]));
 }
 
-///
+/// Unstable
 int[2] findFirst2D(T, U)(in T mp, in U c) {
     import std.conv : to;
     int R = mp.length.to!int;
@@ -32,7 +32,7 @@ unittest {
     assert(mp.findFirst2D('g') == [2, 1]);
 }
 
-///
+/// Unstable
 auto ref at2D(T, U)(ref T mp, in U idx) {
     return mp[idx[0]][idx[1]];
 }

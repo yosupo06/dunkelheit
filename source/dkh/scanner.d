@@ -12,12 +12,13 @@ class Scanner {
     import std.array : split;
     import std.traits : isSomeChar, isStaticArray, isArray; 
     import std.algorithm : map;
-    File f;
+    private File f;
+    /// f is source file
     this(File f) {
         this.f = f;
     }
-    char[512] lineBuf;
-    char[] line;
+    private char[512] lineBuf;
+    private char[] line;
     private bool succW() {
         import std.range.primitives : empty, front, popFront;
         import std.ascii : isWhite;
@@ -56,8 +57,7 @@ class Scanner {
                 line = r[1];
             } else static if (isStaticArray!T) {
                 foreach (i; 0..T.length) {
-                    bool f = succW();
-                    assert(f);
+                    assert(succW());
                     x[i] = line.parse!E;
                 }
             } else {
@@ -73,6 +73,7 @@ class Scanner {
         return true;
     }
 
+    /// Read tokens. Return the number of success read
     int unsafeRead(T, Args...)(ref T x, auto ref Args args) {
         if (!readSingle(x)) return 0;
         static if (args.length == 0) {
@@ -81,13 +82,15 @@ class Scanner {
             return 1 + read(args);
         }
     }
+    /// Read tokens. If can't read, throw exception.
     void read(Args...)(auto ref Args args) {
-        import std.exception;
+        import std.exception : enforce;
         static if (args.length != 0) {
             enforce(readSingle(args[0]));
             read(args[1..$]);
         }
     }
+    /// Do file has next token?
     bool hasNext() {
         return succ();
     }
@@ -115,10 +118,10 @@ unittest {
     double[] f;
     sc.read(a, b, c, d, e, f);
     assert(a == 1);
-    assert(equal(b[], [2, 3])); // 配列型は行末まで読み込む
-    assert(equal(c[], "ab")); // char型配列はトークンをそのまま返す
-    assert(equal(d, "cde")); // stringもchar型配列と同様
-    assert(e == 1.0); // 小数も可
+    assert(equal(b[], [2, 3])); // array(except char) read whole line
+    assert(equal(c[], "ab")); // char array(char[], char[2], ...) return token
+    assert(equal(d, "cde")); // string is char array
+    assert(e == 1.0);
     assert(equal(f, [1.0, 2.0]));
     assert(!sc.hasNext);
 }

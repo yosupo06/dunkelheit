@@ -1,47 +1,8 @@
 module dkh.numeric.convolution;
 
-/// Zeta変換
-T[] zeta(T)(T[] v, bool rev) {
-    import core.bitop : bsr;
-    int n = bsr(v.length);
-    assert(1<<n == v.length);
-    foreach (fe; 0..n) {
-        foreach (i, _; v) {
-            if (i & (1<<fe)) continue;
-            if (!rev) {
-                v[i] += v[i|(1<<fe)];
-            } else {
-                v[i] -= v[i|(1<<fe)];
-            }
-        }
-    }
-    return v;
-}
-
-/// hadamard変換
-T[] hadamard(T)(T[] v, bool rev) {
-    import core.bitop : bsr;
-    int n = bsr(v.length);
-    assert(1<<n == v.length);
-    foreach (fe; 0..n) {
-        foreach (i, _; v) {
-            if (i & (1<<fe)) continue;
-            auto l = v[i], r = v[i|(1<<fe)];
-            if (!rev) {
-                v[i] = l+r;
-                v[i|(1<<fe)] = l-r;
-            } else {
-                v[i] = (l+r)/2;
-                v[i|(1<<fe)] = (l-r)/2;
-            }
-        }
-    }
-    return v;
-}
-
 import std.complex;
 
-double[] fftSinList(size_t S) {
+private double[] fftSinList(size_t S) {
     import std.math : PI, sin;
     assert(2 <= S);
     size_t N = 1<<S;
@@ -149,6 +110,7 @@ unittest {
 
 import dkh.modint, dkh.numeric.primitive;
 
+/// nft(G must be primitive root)
 void nft(uint G, bool type, Mint)(Mint[] c) {
     import std.algorithm : swap;
     import core.bitop : bsr;    
@@ -177,6 +139,7 @@ void nft(uint G, bool type, Mint)(Mint[] c) {
     c[] = a[];    
 }
 
+/// multiply 2 Mint[](G must be primitive root)
 Mint[] multiply(uint G, Mint)(in Mint[] a, in Mint[] b) {
     size_t A = a.length, B = b.length;
     if (!A || !B) return [];
@@ -199,6 +162,7 @@ Mint[] multiply(uint G, Mint)(in Mint[] a, in Mint[] b) {
     return c;
 }
 
+/// multiply 2 Mint[](abiritialy mod)
 Mint[] multiply(Mint, size_t M = 3, size_t W = 10)(in Mint[] a, in Mint[] b)
 if (isModInt!Mint) {
     import std.math : round;
@@ -329,4 +293,3 @@ unittest {
     }
     writeln("FFT(ModInt) Stress: ", sw.peek.toMsecs);    
 }
-

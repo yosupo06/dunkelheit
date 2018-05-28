@@ -1,3 +1,6 @@
+/**
+Unstable
+*/
 module dkh.graph.hldecomp;
 
 import dkh.container.stackpayload;

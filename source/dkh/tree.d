@@ -1,3 +1,7 @@
+/**
+Unstable
+*/
+
 module dkh.tree;
 
 import std.traits;
@@ -355,7 +359,7 @@ if(isInstanceOf!(Tree, T)) {
 }
 
 unittest {
-    import std.traits : AliasSeq;
+    import std.meta : AliasSeq;
     import std.random;
     import dkh.modint;
     alias Mint = ModInt!(10^^9 + 7);
@@ -377,7 +381,7 @@ unittest {
 
 unittest {
     import std.conv : to;
-    import std.traits : AliasSeq;
+    import std.meta : AliasSeq;
     import std.algorithm : swap;
     import std.random;
     import dkh.modint, dkh.foundation;

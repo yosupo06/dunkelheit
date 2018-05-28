@@ -1,3 +1,6 @@
+/**
+Unstable
+*/
 module dkh.graph.namori;
 
 import dkh.graph.dfstree;

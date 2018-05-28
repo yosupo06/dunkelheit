@@ -3,7 +3,7 @@ module dkh.modint;
 import dkh.numeric.primitive;
 
 /**
-自動mod取り構造体
+int with mod, mod must be prime
  */
 struct ModInt(uint MD) if (MD < int.max) {
     import std.conv : to;
@@ -12,7 +12,7 @@ struct ModInt(uint MD) if (MD < int.max) {
     this(long v) {this.v = (v%MD+MD)%MD;}
     static auto normS(uint x) {return (x<MD)?x:x-MD;}
     static auto make(uint x) {ModInt m; m.v = x; return m;}
-    /// 整数型と同じように演算可能 割り算のみ遅い
+    /// We can handle it as same as int(but divide is slow)
     auto opBinary(string op:"+")(ModInt r) const {return make(normS(v+r.v));}
     /// ditto
     auto opBinary(string op:"-")(ModInt r) const {return make(normS(v+MD-r.v));}
@@ -23,7 +23,7 @@ struct ModInt(uint MD) if (MD < int.max) {
     /// ditto
     auto opBinary(string op:"^^", T)(T r) const {return pow(this, r, ModInt(1));}
     auto opOpAssign(string op)(ModInt r) {return mixin ("this=this"~op~"r");}
-    /// xの逆元を求める
+    /// return 1/x
     static ModInt inv(ModInt x) {return x^^(MD-2);};
     string toString() const {return v.to!string;}
 }
@@ -55,7 +55,7 @@ unittest {
 }
 
 /**
-自動mod取り構造体(実行時mod指定)
+int with mod, mod can be setted in execute time. mod don't have to be prime.
  */
 struct DModInt(string name) {
     import std.conv : to;
@@ -113,13 +113,14 @@ template isModInt(T) {
         is(T : ModInt!MD, uint MD) || is(T : DModInt!S, string S);
 }
 
-
+/// return [0!, 1!, 2!, ..., (length-1)!]
 T[] factTable(T)(size_t length) if (isModInt!T) {
     import std.range : take, recurrence;
     import std.array : array;
     return T(1).recurrence!((a, n) => a[n-1]*T(n)).take(length).array;
 }
 
+/// return [1/0!, 1/1!, 1/2!, ..., 1/(length-1)!]
 T[] invFactTable(T)(size_t length) if (isModInt!T) {
     import std.algorithm : map, reduce;
     import std.range : take, recurrence, iota;
@@ -132,6 +133,7 @@ T[] invFactTable(T)(size_t length) if (isModInt!T) {
     return res;
 }
 
+/// return [0, 1/1, 1/2, 1/3, ...]
 T[] invTable(T)(size_t length) if (isModInt!T) {
     auto f = factTable!T(length);
     auto invf = invFactTable!T(length);

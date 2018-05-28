@@ -1,5 +1,5 @@
 /**
-64bit op 64bit -> 128bit の乗算/除算ライブラリ
+64bit op 64bit -> 128bit, library(mul, div, divmod)
  */
 
 module dkh.int128;

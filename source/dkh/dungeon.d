@@ -1,3 +1,7 @@
+/**
+Unstable
+*/
+
 module dkh.dungeon;
 
 /// [+row, +col, -row, -col]

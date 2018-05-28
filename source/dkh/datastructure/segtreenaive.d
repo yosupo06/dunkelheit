@@ -116,7 +116,7 @@ int binSearchNaiveLazy(bool rev, alias pred, TR)(TR t, int a, int b) {
 }
 
 unittest {
-    import std.traits : AliasSeq;
+    import std.meta : AliasSeq;
     alias SimpleEngines = AliasSeq!(SimpleSegEngine);
     alias LazyEngines = AliasSeq!(LazySegEngine);
 
@@ -190,7 +190,7 @@ unittest {
 
 unittest {
     //some func test
-    import std.traits : AliasSeq;
+    import std.meta : AliasSeq;
     alias SimpleEngines = AliasSeq!(SimpleSegEngine);
     alias LazyEngines = AliasSeq!(LazySegEngine);
     
@@ -239,7 +239,7 @@ unittest {
 
 unittest {
     //stress test
-    import std.traits : AliasSeq;
+    import std.meta : AliasSeq;
     alias SimpleEngines = AliasSeq!(SimpleSegEngine);
     alias LazyEngines = AliasSeq!(LazySegEngine);
 

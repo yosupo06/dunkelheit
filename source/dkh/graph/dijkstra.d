@@ -1,16 +1,21 @@
+/**
+calc shortest path
+*/
 module dkh.graph.dijkstra;
 
 import dkh.algorithm, dkh.container.radixheap;
 
+/// information of shortest path
 struct DijkstraInfo(T) {
-    T[] dist;
-    int[] from;
+    T[] dist; /// distance
+    int[] from; /// there is a shortest path (s, ..., from[i], i)
     this(int n, T inf) {
         dist = new T[n]; dist[] = inf;
         from = new int[n];
     }
 }
 
+/// calc shortest path with O(ElogE)
 DijkstraInfo!D dijkstra(D, T)(T g, int s, D inf = D.max) {
     import std.conv : to;
     import std.typecons : Tuple;
@@ -47,6 +52,7 @@ DijkstraInfo!D dijkstra(D, T)(T g, int s, D inf = D.max) {
     return dijk;
 }
 
+/// calc shortest path with O(V^2)
 DijkstraInfo!D dijkstraDense(D, T)(T g, int s, D inf = D.max) {
     import std.conv : to;
     import std.typecons : Tuple;

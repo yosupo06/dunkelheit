@@ -1,3 +1,9 @@
+/**
+グラフライブラリ
+
+基本的にグラフはEdge[][]の形で入力する
+*/
+
 module dkh.graph;
 
 public import dkh.graph.ariticulation;
