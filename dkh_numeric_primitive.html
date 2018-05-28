@@ -30,6 +30,8 @@
 	</ul></li>
 	<li><a href="dkh_datastructure_index.html">datastructure</a> <ul>		<li><a href="dkh_datastructure_convexhull.html">convexhull</a></li>
 		<li><a href="dkh_datastructure_fastset.html">fastset</a></li>
+		<li><a href="dkh_datastructure_segtree.html">segtree</a></li>
+		<li><a href="dkh_datastructure_segtreenaive.html">segtreenaive</a></li>
 		<li><a href="dkh_datastructure_unionfind.html">unionfind</a></li>
 	</ul></li>
 	<li><a href="dkh_dungeon.html">dungeon</a></li>
@@ -64,12 +66,6 @@
 		<li><a href="dkh_numeric_primitive.html">primitive</a></li>
 	</ul></li>
 	<li><a href="dkh_scanner.html">scanner</a></li>
-	<li><a href="dkh_segtree_index.html">segtree</a> <ul>		<li><a href="dkh_segtree_lazyseg.html">lazyseg</a></li>
-		<li><a href="dkh_segtree_naive.html">naive</a></li>
-		<li><a href="dkh_segtree_primitive.html">primitive</a></li>
-		<li><a href="dkh_segtree_segex.html">segex</a></li>
-		<li><a href="dkh_segtree_simpleseg.html">simpleseg</a></li>
-	</ul></li>
 	<li><a href="dkh_stopwatch.html">stopwatch</a></li>
 	<li><a href="dkh_string.html">string</a></li>
 	<li><a href="dkh_tree.html">tree</a></li>
@@ -84,6 +80,57 @@
   <div class="ddoc_module_members">
     <ul class="ddoc_members">
   <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#lcm" id="lcm"><code class="code">lcm</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="lcm"></span>T <span class="color_yellow">lcm</span><span class="color_red">(T)</span>(in T a, in T b);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    <span class="color_yellow">lcm</span>
+  </p>
+</div>
+<div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code"><span class="color_blue">assert</span>(<span class="color_yellow">lcm</span>(2, 4) == 4);
+<span class="color_blue">assert</span>(<span class="color_yellow">lcm</span>(3, 5) == 15);
+<span class="color_blue">assert</span>(<span class="color_yellow">lcm</span>(1, 1) == 1);
+<span class="color_blue">assert</span>(<span class="color_yellow">lcm</span>(0, 100) == 0);
+</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div>
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
   <div class="ddoc_member_header">
   <div class="ddoc_header_anchor">
   <a href="#pow" id="pow"><code class="code">pow</code></a>
@@ -145,82 +192,6 @@ Unqual!T <span class="color_yellow">pow</span><span class="color_red">(T, U, V)<
 </li><li class="ddoc_member">
   <div class="ddoc_member_header">
   <div class="ddoc_header_anchor">
-  <a href="#ulongPowMod" id="ulongPowMod"><code class="code">ulongPowMod</code></a>
-</div>
-</div><div class="ddoc_decl">
-  <section class="section">
-    <div class="declaration">
-      <h4>Declaration</h4>
-      <div class="dlang">
-        <p class="para">
-          <code class="code">
-            <span class="ddoc_anchor" id="ulongPowMod"></span>ulong <span class="color_yellow">ulongPowMod</span><span class="color_red">(U)</span>(ulong x, U n, ulong md) if (isIntegral!U || is(U == BigInt));
-<span class="color_red"></span>
-          </code>
-        </p>
-      </div>
-    </div>
-  </section>
-</div>
-<div class="ddoc_decl">
-  
-
-</div>
-
-</li><li class="ddoc_member">
-  <div class="ddoc_member_header">
-  <div class="ddoc_header_anchor">
-  <a href="#lcm" id="lcm"><code class="code">lcm</code></a>
-</div>
-</div><div class="ddoc_decl">
-  <section class="section">
-    <div class="declaration">
-      <h4>Declaration</h4>
-      <div class="dlang">
-        <p class="para">
-          <code class="code">
-            <span class="ddoc_anchor" id="lcm"></span>T <span class="color_yellow">lcm</span><span class="color_red">(T)</span>(in T a, in T b);
-<span class="color_red"></span>
-          </code>
-        </p>
-      </div>
-    </div>
-  </section>
-</div>
-<div class="ddoc_decl">
-  <section class="section ddoc_sections">
-  <div class="ddoc_summary">
-  <p class="para">
-    <span class="color_yellow">lcm</span>
-  </p>
-</div>
-<div class="ddoc_examples">
-  <h4>Examples</h4>
-  <p class="para">
-    
-<section class="code_listing">
-  <div class="code_sample">
-    <div class="dlang">
-      <ol class="code_lines">
-        <li><code class="code"><span class="color_blue">assert</span>(<span class="color_yellow">lcm</span>(2, 4) == 4);
-<span class="color_blue">assert</span>(<span class="color_yellow">lcm</span>(3, 5) == 15);
-<span class="color_blue">assert</span>(<span class="color_yellow">lcm</span>(1, 1) == 1);
-<span class="color_blue">assert</span>(<span class="color_yellow">lcm</span>(0, 100) == 0);
-</code></li>
-      </ol>
-    </div>
-  </div>
-</section>
-
-  </p>
-</div>
-</section>
-
-</div>
-
-</li><li class="ddoc_member">
-  <div class="ddoc_member_header">
-  <div class="ddoc_header_anchor">
   <a href="#extGcd" id="extGcd"><code class="code">extGcd</code></a>
 </div>
 </div><div class="ddoc_decl">
@@ -269,6 +240,38 @@ Unqual!T <span class="color_yellow">pow</span><span class="color_red">(T, U, V)<
 
   </p>
 </div>
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#invMod" id="invMod"><code class="code">invMod</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="invMod"></span>T <span class="color_yellow">invMod</span><span class="color_red">(T)</span>(T x, T md);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    calc inverse, (x * <span class="color_yellow">invMod</span>(x)) % md == 1
+  </p>
+</div>
+
 </section>
 
 </div>

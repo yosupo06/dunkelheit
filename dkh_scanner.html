@@ -30,6 +30,8 @@
 	</ul></li>
 	<li><a href="dkh_datastructure_index.html">datastructure</a> <ul>		<li><a href="dkh_datastructure_convexhull.html">convexhull</a></li>
 		<li><a href="dkh_datastructure_fastset.html">fastset</a></li>
+		<li><a href="dkh_datastructure_segtree.html">segtree</a></li>
+		<li><a href="dkh_datastructure_segtreenaive.html">segtreenaive</a></li>
 		<li><a href="dkh_datastructure_unionfind.html">unionfind</a></li>
 	</ul></li>
 	<li><a href="dkh_dungeon.html">dungeon</a></li>
@@ -64,12 +66,6 @@
 		<li><a href="dkh_numeric_primitive.html">primitive</a></li>
 	</ul></li>
 	<li><a href="dkh_scanner.html">scanner</a></li>
-	<li><a href="dkh_segtree_index.html">segtree</a> <ul>		<li><a href="dkh_segtree_lazyseg.html">lazyseg</a></li>
-		<li><a href="dkh_segtree_naive.html">naive</a></li>
-		<li><a href="dkh_segtree_primitive.html">primitive</a></li>
-		<li><a href="dkh_segtree_segex.html">segex</a></li>
-		<li><a href="dkh_segtree_simpleseg.html">simpleseg</a></li>
-	</ul></li>
 	<li><a href="dkh_stopwatch.html">stopwatch</a></li>
 	<li><a href="dkh_string.html">string</a></li>
 	<li><a href="dkh_tree.html">tree</a></li>
@@ -107,7 +103,7 @@
   <section class="section ddoc_sections">
   <div class="ddoc_summary">
   <p class="para">
-    <span class="color_yellow">Scanner</span> 速くはないが遅くもない printf/scanfよりちょっと遅いくらい？
+    <span class="color_yellow">Scanner</span>, not slow, not fast.
   </p>
 </div>
 <div class="ddoc_examples">
@@ -135,15 +131,14 @@ fout.close;
 string d;
 <span class="color_blue">double</span> e;
 <span class="color_blue">double</span>[] f;
-sc.read!<span class="color_blue">false</span>(a, b, c);
-sc.read!<span class="color_blue">false</span>();
-sc.read!<span class="color_blue">true</span>(d, e, f);
+sc.read(a, b, c, d, e, f);
 <span class="color_blue">assert</span>(a == 1);
-<span class="color_blue">assert</span>(equal(b[], [2, 3])); <span class="color_red">// 配列型は行末まで読み込む
-</span><span class="color_blue">assert</span>(equal(c[], <span class="color_red">"ab"</span>)); <span class="color_red">// char型配列はトークンをそのまま返す
-</span><span class="color_blue">assert</span>(equal(d, <span class="color_red">"cde"</span>)); <span class="color_red">// stringもchar型配列と同様
-</span><span class="color_blue">assert</span>(e == 1.0); <span class="color_red">// 小数も可
-</span><span class="color_blue">assert</span>(equal(f, [1.0, 2.0]));
+<span class="color_blue">assert</span>(equal(b[], [2, 3])); <span class="color_red">// array(except char) read whole line
+</span><span class="color_blue">assert</span>(equal(c[], <span class="color_red">"ab"</span>)); <span class="color_red">// char array(char[], char[2], ...) return token
+</span><span class="color_blue">assert</span>(equal(d, <span class="color_red">"cde"</span>)); <span class="color_red">// string is char array
+</span><span class="color_blue">assert</span>(e == 1.0);
+<span class="color_blue">assert</span>(equal(f, [1.0, 2.0]));
+<span class="color_blue">assert</span>(!sc.hasNext);
 </code></li>
       </ol>
     </div>
@@ -153,6 +148,137 @@ sc.read!<span class="color_blue">true</span>(d, e, f);
   </p>
 </div>
 </section>
+<ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#Scanner.this" id="Scanner.this"><code class="code">this</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="Scanner.this"></span>this(File f);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    f is source file
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#Scanner.unsafeRead" id="Scanner.unsafeRead"><code class="code">unsafeRead</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="Scanner.unsafeRead"></span>int <span class="color_yellow">unsafeRead</span><span class="color_red">(T, Args...)</span>(ref T x, auto ref Args args);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    Read tokens. Return the number of success read
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#Scanner.read" id="Scanner.read"><code class="code">read</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="Scanner.read"></span>void <span class="color_yellow">read</span><span class="color_red">(Args...)</span>(auto ref Args args);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    Read tokens. If can't <span class="color_yellow">read</span>, throw exception.
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#Scanner.hasNext" id="Scanner.hasNext"><code class="code">hasNext</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="Scanner.hasNext"></span>bool <span class="color_yellow">hasNext</span>();
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    Do file has next token?
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li>
+</ul>
 
 </div>
 

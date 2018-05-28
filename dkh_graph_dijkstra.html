@@ -30,6 +30,8 @@
 	</ul></li>
 	<li><a href="dkh_datastructure_index.html">datastructure</a> <ul>		<li><a href="dkh_datastructure_convexhull.html">convexhull</a></li>
 		<li><a href="dkh_datastructure_fastset.html">fastset</a></li>
+		<li><a href="dkh_datastructure_segtree.html">segtree</a></li>
+		<li><a href="dkh_datastructure_segtreenaive.html">segtreenaive</a></li>
 		<li><a href="dkh_datastructure_unionfind.html">unionfind</a></li>
 	</ul></li>
 	<li><a href="dkh_dungeon.html">dungeon</a></li>
@@ -64,12 +66,6 @@
 		<li><a href="dkh_numeric_primitive.html">primitive</a></li>
 	</ul></li>
 	<li><a href="dkh_scanner.html">scanner</a></li>
-	<li><a href="dkh_segtree_index.html">segtree</a> <ul>		<li><a href="dkh_segtree_lazyseg.html">lazyseg</a></li>
-		<li><a href="dkh_segtree_naive.html">naive</a></li>
-		<li><a href="dkh_segtree_primitive.html">primitive</a></li>
-		<li><a href="dkh_segtree_segex.html">segex</a></li>
-		<li><a href="dkh_segtree_simpleseg.html">simpleseg</a></li>
-	</ul></li>
 	<li><a href="dkh_stopwatch.html">stopwatch</a></li>
 	<li><a href="dkh_string.html">string</a></li>
 	<li><a href="dkh_tree.html">tree</a></li>
@@ -79,7 +75,184 @@
       <div class="col-md-10 content_wrapper main-dlang">
         <article class="module">
           <h1 class="module_name">dkh.graph.dijkstra</h1>
-          <section id="module_content">
+          <section id="module_content"><section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    calc shortest path
+  </p>
+</div>
+
+</section>
+<section class="section ddoc_module_members_section">
+  <div class="ddoc_module_members">
+    <ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#DijkstraInfo" id="DijkstraInfo"><code class="code">DijkstraInfo</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="DijkstraInfo"></span>struct <span class="color_yellow">DijkstraInfo</span>(T);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    information of shortest path
+  </p>
+</div>
+
+</section>
+<ul class="ddoc_members">
+  <li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#DijkstraInfo.dist" id="DijkstraInfo.dist"><code class="code">dist</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="DijkstraInfo.dist"></span>T[] <span class="color_yellow">dist</span>;
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    distance
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#DijkstraInfo.from" id="DijkstraInfo.from"><code class="code">from</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="DijkstraInfo.from"></span>int[] <span class="color_yellow">from</span>;
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    there is a shortest path (s, ..., <span class="color_yellow">from</span>[i], i)
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li>
+</ul>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#dijkstra" id="dijkstra"><code class="code">dijkstra</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="dijkstra"></span>DijkstraInfo!D <span class="color_yellow">dijkstra</span><span class="color_red">(D, T)</span>(T g, int s, D inf = D.max);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    calc shortest path with O(ElogE)
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#dijkstraDense" id="dijkstraDense"><code class="code">dijkstraDense</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="dijkstraDense"></span>DijkstraInfo!D <span class="color_yellow">dijkstraDense</span><span class="color_red">(D, T)</span>(T g, int s, D inf = D.max);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    calc shortest path with O(V^2)
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li>
+</ul>
+  </div>
+</section>
 </section>
         </article>
       </div>

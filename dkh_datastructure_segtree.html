@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dkh.segtree.simpleseg</title>
+    <title>dkh.datastructure.segtree</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/default.css">    
     <link rel="stylesheet" href="css/my.css">
@@ -30,6 +30,8 @@
 	</ul></li>
 	<li><a href="dkh_datastructure_index.html">datastructure</a> <ul>		<li><a href="dkh_datastructure_convexhull.html">convexhull</a></li>
 		<li><a href="dkh_datastructure_fastset.html">fastset</a></li>
+		<li><a href="dkh_datastructure_segtree.html">segtree</a></li>
+		<li><a href="dkh_datastructure_segtreenaive.html">segtreenaive</a></li>
 		<li><a href="dkh_datastructure_unionfind.html">unionfind</a></li>
 	</ul></li>
 	<li><a href="dkh_dungeon.html">dungeon</a></li>
@@ -64,12 +66,6 @@
 		<li><a href="dkh_numeric_primitive.html">primitive</a></li>
 	</ul></li>
 	<li><a href="dkh_scanner.html">scanner</a></li>
-	<li><a href="dkh_segtree_index.html">segtree</a> <ul>		<li><a href="dkh_segtree_lazyseg.html">lazyseg</a></li>
-		<li><a href="dkh_segtree_naive.html">naive</a></li>
-		<li><a href="dkh_segtree_primitive.html">primitive</a></li>
-		<li><a href="dkh_segtree_segex.html">segex</a></li>
-		<li><a href="dkh_segtree_simpleseg.html">simpleseg</a></li>
-	</ul></li>
 	<li><a href="dkh_stopwatch.html">stopwatch</a></li>
 	<li><a href="dkh_string.html">string</a></li>
 	<li><a href="dkh_tree.html">tree</a></li>
@@ -78,7 +74,7 @@
       </div>
       <div class="col-md-10 content_wrapper main-dlang">
         <article class="module">
-          <h1 class="module_name">dkh.segtree.simpleseg</h1>
+          <h1 class="module_name">dkh.datastructure.segtree</h1>
           <section id="module_content">
 <section class="section ddoc_module_members_section">
   <div class="ddoc_module_members">
@@ -141,6 +137,156 @@ opTTは結合率を満たす2引数関数, eTは単位元。
 <span class="color_red">//[2, 11, 5]
 </span>seg[1] = seg[1] + 10;
 <span class="color_blue">assert</span>(seg[0..3].sum == 11);
+</code></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+  </p>
+</div>
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#LazySeg" id="LazySeg"><code class="code">LazySeg</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="LazySeg"></span>template <span class="color_yellow">LazySeg</span>(T, L, alias opTT, alias opTL, alias opLL, T eT, L eL, alias Engine = LazySegEngine)<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    遅延伝搬SegTree
+
+  </p>
+</div>
+<div class="ddoc_description">
+  <h4>Discussion</h4>
+  <p class="para">
+    T型の配列aに対して、a[l..r] += x(xはL型)、opTT(a[l..r])が高速に計算できる
+
+
+  </p>
+</div>
+<div class="ddoc_params">
+  <h4>Parameters</h4>
+  <table cellspacing="0" cellpadding="5" border="0" class="graybox">
+    <tbody>
+      <tr class="ddoc_param_row">
+  <td scope="ddoc_param_id">
+  <code class="code">
+    <em class="term">opTT</em>
+  </code>
+</td>
+<td>
+  <div class="ddoc_param_desc">
+    <p class="para">
+      (T, T)の演算(結果をまとめる)
+    </p>
+  </div>
+</td>
+</tr>
+<tr class="ddoc_param_row">
+  <td scope="ddoc_param_id">
+  <code class="code">
+    <em class="term">opTL</em>
+  </code>
+</td>
+<td>
+  <div class="ddoc_param_desc">
+    <p class="para">
+      (T, L)の演算(クエリを適用する)
+    </p>
+  </div>
+</td>
+</tr>
+<tr class="ddoc_param_row">
+  <td scope="ddoc_param_id">
+  <code class="code">
+    <em class="term">opLL</em>
+  </code>
+</td>
+<td>
+  <div class="ddoc_param_desc">
+    <p class="para">
+      (L, L)の演算(クエリをまとめる)
+    </p>
+  </div>
+</td>
+</tr>
+<tr class="ddoc_param_row">
+  <td scope="ddoc_param_id">
+  <code class="code">
+    <em class="term">eT</em>
+  </code>
+</td>
+<td>
+  <div class="ddoc_param_desc">
+    <p class="para">
+      Tの単位元
+    </p>
+  </div>
+</td>
+</tr>
+<tr class="ddoc_param_row">
+  <td scope="ddoc_param_id">
+  <code class="code">
+    <em class="term">eL</em>
+  </code>
+</td>
+<td>
+  <div class="ddoc_param_desc">
+    <p class="para">
+      Lの単位元
+    </p>
+  </div>
+</td>
+</tr>
+
+    </tbody>
+  </table>
+</div>
+<div class="ddoc_examples">
+  <h4>Examples</h4>
+  <p class="para">
+    
+<section class="code_listing">
+  <div class="code_sample">
+    <div class="dlang">
+      <ol class="code_lines">
+        <li><code class="code"><span class="color_blue">import</span> std.algorithm : max;
+<span class="color_red">///区間max, 区間加算
+</span><span class="color_blue">auto</span> seg = <span class="color_yellow">LazySeg</span>!(<span class="color_blue">int</span>, <span class="color_blue">int</span>,
+    (a, b) =&gt; max(a, b), (a, b) =&gt; a+b, (a, b) =&gt; a+b, 0, 0)([2, 1, 4]);
+
+<span class="color_red">//[2, 1, 4]
+</span>seg[0] = 2; seg[1] = 1; seg[2] = 4;
+<span class="color_blue">assert</span>(seg[0..3].sum == 4);
+
+<span class="color_red">//[2, 1, 5]
+</span>seg[2] = 5;
+<span class="color_blue">assert</span>(seg[0..2].sum == 2);
+<span class="color_blue">assert</span>(seg[0..3].sum == 5);
+
+<span class="color_red">//[12, 11, 5]
+</span>seg[0..2] += 10;
+<span class="color_blue">assert</span>(seg[0..3].sum == 12);
 </code></li>
       </ol>
     </div>

@@ -30,6 +30,8 @@
 	</ul></li>
 	<li><a href="dkh_datastructure_index.html">datastructure</a> <ul>		<li><a href="dkh_datastructure_convexhull.html">convexhull</a></li>
 		<li><a href="dkh_datastructure_fastset.html">fastset</a></li>
+		<li><a href="dkh_datastructure_segtree.html">segtree</a></li>
+		<li><a href="dkh_datastructure_segtreenaive.html">segtreenaive</a></li>
 		<li><a href="dkh_datastructure_unionfind.html">unionfind</a></li>
 	</ul></li>
 	<li><a href="dkh_dungeon.html">dungeon</a></li>
@@ -64,12 +66,6 @@
 		<li><a href="dkh_numeric_primitive.html">primitive</a></li>
 	</ul></li>
 	<li><a href="dkh_scanner.html">scanner</a></li>
-	<li><a href="dkh_segtree_index.html">segtree</a> <ul>		<li><a href="dkh_segtree_lazyseg.html">lazyseg</a></li>
-		<li><a href="dkh_segtree_naive.html">naive</a></li>
-		<li><a href="dkh_segtree_primitive.html">primitive</a></li>
-		<li><a href="dkh_segtree_segex.html">segex</a></li>
-		<li><a href="dkh_segtree_simpleseg.html">simpleseg</a></li>
-	</ul></li>
 	<li><a href="dkh_stopwatch.html">stopwatch</a></li>
 	<li><a href="dkh_string.html">string</a></li>
 	<li><a href="dkh_tree.html">tree</a></li>
@@ -107,7 +103,7 @@
   <section class="section ddoc_sections">
   <div class="ddoc_summary">
   <p class="para">
-    自動mod取り構造体
+    int with mod, mod must be prime
   </p>
 </div>
 <div class="ddoc_examples">
@@ -122,6 +118,7 @@
 <span class="color_blue">assert</span>((Mint(100) + Mint(10)).v == 3);
 <span class="color_blue">assert</span>(( Mint(10) * Mint(12)).v == 13);
 <span class="color_blue">assert</span>((  Mint(1) /  Mint(2)).v == 108/2);
+<span class="color_blue">assert</span>((Mint(2) ^^ 7).v == 21);
 </code></li>
       </ol>
     </div>
@@ -151,6 +148,8 @@ const auto <span class="color_yellow">opBinary</span><span class="color_red">(st
 const auto <span class="color_yellow">opBinary</span><span class="color_red">(string op : "*")</span>(ModInt r);
 <span class="color_red"></span><br>
 const auto <span class="color_yellow">opBinary</span><span class="color_red">(string op : "/")</span>(ModInt r);
+<span class="color_red"></span><br>
+const auto <span class="color_yellow">opBinary</span><span class="color_red">(string op : "^^", T)</span>(T r);
 <span class="color_red"></span>
           </code>
         </p>
@@ -162,7 +161,7 @@ const auto <span class="color_yellow">opBinary</span><span class="color_red">(st
   <section class="section ddoc_sections">
   <div class="ddoc_summary">
   <p class="para">
-    整数型と同じように演算可能 割り算のみ遅い
+    We can handle it as same as int(but divide is slow)
   </p>
 </div>
 
@@ -194,7 +193,7 @@ const auto <span class="color_yellow">opBinary</span><span class="color_red">(st
   <section class="section ddoc_sections">
   <div class="ddoc_summary">
   <p class="para">
-    xの逆元を求める
+    return 1/x
   </p>
 </div>
 
@@ -231,7 +230,7 @@ const auto <span class="color_yellow">opBinary</span><span class="color_red">(st
   <section class="section ddoc_sections">
   <div class="ddoc_summary">
   <p class="para">
-    自動mod取り構造体(実行時mod指定)
+    int with mod, mod can be setted in execute time. mod don't have to be prime.
   </p>
 </div>
 <div class="ddoc_examples">
@@ -330,6 +329,102 @@ const auto <span class="color_yellow">opBinary</span><span class="color_red">(st
 
 </li>
 </ul>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#factTable" id="factTable"><code class="code">factTable</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="factTable"></span>T[] <span class="color_yellow">factTable</span><span class="color_red">(T)</span>(size_t length) if (isModInt!T);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    return [0!, 1!, 2!, ..., (length-1)!]
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#invFactTable" id="invFactTable"><code class="code">invFactTable</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="invFactTable"></span>T[] <span class="color_yellow">invFactTable</span><span class="color_red">(T)</span>(size_t length) if (isModInt!T);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    return [1/0!, 1/1!, 1/2!, ..., 1/(length-1)!]
+  </p>
+</div>
+
+</section>
+
+</div>
+
+</li><li class="ddoc_member">
+  <div class="ddoc_member_header">
+  <div class="ddoc_header_anchor">
+  <a href="#invTable" id="invTable"><code class="code">invTable</code></a>
+</div>
+</div><div class="ddoc_decl">
+  <section class="section">
+    <div class="declaration">
+      <h4>Declaration</h4>
+      <div class="dlang">
+        <p class="para">
+          <code class="code">
+            <span class="ddoc_anchor" id="invTable"></span>T[] <span class="color_yellow">invTable</span><span class="color_red">(T)</span>(size_t length) if (isModInt!T);
+<span class="color_red"></span>
+          </code>
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="ddoc_decl">
+  <section class="section ddoc_sections">
+  <div class="ddoc_summary">
+  <p class="para">
+    return [0, 1/1, 1/2, 1/3, ...]
+  </p>
+</div>
+
+</section>
 
 </div>
 
