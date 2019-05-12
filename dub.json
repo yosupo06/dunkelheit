@@ -13,7 +13,7 @@
 			"sourcePaths": ["combine"],
 			"targetType": "executable",
 			"dependencies": {
-				"libdparse" : "~>0.7.1"
+				"libdparse" : "~>0.12.0"
 			}
 		},
 		{

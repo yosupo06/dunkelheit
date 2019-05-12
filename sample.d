@@ -1,6 +1,6 @@
 /+ dub.sdl:
     name "A"
-    dependency "dunkelheit" version="1.0.0"
+    dependency "dunkelheit" version="1.0.1"
 +/
 
 import std.stdio, std.algorithm, std.range, std.conv;
