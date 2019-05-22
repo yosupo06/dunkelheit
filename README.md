@@ -1,4 +1,4 @@
-[![Build Status](http://drone.yosupo.com/api/badges/yosupo06/dunkelheit/status.svg)](http://drone.yosupo.com/yosupo06/dunkelheit)
+[![Build Status](https://drone.yosupo.jp/api/badges/yosupo06/dunkelheit/status.svg)](https://drone.yosupo.jp/yosupo06/dunkelheit)
 
 [Document](https://yosupo06.github.io/dunkelheit/)
 
