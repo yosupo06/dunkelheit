@@ -261,6 +261,33 @@ auto determinent(Mat)(in Mat _m) {
     return base;
 }
 
+
+size_t rank(Mat)(in Mat _m) {
+    alias M = Mat.DataType;
+    auto m = _m.dup;
+    immutable size_t h = m.height, w = m.width;
+    size_t rnk;
+    foreach (c; 0..w) {
+        size_t mr = h;
+        foreach (r; rnk..h) {
+            if (m[r, c]) {
+                mr = r;
+                break;
+            }
+        }
+        if (mr == h) continue;
+        m.swapLine(rnk, mr);
+        foreach (r; rnk + 1..h) {
+            if (!a[r, c]) continue;
+            auto freq = a[r, c] / a[rnk, c];
+            foreach (i; c..w) m[r, i] -= freq * m[rnk, i];
+        }
+        rnk++;
+        if (rnk == h) break;
+    }
+    return rnk;
+}
+
 unittest {
     import std.random, std.stdio, std.algorithm;
     import dkh.modint;
